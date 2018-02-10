@@ -16,6 +16,9 @@ namespace MoreQuickSlots
             Unload();
             entry = obj;
             new GameObject(GAME_OBJECT_NAME).AddComponent<MoreQuickSlots.Controller>();
+            
+            Patcher.Patch();
+
             Console.WriteLine("[MoreQuickSlots] Mod Loaded");
         }
 

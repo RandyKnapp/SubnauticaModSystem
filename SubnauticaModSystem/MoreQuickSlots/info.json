@@ -1,0 +1,7 @@
+{
+	"title": "MoreQuickSlots",
+	"name": "MoreQuickSlots",
+	"version": "0.1.0",
+	"enable": true,
+	"entries": ["MoreQuickSlots.dll"]
+}
