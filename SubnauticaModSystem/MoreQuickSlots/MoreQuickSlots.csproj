@@ -80,8 +80,6 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Patcher.cs" />
     <Compile Include="Patches\Inventory_Awake_Patch.cs" />
-    <Compile Include="Patches\Player_Patch.cs" />
-    <Compile Include="Patches\uGUI_MainMenu_Awake_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
