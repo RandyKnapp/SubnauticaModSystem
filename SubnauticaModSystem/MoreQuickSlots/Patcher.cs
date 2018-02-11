@@ -10,6 +10,8 @@ namespace MoreQuickSlots
         {
             HarmonyInstance harmony = HarmonyInstance.Create("com.morequickslots.mod");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+            Logger.Log("Patched");
         }
     }
 }

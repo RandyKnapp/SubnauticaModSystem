@@ -10,29 +10,21 @@ namespace MoreQuickSlots.Patches
     {
         static void Postfix(Inventory __instance)
         {
-            /*typeof(QuickSlots).GetField("slotNames", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, new string[]
+            string[] newSlotNames = new string[Config.SlotCount];
+            for (int i = 0; i < Config.SlotCount; ++i)
             {
-                "QuickSlot0",
-                "QuickSlot1",
-                "QuickSlot2",
-                "QuickSlot3",
-                "QuickSlot4",
-                "QuickSlot5",
-                "QuickSlot6",
-                "QuickSlot7",
-                "QuickSlot8",
-                "QuickSlot9"
-            });*/
+                newSlotNames[i] = "QuickSlot" + i;
+            }
+            typeof(QuickSlots).GetField("slotNames", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, newSlotNames);
 
             Player player = __instance.GetComponent<Player>();
 
-            Console.WriteLine("[MoreQuickSlots] Inventory Quick Slots (before): {0}", __instance.quickSlots.slotCount);
+            Logger.Log("Inventory Quick Slots (before): {0}", __instance.quickSlots.slotCount);
 
-            var quickSlots = __instance.GetType().GetField("quickSlots", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            Console.WriteLine("[MoreQuickSlots] quickSlots = {0}", quickSlots);
-            quickSlots.SetValue(__instance, new QuickSlots(__instance.gameObject, __instance.toolSocket, __instance.cameraSocket, __instance, player.rightHandSlot, Player.quickSlotButtonsCount));
+            var setQuickSlots = __instance.GetType().GetMethod("set_quickSlots", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            setQuickSlots.Invoke(__instance, new object[]{ new QuickSlots(__instance.gameObject, __instance.toolSocket, __instance.cameraSocket, __instance, player.rightHandSlot, Config.SlotCount) });
 
-            Console.WriteLine("[MoreQuickSlots] Inventory Quick Slots (after): {0}", __instance.quickSlots.slotCount);
+            Logger.Log("Inventory Quick Slots (after): {0}", __instance.quickSlots.slotCount);
         }
     }
 }

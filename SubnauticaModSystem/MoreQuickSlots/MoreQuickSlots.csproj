@@ -77,14 +77,16 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Patcher.cs" />
     <Compile Include="Patches\Inventory_Awake_Patch.cs" />
     <Compile Include="Patches\Player_Patch.cs" />
+    <Compile Include="Patches\uGUI_MainMenu_Awake_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Mods\MoreQuickSlots /q /y</PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed /q /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

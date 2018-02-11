@@ -5,11 +5,11 @@ namespace MoreQuickSlots
 {
     public class Controller : MonoBehaviour
     {
-        private static readonly string GAME_OBJECT_NAME = "MoreQuickSlots.Controller";
+        //private static readonly string GAME_OBJECT_NAME = "MoreQuickSlots.Controller";
 
-        private static ModLoader.ModEntry entry;
+        //private static ModLoader.ModEntry entry;
 
-        public string dir { get { return entry.path; } }
+        /*public string dir { get { return entry.path; } }
 
         public static void Load(ModLoader.ModEntry obj = null)
         {
@@ -17,7 +17,7 @@ namespace MoreQuickSlots
             entry = obj;
             new GameObject(GAME_OBJECT_NAME).AddComponent<MoreQuickSlots.Controller>();
             
-            Patcher.Patch();
+            //Patcher.Patch();
 
             Console.WriteLine("[MoreQuickSlots] Mod Loaded");
         }
@@ -31,6 +31,6 @@ namespace MoreQuickSlots
                 DestroyImmediate(gameObject);
                 Console.WriteLine("[MoreQuickSlots] Mod Unloaded");
             }
-        }
+        }*/
     }
 }
