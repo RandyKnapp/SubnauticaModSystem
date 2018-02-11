@@ -8,6 +8,9 @@ namespace MoreQuickSlots
 {
     public static class Mod
     {
+        public const int MaxSlots = 12;
+        public const int MinSlots = 1;
+
         public static Config config;
 
         public static void Patch()
@@ -22,28 +25,23 @@ namespace MoreQuickSlots
             Logger.Log("Initialized");
         }
 
+        private static string GetModInfoPath()
+        {
+            return Environment.CurrentDirectory + @"\QMods\mod.json";
+        }
+
         private static void LoadConfig()
         {
-            string modDirectory = Environment.CurrentDirectory + @"\QMods";
-            string settingsPath = modDirectory + @"\mod.json";
+            string modInfoPath = GetModInfoPath();
 
-            if (!File.Exists(settingsPath))
+            if (!File.Exists(modInfoPath))
             {
-                Logger.Log("Could not find mod.json");
                 config = new Config();
                 return;
             }
 
-            string modInfoJson = File.ReadAllText(settingsPath);
-            Logger.Log("modInfoJson = " + modInfoJson);
-
-            ModInfo modInfo = JsonUtility.FromJson<ModInfo>(modInfoJson);
-
-            var N = JSON.Parse(modInfoJson);
-            var configObject = N["config"];
-            string configJson = configObject.ToString();
-            Logger.Log("configJson = " + configJson);
-
+            var modInfoObject = JSON.Parse(File.ReadAllText(modInfoPath));
+            string configJson = modInfoObject["config"].ToString();
             config = JsonUtility.FromJson<Config>(configJson);
             ValidateConfig();
         }
@@ -53,12 +51,11 @@ namespace MoreQuickSlots
             Config defaultConfig = new Config();
             if (config == null)
             {
-                Logger.Log("Config was missing from mod.json");
                 config = defaultConfig;
                 return;
             }
 
-            if (config.SlotCount < 1 || config.SlotCount > 12)
+            if (config.SlotCount < MinSlots || config.SlotCount > MaxSlots)
             {
                 config.SlotCount = defaultConfig.SlotCount;
             }

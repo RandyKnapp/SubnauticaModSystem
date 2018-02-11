@@ -7,6 +7,6 @@
   "enable": true,
   "assemblies": [ "MoreQuickSlots.dll" ],
   "config": {
-    "SlotCount": -1
+    "SlotCount": 12
   }
 }
