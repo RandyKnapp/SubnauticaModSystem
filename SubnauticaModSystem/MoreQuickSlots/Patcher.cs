@@ -12,6 +12,8 @@ namespace MoreQuickSlots
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             Logger.Log("Patched");
+
+            Controller.Load();
         }
     }
 }

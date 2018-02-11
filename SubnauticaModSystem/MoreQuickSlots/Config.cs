@@ -7,6 +7,6 @@ namespace MoreQuickSlots
 {
     public static class Config
     {
-        public const int SlotCount = 10;
+        public const int SlotCount = 12;
     }
 }

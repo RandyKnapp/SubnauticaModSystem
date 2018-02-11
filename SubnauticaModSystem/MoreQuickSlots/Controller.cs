@@ -1,36 +1,100 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MoreQuickSlots
 {
     public class Controller : MonoBehaviour
     {
-        //private static readonly string GAME_OBJECT_NAME = "MoreQuickSlots.Controller";
+        private static readonly string GAME_OBJECT_NAME = "MoreQuickSlots.Controller";
 
-        //private static ModLoader.ModEntry entry;
-
-        /*public string dir { get { return entry.path; } }
-
-        public static void Load(ModLoader.ModEntry obj = null)
+        public static void Load()
         {
             Unload();
-            entry = obj;
             new GameObject(GAME_OBJECT_NAME).AddComponent<MoreQuickSlots.Controller>();
-            
-            //Patcher.Patch();
-
-            Console.WriteLine("[MoreQuickSlots] Mod Loaded");
+            Logger.Log("Controller Loaded");
         }
 
         private static void Unload()
         {
-            entry = null;
             GameObject gameObject = GameObject.Find(GAME_OBJECT_NAME);
             if (gameObject)
             {
                 DestroyImmediate(gameObject);
-                Console.WriteLine("[MoreQuickSlots] Mod Unloaded");
+                Logger.Log("Controller Unloaded");
             }
-        }*/
+        }
+
+        private void Awake()
+        {
+            DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            Logger.Log("Controller Awake");
+        }
+
+        private void OnDestroy()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            Logger.Log("Controller Destroyed");
+        }
+        
+        private void Update()
+        {
+            if (!uGUI_SceneLoading.IsLoadingScreenFinished || uGUI.main == null || uGUI.main.loading.IsLoading)
+            {
+                return;
+            }
+
+            for (int i = Player.quickSlotButtonsCount; i < Config.SlotCount; ++i)
+            {
+                KeyCode key = GetKeyCodeForSlot(i);
+                if (Input.GetKeyDown(key))
+                {
+                    SelectQuickSlot(i);
+                }
+            }
+        }
+
+        private KeyCode GetKeyCodeForSlot(int slotID)
+        {
+            if (slotID == 9) return KeyCode.Alpha0;
+            if (slotID == 10) return KeyCode.Minus;
+            if (slotID == 11) return KeyCode.Equals;
+            else return KeyCode.Alpha1 + slotID;
+        }
+
+        private void OnEnable()
+        {
+            Logger.Log("Controller enabled");
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            Logger.Log("Scene Loaded: " + scene.name);
+            if (scene.name == "Main")
+            {
+                gameObject.SetActive(true);
+            }
+        }
+
+        private void OnDisable()
+        {
+            Logger.Log("Controller disabled");
+        }
+        
+        private void SelectQuickSlot(int slotID)
+        {
+            string message = string.Format("Quick Slot Selected ({0})", slotID);
+            Logger.Log(message);
+
+            if (Inventory.main != null)
+            {
+                Inventory.main.quickSlots.Select(slotID);
+            }
+            else
+            {
+                Logger.Log("Inventory is null");
+            }
+        }
     }
 }
