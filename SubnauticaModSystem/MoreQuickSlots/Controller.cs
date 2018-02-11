@@ -11,8 +11,7 @@ namespace MoreQuickSlots
         public static void Load()
         {
             Unload();
-            new GameObject(GAME_OBJECT_NAME).AddComponent<MoreQuickSlots.Controller>();
-            Logger.Log("Controller Loaded");
+            new GameObject(GAME_OBJECT_NAME).AddComponent<global::MoreQuickSlots.Controller>();
         }
 
         private static void Unload()
@@ -21,7 +20,6 @@ namespace MoreQuickSlots
             if (gameObject)
             {
                 DestroyImmediate(gameObject);
-                Logger.Log("Controller Unloaded");
             }
         }
 
@@ -29,13 +27,11 @@ namespace MoreQuickSlots
         {
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
-            Logger.Log("Controller Awake");
         }
 
         private void OnDestroy()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            Logger.Log("Controller Destroyed");
         }
         
         private void Update()
@@ -45,7 +41,12 @@ namespace MoreQuickSlots
                 return;
             }
 
-            for (int i = Player.quickSlotButtonsCount; i < Config.SlotCount; ++i)
+            if (Inventory.main == null)
+            {
+                return;
+            }
+
+            for (int i = Player.quickSlotButtonsCount; i < Mod.config.SlotCount; ++i)
             {
                 KeyCode key = GetKeyCodeForSlot(i);
                 if (Input.GetKeyDown(key))
@@ -63,38 +64,17 @@ namespace MoreQuickSlots
             else return KeyCode.Alpha1 + slotID;
         }
 
-        private void OnEnable()
-        {
-            Logger.Log("Controller enabled");
-        }
-
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            Logger.Log("Scene Loaded: " + scene.name);
             if (scene.name == "Main")
             {
                 gameObject.SetActive(true);
             }
         }
-
-        private void OnDisable()
-        {
-            Logger.Log("Controller disabled");
-        }
         
         private void SelectQuickSlot(int slotID)
         {
-            string message = string.Format("Quick Slot Selected ({0})", slotID);
-            Logger.Log(message);
-
-            if (Inventory.main != null)
-            {
-                Inventory.main.quickSlots.Select(slotID);
-            }
-            else
-            {
-                Logger.Log("Inventory is null");
-            }
+            Inventory.main.quickSlots.Select(slotID);
         }
     }
 }

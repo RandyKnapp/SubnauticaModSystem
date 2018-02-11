@@ -1,0 +1,12 @@
+{
+  "id": "MoreQuickSlots",
+  "displayName": "More Quick Slots",
+  "author": "RandyKnapp",
+  "version": "0.9.0",
+  "requires": [],
+  "enable": true,
+  "assemblies": [ "MoreQuickSlots.dll" ],
+  "config": {
+    "SlotCount": -1
+  }
+}

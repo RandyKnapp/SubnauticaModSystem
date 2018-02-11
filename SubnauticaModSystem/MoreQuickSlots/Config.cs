@@ -1,12 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MoreQuickSlots
 {
-    public static class Config
+    [Serializable]
+    public struct ModInfo
     {
-        public const int SlotCount = 12;
+        public string id;
+        public string displayName;
+        public string author;
+        public string version;
+        public string[] requires;
+        public bool enable;
+        public string[] assemblies;
+        public object config;
+    }
+
+    [Serializable]
+    public class Config
+    {
+        public int SlotCount = 12;
     }
 }
