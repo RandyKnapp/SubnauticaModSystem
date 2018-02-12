@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace MoreQuickSlots
 {
@@ -48,20 +49,55 @@ namespace MoreQuickSlots
 
 			for (int i = Player.quickSlotButtonsCount; i < Mod.config.SlotCount; ++i)
 			{
-				KeyCode key = GetKeyCodeForSlot(i);
+				KeyCode key = Mod.GetKeyCodeForSlot(i);
 				if (Input.GetKeyDown(key))
 				{
 					SelectQuickSlot(i);
 				}
 			}
+
+			/*if (Input.GetKeyDown(KeyCode.I)) MoveAllLabels(new Vector2(0, 1));
+			if (Input.GetKeyDown(KeyCode.K)) MoveAllLabels(new Vector2(0, -1));
+			if (Input.GetKeyDown(KeyCode.J)) MoveAllLabels(new Vector2(-1, 0));
+			if (Input.GetKeyDown(KeyCode.L)) MoveAllLabels(new Vector2(1, 0));
+			if (Input.GetKeyDown(KeyCode.U)) SetTextSize(-1);
+			if (Input.GetKeyDown(KeyCode.O)) SetTextSize(1);*/
 		}
 
-		private KeyCode GetKeyCodeForSlot(int slotID)
+		/*private void MoveAllLabels(Vector2 offset)
 		{
-			if (slotID == 9) return KeyCode.Alpha0;
-			if (slotID == 10) return KeyCode.Minus;
-			if (slotID == 11) return KeyCode.Equals;
-			else return KeyCode.Alpha1 + slotID;
+			GameObject[] labels = GetAllLabels();
+			foreach(var label in labels)
+			{
+				RectTransform rt = label.transform as RectTransform;
+				rt.anchoredPosition = rt.anchoredPosition + offset;
+			}
+			Logger.Log("Label Position = " + (labels[0].transform as RectTransform).anchoredPosition);
+		}*/
+
+		/*private void SetTextSize(int offset)
+		{
+			GameObject[] labels = GetAllLabels();
+			foreach (var label in labels)
+			{
+				Text t = label.GetComponent<Text>();
+				t.fontSize = t.fontSize + offset;
+			}
+			Logger.Log("Label Font Size = " + labels[0].GetComponent<Text>().fontSize);
+		}*/
+
+		private GameObject[] GetAllLabels()
+		{
+			GameObject[] labels = new GameObject[Mod.config.SlotCount];
+			for (int i = 0; i < Mod.config.SlotCount; ++i)
+			{
+				GameObject label = GameObject.Find("QuickSlotText" + i.ToString());
+				if (label != null)
+				{
+					labels[i] = label;
+				}
+			}
+			return labels;
 		}
 
 		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

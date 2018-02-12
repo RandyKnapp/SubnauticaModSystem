@@ -60,5 +60,21 @@ namespace MoreQuickSlots
 				config.SlotCount = defaultConfig.SlotCount;
 			}
 		}
+
+		public static KeyCode GetKeyCodeForSlot(int slotID)
+		{
+			if (slotID == 9) return KeyCode.Alpha0;
+			if (slotID == 10) return KeyCode.Minus;
+			if (slotID == 11) return KeyCode.Equals;
+			else return KeyCode.Alpha1 + slotID;
+		}
+
+		public static string GetHintTextForSlot(int slotID)
+		{
+			if (slotID == 9) return "0";
+			if (slotID == 10) return "-";
+			if (slotID == 11) return "=";
+			else return (slotID + 1).ToString();
+		}
 	}
 }
