@@ -11,6 +11,11 @@ namespace MoreQuickSlots.Patches
 	{
 		private static void Postfix(uGUI_QuickSlots __instance)
 		{
+			if (!Mod.config.ShowInputText)
+			{
+				return;
+			}
+
 			Text textPrefab = GetTextPrefab();
 			if (textPrefab == null)
 			{
