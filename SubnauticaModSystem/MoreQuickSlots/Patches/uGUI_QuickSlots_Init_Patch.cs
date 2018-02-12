@@ -22,12 +22,6 @@ namespace MoreQuickSlots.Patches
 				return;
 			}
 
-			Transform parent = GetParentForNewText();
-			if (parent == null)
-			{
-				return;
-			}
-
 			var iconsField = typeof(uGUI_QuickSlots).GetField("icons", BindingFlags.NonPublic | BindingFlags.Instance);
 			uGUI_ItemIcon[] icons = (uGUI_ItemIcon[])iconsField.GetValue(__instance);
 			for (int i = 0; i < icons.Length; ++i)
@@ -47,24 +41,6 @@ namespace MoreQuickSlots.Patches
 			}
 
 			return prefab;
-		}
-
-		private static Transform GetParentForNewText()
-		{
-			GameObject hud = GameObject.FindObjectOfType<uGUI_PowerIndicator>().gameObject;
-			if (hud == null)
-			{
-				Logger.Log("Could not find HUD!");
-				return null;
-			}
-
-			Transform content = hud.transform.Find("Content");
-			if (content == null)
-			{
-				Logger.Log("Could not find child named 'Content' in HUD!");
-				return null;
-			}
-			return content;
 		}
 
 		private static Text CreateNewText(Text prefab, Transform parent, string newText, int index = -1)
