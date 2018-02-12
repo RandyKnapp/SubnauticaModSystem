@@ -4,12 +4,12 @@ using System.Reflection;
 
 namespace MoreQuickSlots
 {
-    // for QMods system
-    public static class QPatch
-    {
-        public static void Patch()
-        {
-            Mod.Patch();
-        }
-    }
+	// for QMods system
+	public static class QPatch
+	{
+		public static void Patch()
+		{
+			Mod.Patch();
+		}
+	}
 }

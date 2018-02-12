@@ -81,6 +81,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Patches\uGUI_QuickSlots_Init_Patch.cs" />
     <Compile Include="QPatch.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Patches\Inventory_Awake_Patch.cs" />
