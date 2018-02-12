@@ -7,6 +7,7 @@
   "enable": true,
   "assemblies": [ "MoreQuickSlots.dll" ],
   "config": {
-    "SlotCount": 12
+    "SlotCount": 12,
+    "ShowInputText": true
   }
 }
