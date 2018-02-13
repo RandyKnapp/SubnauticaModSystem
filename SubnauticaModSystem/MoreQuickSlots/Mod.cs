@@ -15,9 +15,9 @@ namespace MoreQuickSlots
 
 		private static string modDirectory;
 
-		public static void Patch(string modDirectory)
+		public static void Patch(string modDirectory = null)
 		{
-			Mod.modDirectory = modDirectory;
+			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
 			LoadConfig();
 
 			HarmonyInstance harmony = HarmonyInstance.Create("com.morequickslots.mod");
