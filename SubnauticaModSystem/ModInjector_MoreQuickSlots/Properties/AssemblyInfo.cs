@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ModInjector_MoreQuickSlots")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Standalone Injector for MoreQuickSlots Subnautica Mod")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("RandyKnapp")]
 [assembly: AssemblyProduct("ModInjector_MoreQuickSlots")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright © 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
