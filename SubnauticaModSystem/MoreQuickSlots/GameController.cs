@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 namespace MoreQuickSlots
 {
-	public class Controller : MonoBehaviour
+	public class GameController : MonoBehaviour
 	{
 		private static readonly string GAME_OBJECT_NAME = "MoreQuickSlots.Controller";
 
 		public static void Load()
 		{
 			Unload();
-			new GameObject(GAME_OBJECT_NAME).AddComponent<global::MoreQuickSlots.Controller>();
+			new GameObject(GAME_OBJECT_NAME).AddComponent<global::MoreQuickSlots.GameController>();
 		}
 
 		private static void Unload()

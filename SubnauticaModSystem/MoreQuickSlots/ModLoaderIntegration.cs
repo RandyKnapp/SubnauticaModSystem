@@ -4,12 +4,14 @@ using System.Reflection;
 
 namespace MoreQuickSlots
 {
-	// for QMods system
+	// QMods by qwiso https://github.com/Qwiso/QModManager
 	public static class QPatch
 	{
 		public static void Patch()
 		{
-			Mod.Patch();
+			Mod.Patch("QMods");
 		}
 	}
+
+	// 
 }

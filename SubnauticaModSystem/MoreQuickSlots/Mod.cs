@@ -13,21 +13,24 @@ namespace MoreQuickSlots
 
 		public static Config config;
 
-		public static void Patch()
+		private static string modDirectory;
+
+		public static void Patch(string modDirectory)
 		{
+			Mod.modDirectory = modDirectory;
 			LoadConfig();
 
 			HarmonyInstance harmony = HarmonyInstance.Create("com.morequickslots.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-			Controller.Load();
+			GameController.Load();
 
 			Logger.Log("Initialized");
 		}
 
 		private static string GetModInfoPath()
 		{
-			return Environment.CurrentDirectory + @"\QMods\mod.json";
+			return Environment.CurrentDirectory + "\\" + modDirectory + "\\mod.json";
 		}
 
 		private static void LoadConfig()
