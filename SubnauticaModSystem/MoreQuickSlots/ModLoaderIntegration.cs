@@ -38,4 +38,15 @@ namespace MoreQuickSlots
 			Mod.Patch("SNUnityMod");
 		}
 	}
+
+	// SubnauticaModLoader by dumbdiscord https://github.com/dumbdiscord/SubnauticaModLoader
+	// ERROR: Currently this modloader is targetting .NET 4.6 and is incompatible
+	/*public class CableWayPatcher : ModEntryPoint
+	{
+		public override void Patch()
+		{
+			Logger.Log("Mod Loaded by SubnauticaModLoader by dumbdiscord");
+			Mod.Patch("Mods\\MoreQuickSlots");
+		}
+	}*/
 }
