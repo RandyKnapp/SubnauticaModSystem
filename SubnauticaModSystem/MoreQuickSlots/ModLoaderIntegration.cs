@@ -6,6 +6,15 @@ using UnityEngine;
 
 namespace MoreQuickSlots
 {
+	// Injector
+	public static class InjectorPatcher
+	{
+		public static void Patch()
+		{
+			Mod.Patch("Subnautica_Data\\Managed");
+		}
+	}
+
 	// QMods by qwiso https://github.com/Qwiso/QModManager
 	public static class QPatch
 	{
