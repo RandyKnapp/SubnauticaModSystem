@@ -2,8 +2,8 @@
   "id": "MoreQuickSlots",
   "displayName": "More Quick Slots",
   "author": "RandyKnapp",
-  "version": "0.9.0",
-  "requires": [],
+  "version": "1.0.0",
+  "requires": [ "0Harmony.dll" ],
   "enable": true,
   "assemblies": [ "MoreQuickSlots.dll" ],
   "config": {
