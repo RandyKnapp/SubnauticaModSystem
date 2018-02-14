@@ -1,0 +1,12 @@
+{
+  "Id": "BetterPowerInfo",
+  "DisplayName": "Better Power Info",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "BetterPowerInfo.dll",
+  "EntryMethod": "BetterPowerInfo.QPatch.Patch",
+  "Config": {
+  }
+}

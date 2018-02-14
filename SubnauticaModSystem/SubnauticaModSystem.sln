@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreQuickSlots", "MoreQuick
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModInjector_MoreQuickSlots", "ModInjector_MoreQuickSlots\ModInjector_MoreQuickSlots.csproj", "{09868E2D-416A-441C-9D9A-19D791E8FC42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterPowerInfo", "BetterPowerInfo\BetterPowerInfo.csproj", "{0D86304E-0A53-422A-99E6-0C687D9DBBC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{09868E2D-416A-441C-9D9A-19D791E8FC42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09868E2D-416A-441C-9D9A-19D791E8FC42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09868E2D-416A-441C-9D9A-19D791E8FC42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D86304E-0A53-422A-99E6-0C687D9DBBC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D86304E-0A53-422A-99E6-0C687D9DBBC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D86304E-0A53-422A-99E6-0C687D9DBBC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D86304E-0A53-422A-99E6-0C687D9DBBC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
