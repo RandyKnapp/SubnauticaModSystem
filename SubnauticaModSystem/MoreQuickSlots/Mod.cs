@@ -44,7 +44,7 @@ namespace MoreQuickSlots
 			}
 
 			var modInfoObject = JSON.Parse(File.ReadAllText(modInfoPath));
-			string configJson = modInfoObject["config"].ToString();
+			string configJson = modInfoObject["Config"].ToString();
 			config = JsonUtility.FromJson<Config>(configJson);
 			ValidateConfig();
 		}

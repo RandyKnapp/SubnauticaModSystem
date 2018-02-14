@@ -1,12 +1,13 @@
 {
-  "id": "MoreQuickSlots",
-  "displayName": "More Quick Slots",
-  "author": "RandyKnapp",
-  "version": "1.0.0",
-  "requires": [ "0Harmony.dll" ],
-  "enable": true,
-  "assemblies": [ "MoreQuickSlots.dll" ],
-  "config": {
+  "Id": "MoreQuickSlots",
+  "DisplayName": "More Quick Slots",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "MoreQuickSlots.dll",
+  "EntryMethod": "MoreQuickSlots.QPatch.Patch",
+  "Config": {
     "SlotCount": 12,
     "ShowInputText": true
   }

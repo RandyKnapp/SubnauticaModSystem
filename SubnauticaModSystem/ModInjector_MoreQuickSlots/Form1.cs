@@ -17,17 +17,31 @@ namespace ModInjector_MoreQuickSlots
 		private const string steamInstallRegistryKey = "InstallPath";
 		private const string steamConfigFile = @"\config\config.vdf";
 		private const string subnauticaDir = @"\steamapps\common\Subnautica";
-		private const string steamConfigBaseInstallKey = "BaseInstallFolder_1";
+		private const string steamConfigBaseInstallKey = "BaseInstallFolder_";
 
 		private Injector injector;
 
 		public Form1()
 		{
 			InitializeComponent();
+			
+			bool success = FindInstallDirectory(out string subnauticaDirectory);
+			if (success)
+			{
+				textBox1.Text = subnauticaDirectory;
+			}
+			textBox1.Select(0, 0);
+
+			UpdateInjector();
+		}
+
+		private bool FindInstallDirectory(out string subnauticaDirectory)
+		{
+			List<string> potentialDirectories = new List<string>();
 
 			string steamDir = (string)Microsoft.Win32.Registry.GetValue(steamInstallRegistryPath, steamInstallRegistryKey, "");
 			string configPath = steamDir + steamConfigFile;
-			string subnauticaDirectory = steamDir + subnauticaDir;
+			potentialDirectories.Add(steamDir + subnauticaDir);
 
 			if (File.Exists(configPath))
 			{
@@ -38,19 +52,22 @@ namespace ModInjector_MoreQuickSlots
 						int start = line.LastIndexOf("\t\t\"") + 3;
 						string dir = line.Substring(start, line.Length - start - 1);
 						dir = dir.Replace("\\\\", "\\");
-						subnauticaDirectory = dir + subnauticaDir;
-						break;
+						potentialDirectories.Add(dir + subnauticaDir);
 					}
 				}
 			}
 
-			if (Directory.Exists(subnauticaDirectory))
+			foreach (string dir in potentialDirectories)
 			{
-				textBox1.Text = subnauticaDirectory;
+				if (Directory.Exists(dir))
+				{
+					subnauticaDirectory = dir;
+					return true;
+				}
 			}
-			textBox1.Select(0, 0);
 
-			UpdateInjector();
+			subnauticaDirectory = "";
+			return false;
 		}
 
 		private void button2_Click(object sender, EventArgs e)

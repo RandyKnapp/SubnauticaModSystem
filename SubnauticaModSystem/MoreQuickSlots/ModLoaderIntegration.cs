@@ -20,7 +20,7 @@ namespace MoreQuickSlots
 	{
 		public static void Patch()
 		{
-			Mod.Patch("QMods");
+			Mod.Patch("QMods\\MoreQuickSlots");
 		}
 	}
 
