@@ -8,35 +8,17 @@ namespace BetterPowerInfo
 {
 	public class GameController : MonoBehaviour
 	{
-		private static readonly string GAME_OBJECT_NAME = "BetterPowerInfo.Controller";
-
 		private PowerIndicatorDisplay display;
-
-		public static void Load()
-		{
-			Unload();
-			new GameObject(GAME_OBJECT_NAME).AddComponent<GameController>();
-		}
-
-		private static void Unload()
-		{
-			GameObject gameObject = GameObject.Find(GAME_OBJECT_NAME);
-			if (gameObject)
-			{
-				DestroyImmediate(gameObject);
-			}
-		}
 
 		private void Awake()
 		{
-			DontDestroyOnLoad(gameObject);
-			SceneManager.sceneLoaded += OnSceneLoaded;
 			DevConsole.RegisterConsoleCommand(this, "deplete", false, false);
+			Logger.Log("GameController Added");
 		}
 
 		private void OnDestroy()
 		{
-			SceneManager.sceneLoaded -= OnSceneLoaded;
+			Logger.Log("GameController Destroyed");
 		}
 
 		private void Update()
@@ -50,15 +32,7 @@ namespace BetterPowerInfo
 			{
 				Logger.Log("Creating Text Object...");
 				Transform hud = GameObject.FindObjectOfType<uGUI_PowerIndicator>().transform;
-				display = CreateNewText(hud, "XXXXXXXXXX").AddComponent<PowerIndicatorDisplay>();
-			}
-		}
-		
-		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-		{
-			if (scene.name == "Main")
-			{
-				gameObject.SetActive(true);
+				display = CreateNewText(hud, "").AddComponent<PowerIndicatorDisplay>();
 			}
 		}
 
@@ -79,7 +53,7 @@ namespace BetterPowerInfo
 					}
 				}
 			}
-			ErrorMessage.AddDebug("Depleting batteries");
+			ErrorMessage.AddDebug("Depleting batteries and powercells");
 		}
 
 		private static GameObject CreateNewText(Transform parent, string newText)

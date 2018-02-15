@@ -81,6 +81,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
     <Compile Include="Mod.cs" />
+    <Compile Include="Patches\uGUI_PowerIndicator_Initialize_Patch.cs" />
     <Compile Include="PowerIndicatorDisplay.cs" />
     <Compile Include="PowerProductionTracker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -100,9 +101,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Patches\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\Subnautica\QMods\$(ProjectName)\ /q /y

@@ -22,9 +22,7 @@ namespace BetterPowerInfo
 
 			DevConsole.disableConsole = false;
 
-			GameController.Load();
-
-			Logger.Log("Initialized");
+			Logger.Log("Patched");
 		}
 
 		private static string GetModInfoPath()
