@@ -8,7 +8,8 @@ namespace BetterPowerInfo
 {
 	public class GameController : MonoBehaviour
 	{
-		private PowerIndicatorDisplay display;
+		private PowerProductionDisplay productionDisplay;
+		private PowerConsumerDisplay consumerDisplay;
 
 		private void Awake()
 		{
@@ -28,11 +29,12 @@ namespace BetterPowerInfo
 				return;
 			}
 
-			if (display == null)
+			if (productionDisplay == null)
 			{
-				Logger.Log("Creating Text Object...");
+				Logger.Log("Creating Text Objects...");
 				Transform hud = GameObject.FindObjectOfType<uGUI_PowerIndicator>().transform;
-				display = CreateNewText(hud, "").AddComponent<PowerIndicatorDisplay>();
+				productionDisplay = CreateNewText(hud, -500, TextAnchor.UpperRight).AddComponent<PowerProductionDisplay>();
+				consumerDisplay = CreateNewText(hud, 500, TextAnchor.UpperLeft).AddComponent<PowerConsumerDisplay>();
 			}
 		}
 
@@ -56,7 +58,7 @@ namespace BetterPowerInfo
 			ErrorMessage.AddDebug("Depleting batteries and powercells");
 		}
 
-		private static GameObject CreateNewText(Transform parent, string newText)
+		private static GameObject CreateNewText(Transform parent, int x, TextAnchor anchor)
 		{
 			Text prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
 			if (prefab == null)
@@ -72,13 +74,13 @@ namespace BetterPowerInfo
 			text.transform.localScale = new Vector3(1, 1, 1);
 			text.gameObject.SetActive(true);
 			text.enabled = true;
-			text.text = newText;
+			text.text = "";
 			text.fontSize = 20;
 			RectTransformExtensions.SetParams(text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 800);
+			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 700);
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 800);
-			text.rectTransform.anchoredPosition = new Vector3(-500, 100);
-			text.alignment = TextAnchor.UpperLeft;
+			text.rectTransform.anchoredPosition = new Vector3(x, 100);
+			text.alignment = anchor;
 			text.raycastTarget = false;
 
 			return text.gameObject;
