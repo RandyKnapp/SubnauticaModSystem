@@ -9,8 +9,6 @@ namespace BetterPowerInfo.Producers
 {
 	public class PowerSourceInfoBase
 	{
-		protected static MethodInfo SolarPanel_GetRechargeScalar;
-
 		public virtual string DisplayText { get { return GetPowerSourceDisplayText(); } }
 		public virtual int CurrentPower { get { return Mathf.RoundToInt(source.GetPower()); } }
 		public virtual int MaxPower { get { return Mathf.RoundToInt(source.GetMaxPower()); } }
@@ -42,10 +40,6 @@ namespace BetterPowerInfo.Producers
 			{
 				return powerProduction;
 			}
-			else if (GetPowerProductionPerMinute(source.gameObject.GetComponent<SolarPanel>(), out powerProduction))
-			{
-				return powerProduction;
-			}
 			else if (GetPowerProductionPerMinute(source.gameObject.GetComponent<ThermalPlant>(), out powerProduction))
 			{
 				return powerProduction;
@@ -57,22 +51,6 @@ namespace BetterPowerInfo.Producers
 		protected bool GetPowerProductionPerMinute(RegeneratePowerSource source, out float result)
 		{
 			result = source != null ? source.regenerationAmount / (source.regenerationInterval / 60) : 0;
-			return source != null;
-		}
-
-		protected bool GetPowerProductionPerMinute(SolarPanel source, out float result)
-		{
-			result = 0;
-			if (source != null)
-			{
-				if (SolarPanel_GetRechargeScalar == null)
-				{
-					SolarPanel_GetRechargeScalar = typeof(SolarPanel).GetMethod("GetRechargeScalar", BindingFlags.NonPublic | BindingFlags.Instance);
-				}
-
-				float chargeScalar = (float)SolarPanel_GetRechargeScalar.Invoke(source, new object[] { });
-				result = chargeScalar * 0.25f * 5.0f * 60;
-			}
 			return source != null;
 		}
 

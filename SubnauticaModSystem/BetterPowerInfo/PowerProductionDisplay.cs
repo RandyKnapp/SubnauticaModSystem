@@ -73,7 +73,7 @@ namespace BetterPowerInfo
 			}
 			else if (source.gameObject.GetComponent<SolarPanel>())
 			{
-				powerSources.Add(new PowerSourceInfoBase(source));
+				powerSources.Add(new SolarPanelPowerSourceInfo(source));
 			}
 			else if (source.gameObject.GetComponent<ThermalPlant>())
 			{
