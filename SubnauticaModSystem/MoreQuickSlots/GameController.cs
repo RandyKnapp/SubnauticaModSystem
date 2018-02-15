@@ -7,32 +7,14 @@ namespace MoreQuickSlots
 {
 	public class GameController : MonoBehaviour
 	{
-		private static readonly string GAME_OBJECT_NAME = "MoreQuickSlots.Controller";
-
-		public static void Load()
-		{
-			Unload();
-			new GameObject(GAME_OBJECT_NAME).AddComponent<global::MoreQuickSlots.GameController>();
-		}
-
-		private static void Unload()
-		{
-			GameObject gameObject = GameObject.Find(GAME_OBJECT_NAME);
-			if (gameObject)
-			{
-				DestroyImmediate(gameObject);
-			}
-		}
-
 		private void Awake()
 		{
-			DontDestroyOnLoad(gameObject);
-			SceneManager.sceneLoaded += OnSceneLoaded;
+			Logger.Log("GameController Added");
 		}
 
 		private void OnDestroy()
 		{
-			SceneManager.sceneLoaded -= OnSceneLoaded;
+			Logger.Log("GameController Destroyed");
 		}
 
 		private void Update()
@@ -98,14 +80,6 @@ namespace MoreQuickSlots
 				}
 			}
 			return labels;
-		}
-
-		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-		{
-			if (scene.name == "Main")
-			{
-				gameObject.SetActive(true);
-			}
 		}
 
 		private void SelectQuickSlot(int slotID)

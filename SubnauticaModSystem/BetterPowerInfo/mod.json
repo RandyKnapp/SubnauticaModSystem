@@ -8,5 +8,6 @@
   "AssemblyName": "BetterPowerInfo.dll",
   "EntryMethod": "BetterPowerInfo.QPatch.Patch",
   "Config": {
+    "Debug":  true
   }
 }

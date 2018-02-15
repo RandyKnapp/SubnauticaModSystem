@@ -20,6 +20,8 @@ namespace BetterPowerInfo
 			HarmonyInstance harmony = HarmonyInstance.Create("com.betterpowerinfo.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
+			DevConsole.disableConsole = false;
+
 			GameController.Load();
 
 			Logger.Log("Initialized");

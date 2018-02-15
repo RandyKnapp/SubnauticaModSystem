@@ -11,11 +11,21 @@ namespace MoreQuickSlots.Patches
 	{
 		private static void Postfix(uGUI_QuickSlots __instance)
 		{
-			if (!Mod.config.ShowInputText)
-			{
-				return;
-			}
+			InstantiateGameController(__instance);
 
+			if (Mod.config.ShowInputText)
+			{
+				AddHotkeyLabels(__instance);
+			}
+		}
+
+		private static void InstantiateGameController(uGUI_QuickSlots instance)
+		{
+			instance.gameObject.AddComponent<GameController>();
+		}
+
+		private static void AddHotkeyLabels(uGUI_QuickSlots instance)
+		{
 			Text textPrefab = GetTextPrefab();
 			if (textPrefab == null)
 			{
@@ -23,7 +33,12 @@ namespace MoreQuickSlots.Patches
 			}
 
 			var iconsField = typeof(uGUI_QuickSlots).GetField("icons", BindingFlags.NonPublic | BindingFlags.Instance);
-			uGUI_ItemIcon[] icons = (uGUI_ItemIcon[])iconsField.GetValue(__instance);
+			uGUI_ItemIcon[] icons = (uGUI_ItemIcon[])iconsField.GetValue(instance);
+			if (icons == null)
+			{
+				return;
+			}
+
 			for (int i = 0; i < icons.Length; ++i)
 			{
 				uGUI_ItemIcon icon = icons[i];

@@ -23,9 +23,7 @@ namespace MoreQuickSlots
 			HarmonyInstance harmony = HarmonyInstance.Create("com.morequickslots.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-			GameController.Load();
-
-			Logger.Log("Initialized");
+			Logger.Log("Patched");
 		}
 
 		private static string GetModInfoPath()
