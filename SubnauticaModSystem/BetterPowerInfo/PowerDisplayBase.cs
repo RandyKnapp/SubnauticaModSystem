@@ -33,6 +33,19 @@ namespace BetterPowerInfo
 			}
 		}
 
+		private void Update()
+		{
+			var pda = Player.main.GetPDA();
+			if (pda != null && pda.isInUse && text.enabled)
+			{
+				text.enabled = false;
+			}
+			else if ((pda == null || !pda.isInUse) && !text.enabled)
+			{
+				text.enabled = true;
+			}
+		}
+
 		protected abstract void UpdatePower();
 
 		protected bool ShouldSkipUpdate()
