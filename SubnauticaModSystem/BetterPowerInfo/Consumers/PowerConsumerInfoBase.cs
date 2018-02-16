@@ -10,10 +10,10 @@ namespace BetterPowerInfo.Consumers
 		public virtual float PowerConsumedPerMinute { get { return GetPowerConsumedPerMinute(); } }
 		public virtual string DisplayText { get { return GetDisplayText(); } }
 
-		private string name;
-		private float consumption;
+		protected string name;
+		protected float consumption;
 
-		public PowerConsumerInfoBase(string name, float consumption)
+		public PowerConsumerInfoBase(string name = "", float consumption = 0)
 		{
 			this.name = name;
 			this.consumption = consumption;

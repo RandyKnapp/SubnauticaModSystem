@@ -12,8 +12,6 @@ namespace BetterPowerInfo
 {
 	class PowerConsumerDisplay : PowerDisplayBase
 	{
-		private static FieldInfo Charger_batteries;
-
 		List<PowerConsumerInfoBase> consumers = new List<PowerConsumerInfoBase>();
 
 		protected override void UpdatePower()
@@ -98,51 +96,16 @@ namespace BetterPowerInfo
 
 		private void AccumulateBaseConsumers(BaseRoot root)
 		{
-			// Chargers
 			AccumulateBaseChargers(root.gameObject.GetComponent<Base>());
 		}
 
 		private void AccumulateBaseChargers(Base b)
 		{
-			Charger[] chargers = b.gameObject.GetAllComponentsInChildren<Charger>();
-			List<Charger> done = new List<Charger>();
+			List<Charger> chargers = b.gameObject.GetAllComponentsInChildren<Charger>().Distinct().ToList();
 			foreach (var charger in chargers)
 			{
-				if (done.Contains(charger))
-				{
-					continue;
-				}
-				done.Add(charger);
-
-				float total = 0f;
-				var batteries = GetChargerBatteries(charger);
-				foreach (KeyValuePair<string, IBattery> keyValuePair in batteries)
-				{
-					IBattery value = keyValuePair.Value;
-					if (value != null)
-					{
-						float charge = value.charge;
-						float capacity = value.capacity;
-						if (charge < capacity)
-						{
-							float chargeAmount = DayNightCycle.main.dayNightSpeed * charger.chargeSpeed * capacity;
-							total += chargeAmount;
-						}
-					}
-				}
-
-				AddGenericConsumer(charger.name, total * 12f);
+				consumers.Add(new ChargerPowerConsumerInfo(charger));
 			}
-		}
-
-		private Dictionary<string, IBattery> GetChargerBatteries(Charger charger)
-		{
-			if (Charger_batteries == null)
-			{
-				Charger_batteries = typeof(Charger).GetField("batteries", BindingFlags.NonPublic | BindingFlags.Instance);
-			}
-
-			return (Dictionary<string, IBattery>)Charger_batteries.GetValue(charger);
 		}
 
 		private void AccumulateCyclopsConsumers(SubRoot root)
