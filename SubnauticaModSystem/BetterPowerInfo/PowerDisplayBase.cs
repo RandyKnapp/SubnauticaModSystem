@@ -11,7 +11,8 @@ namespace BetterPowerInfo
 	public abstract class PowerDisplayBase : MonoBehaviour
 	{
 		protected const float TextUpdateInterval = 0.5f;
-		protected Text text;
+
+		public Text text;
 
 		private void Awake()
 		{

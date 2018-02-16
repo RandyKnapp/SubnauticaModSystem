@@ -36,7 +36,19 @@ namespace BetterPowerInfo
 				productionDisplay = CreateNewText(hud, -500, TextAnchor.UpperRight).AddComponent<PowerProductionDisplay>();
 				consumerDisplay = CreateNewText(hud, 500, TextAnchor.UpperLeft).AddComponent<PowerConsumerDisplay>();
 			}
+
+			//if (Input.GetKeyDown(KeyCode.I)) MoveAllDisplays(new Vector2(0, 1));
+			//if (Input.GetKeyDown(KeyCode.K)) MoveAllDisplays(new Vector2(0, -1));
+			//if (Input.GetKeyDown(KeyCode.J)) MoveAllDisplays(new Vector2(-1, 0));
+			//if (Input.GetKeyDown(KeyCode.L)) MoveAllDisplays(new Vector2(1, 0));
 		}
+
+		//private void MoveAllDisplays(Vector2 offset)
+		//{
+		//	productionDisplay.text.rectTransform.anchoredPosition += offset;
+		//	consumerDisplay.text.rectTransform.anchoredPosition += new Vector2(-offset.x, offset.y);
+		//	Logger.Log("Position = " + productionDisplay.text.rectTransform.anchoredPosition);
+		//}
 
 		private void OnConsoleCommand_deplete()
 		{
@@ -76,10 +88,10 @@ namespace BetterPowerInfo
 			text.enabled = true;
 			text.text = "";
 			text.fontSize = 20;
-			RectTransformExtensions.SetParams(text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			RectTransformExtensions.SetParams(text.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 0.5f), parent);
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 700);
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 800);
-			text.rectTransform.anchoredPosition = new Vector3(x, 100);
+			text.rectTransform.anchoredPosition = new Vector3(x, -428);
 			text.alignment = anchor;
 			text.raycastTarget = false;
 
