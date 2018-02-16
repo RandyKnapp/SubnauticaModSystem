@@ -96,15 +96,35 @@ namespace BetterPowerInfo
 
 		private void AccumulateBaseConsumers(BaseRoot root)
 		{
-			AccumulateBaseChargers(root.gameObject.GetComponent<Base>());
+			AccumulateBaseChargers(root.gameObject);
+			AccumulateSpotLights(root.gameObject);
+			AccumulateFiltrationMachines(root.gameObject);
 		}
 
-		private void AccumulateBaseChargers(Base b)
+		private void AccumulateBaseChargers(GameObject root)
 		{
-			List<Charger> chargers = b.gameObject.GetAllComponentsInChildren<Charger>().Distinct().ToList();
-			foreach (var charger in chargers)
+			List<Charger> objs = root.GetAllComponentsInChildren<Charger>().Distinct().ToList();
+			foreach (var obj in objs)
 			{
-				consumers.Add(new ChargerPowerConsumerInfo(charger));
+				consumers.Add(new ChargerPowerConsumerInfo(obj));
+			}
+		}
+
+		private void AccumulateSpotLights(GameObject root)
+		{
+			List<BaseSpotLight> objs = root.GetAllComponentsInChildren<BaseSpotLight>().Distinct().ToList();
+			foreach (var obj in objs)
+			{
+				consumers.Add(new SpotLightPowerConsumerInfo(obj));
+			}
+		}
+
+		private void AccumulateFiltrationMachines(GameObject root)
+		{
+			List<FiltrationMachine> objs = root.GetAllComponentsInChildren<FiltrationMachine>().Distinct().ToList();
+			foreach (var obj in objs)
+			{
+				consumers.Add(new FiltrationMachinePowerConsumerInfo(obj));
 			}
 		}
 
