@@ -40,10 +40,6 @@ namespace BetterPowerInfo.Producers
 			{
 				return powerProduction;
 			}
-			else if (GetPowerProductionPerMinute(source.gameObject.GetComponent<ThermalPlant>(), out powerProduction))
-			{
-				return powerProduction;
-			}
 
 			return 0;
 		}
@@ -51,18 +47,6 @@ namespace BetterPowerInfo.Producers
 		protected bool GetPowerProductionPerMinute(RegeneratePowerSource source, out float result)
 		{
 			result = source != null ? source.regenerationAmount / (source.regenerationInterval / 60) : 0;
-			return source != null;
-		}
-
-		protected bool GetPowerProductionPerMinute(ThermalPlant source, out float result)
-		{
-			result = 0;
-			if (source != null)
-			{
-				float num = 2f * DayNightCycle.main.dayNightSpeed;
-				float num2 = 1.6500001f * num * Mathf.Clamp01(Mathf.InverseLerp(25f, 100f, source.temperature));
-				result = num2 * 30;
-			}
 			return source != null;
 		}
 	}

@@ -77,7 +77,7 @@ namespace BetterPowerInfo
 			}
 			else if (source.gameObject.GetComponent<ThermalPlant>())
 			{
-				powerSources.Add(new PowerSourceInfoBase(source));
+				powerSources.Add(new ThermalPlantPowerSourceInfo(source));
 			}
 			else if (source.gameObject.GetComponent<BaseBioReactor>())
 			{
