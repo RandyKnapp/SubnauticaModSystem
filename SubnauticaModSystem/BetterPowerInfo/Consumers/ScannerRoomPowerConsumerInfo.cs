@@ -22,7 +22,7 @@ namespace BetterPowerInfo.Consumers
 			bool isScanning = IsScannerActive();
 			float range = scanner.GetScanRange();
 			float speed = scanner.GetScanInterval();
-			return string.Format("Scanner Room {0}(<color=lightblue>{1}m</color> | <color=lightblue>{2}s</color>)",
+			return string.Format("Scanner Room {0}( <color=lightblue>{1}m</color> | <color=lightblue>{2}s</color> )",
 				isScanning ? "<color=lime>[Scanning...]</color> " : "",
 				Mathf.RoundToInt(range),
 				Mathf.RoundToInt(speed)

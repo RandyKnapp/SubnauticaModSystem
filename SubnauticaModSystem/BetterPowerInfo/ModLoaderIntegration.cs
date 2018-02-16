@@ -10,7 +10,7 @@ namespace BetterPowerInfo
 	{
 		public static void Patch()
 		{
-			Mod.Patch("QMods\\MoreQuickSlots");
+			Mod.Patch("QMods\\BetterPowerInfo");
 		}
 	}
 }

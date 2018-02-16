@@ -17,26 +17,25 @@ namespace BetterPowerInfo
 		protected override void UpdatePower()
 		{
 			PowerRelay power = GetCurrentPowerRelay();
-			if (power != null)
+			if (power == null || Mode == DisplayMode.Off)
+			{
+				text.text = "";
+			}
+			else
 			{
 				AccumulateConsumers();
 
-				// TODO: REMOVE
-				if (false && Mode == DisplayMode.Minimal)
+				if (Mode == DisplayMode.Minimal)
 				{
 					text.text = GetTotalConsumedText();
 				}
-				else
+				else if (Mode == DisplayMode.Verbose)
 				{
 					string t = GetTotalConsumedText();
 					t += "\n<b><color=lightblue>Power Consumers</color></b>";
 					t += GetTextForConsumers();
 					text.text = t;
 				}
-			}
-			else
-			{
-				text.text = "";
 			}
 		}
 
@@ -97,9 +96,9 @@ namespace BetterPowerInfo
 		private void AccumulateBaseConsumers(BaseRoot root)
 		{
 			AccumulateBaseObjects<Charger, ChargerPowerConsumerInfo>(root.gameObject);
-			AccumulateBaseObjects<BaseSpotLight, SpotLightPowerConsumerInfo>(root.gameObject);
 			AccumulateBaseObjects<FiltrationMachine, FiltrationMachinePowerConsumerInfo>(root.gameObject);
 			AccumulateBaseObjects<MapRoomFunctionality, ScannerRoomPowerConsumerInfo>(root.gameObject);
+			AccumulateBaseObjects<BaseSpotLight, SpotLightPowerConsumerInfo>(root.gameObject);
 		}
 
 		private List<ObjectT> AccumulateBaseObjects<ObjectT, ConsumerInfoT>(GameObject root)

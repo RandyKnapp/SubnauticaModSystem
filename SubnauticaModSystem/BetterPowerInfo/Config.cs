@@ -6,5 +6,6 @@ namespace BetterPowerInfo
 	public class Config
 	{
 		public bool Debug;
+		public string ViewToggleKey = "p";
 	}
 }

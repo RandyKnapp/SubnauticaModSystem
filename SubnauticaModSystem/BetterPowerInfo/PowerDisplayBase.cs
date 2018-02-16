@@ -11,7 +11,8 @@ namespace BetterPowerInfo
 	public enum DisplayMode
 	{
 		Minimal,
-		Verbose
+		Verbose,
+		Off
 	}
 
 	public abstract class PowerDisplayBase : MonoBehaviour
@@ -99,10 +100,11 @@ namespace BetterPowerInfo
 			{
 				return player.currentSub.GetComponent<PowerRelay>();
 			}
-			else if (player.currentSub != null && player.currentSub.powerRelay != null)
-			{
-				return player.currentSub.powerRelay;
-			}
+			// TODO: All the cyclops power consumers and producers
+			//else if (player.currentSub != null && player.currentSub.powerRelay != null)
+			//{
+			//	return player.currentSub.powerRelay;
+			//}
 			return null;
 		}
 	}

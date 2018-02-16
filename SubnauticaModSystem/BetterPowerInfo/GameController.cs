@@ -41,16 +41,11 @@ namespace BetterPowerInfo
 
 			if (productionDisplay != null && consumerDisplay != null)
 			{
-				bool keyDown = Input.GetKey(KeyCode.P);
-				if (keyDown && productionDisplay.Mode == DisplayMode.Minimal)
+				bool keyDown = Input.GetKeyDown(Mod.config.ViewToggleKey);
+				if (keyDown)
 				{
-					productionDisplay.SetMode(DisplayMode.Verbose);
-					consumerDisplay.SetMode(DisplayMode.Verbose);
-				}
-				else if (!keyDown && productionDisplay.Mode == DisplayMode.Verbose)
-				{
-					productionDisplay.SetMode(DisplayMode.Minimal);
-					consumerDisplay.SetMode(DisplayMode.Minimal);
+					productionDisplay.SetMode((DisplayMode)(((int)productionDisplay.Mode + 1) % 3));
+					consumerDisplay.SetMode(productionDisplay.Mode);
 				}
 			}
 

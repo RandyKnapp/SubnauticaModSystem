@@ -31,7 +31,7 @@ namespace BetterPowerInfo.Consumers
 				float waterProgress = 1f - Mathf.Clamp01(filter.timeRemainingWater / 840f);
 				water = string.Format("{0} ({1}%)", water, Mathf.RoundToInt(waterProgress * 100));
 			}
-			n += string.Format(" [ <color=cyan>H₂0: {1}</color>  <color=lightblue>NaCl: {0}</color> ]", salt, water);
+			n += string.Format(" [ <color=cyan>H₂0: {1}</color> | <color=lightblue>NaCl: {0}</color> ]", salt, water);
 			return n;
 		}
 

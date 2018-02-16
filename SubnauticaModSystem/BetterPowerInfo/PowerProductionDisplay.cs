@@ -101,10 +101,10 @@ namespace BetterPowerInfo
 			float sum = 0;
 			foreach (var entry in powerSources)
 			{
-				if (entry.CurrentPower < entry.MaxPower)
-				{
+				//if (entry.CurrentPower < entry.MaxPower)
+				//{
 					sum += entry.ProductionPerMinute;
-				}
+				//}
 			}
 			return sum;
 		}
@@ -152,16 +152,18 @@ namespace BetterPowerInfo
 			{
 				return GetCurrentAndMaxPowerTextMinimal(power);
 			}
-			else
+			else if (Mode == DisplayMode.Verbose)
 			{
 				string t = GetCurrentAndMaxPowerTextVerbose(power);
-				powerSources.Sort((p1, p2) => p1.DisplayText.Substring(0, 5).CompareTo(p2.DisplayText.Substring(0, 5)));
+				powerSources.Sort((p1, p2) => p1.DisplayText.CompareTo(p2.DisplayText));
 				foreach (var entry in powerSources)
 				{
 					t += GetTextForPowerSource(entry);
 				}
 				return t;
 			}
+
+			return "";
 		}
 
 		private string GetCurrentAndMaxPowerTextMinimal(PowerRelay power)
@@ -173,7 +175,7 @@ namespace BetterPowerInfo
 		private string GetCurrentAndMaxPowerTextVerbose(PowerRelay power)
 		{
 			float totalProduction = Mathf.RoundToInt(GetTotalProductionPerMinute());
-			string name = Mod.FormatName(power.name).Replace("Base", "Habitat").Replace("Module", "").Replace("-MainPrefab", "");
+			string name = Mod.FormatName(power.name.Replace("Base", "Habitat").Replace("Module", "").Replace("-MainPrefab", ""));
 			string firstLine = string.Format("{0} <color={2}><b>+{1}</b></color>", name, totalProduction, totalProduction > 0 ? "lime" : "silver");
 			return string.Format("{0}\n<b><color=lightblue>Power Sources</color></b>", 
 				firstLine
@@ -182,7 +184,7 @@ namespace BetterPowerInfo
 
 		private string GetTextForPowerSource(PowerSourceInfoBase source)
 		{
-			string productionColor = (source.CurrentPower == source.MaxPower ? "silver" : (source.ProductionPerMinute == 0 ? "grey" : "lime"));
+			string productionColor = source.ProductionPerMinute == 0 ? "grey" : "lime";
 			string productionString = string.Format(" <color={1}>+{0:0.0}</color>", source.ProductionPerMinute, productionColor);
 			return string.Format("\n{0} <color={4}>{1}/{2}</color>{3} >",
 				source.DisplayText,

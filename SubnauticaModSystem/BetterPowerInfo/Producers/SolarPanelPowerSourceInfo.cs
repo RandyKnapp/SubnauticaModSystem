@@ -28,7 +28,7 @@ namespace BetterPowerInfo.Producers
 		{
 			string name = base.GetPowerSourceDisplayText();
 			float rechargeScalar = GetRechargeScalar();
-			return string.Format("{0} ({1}%)", name, Mathf.RoundToInt(rechargeScalar * 100));
+			return string.Format("{0} (<color={2}>{1}%</color>)", name, Mathf.RoundToInt(rechargeScalar * 100), Mod.GetChargeColorString(rechargeScalar));
 		}
 
 		protected float GetRechargeScalar()

@@ -24,7 +24,10 @@ namespace BetterPowerInfo
 			HarmonyInstance harmony = HarmonyInstance.Create("com.betterpowerinfo.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-			DevConsole.disableConsole = false;
+			//if (Mod.config.Debug)
+			//{
+			//	DevConsole.disableConsole = false;
+			//}
 
 			Logger.Log("Patched");
 		}
