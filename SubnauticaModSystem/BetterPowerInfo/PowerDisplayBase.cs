@@ -8,14 +8,23 @@ using UnityEngine.UI;
 
 namespace BetterPowerInfo
 {
+	public enum DisplayMode
+	{
+		Minimal,
+		Verbose
+	}
+
 	public abstract class PowerDisplayBase : MonoBehaviour
 	{
 		protected const float TextUpdateInterval = 0.5f;
+
+		public DisplayMode Mode { get; private set; }
 
 		public Text text;
 
 		private void Awake()
 		{
+			Mode = DisplayMode.Minimal;
 			text = GetComponent<Text>();
 			text.supportRichText = true;
 		}
@@ -49,6 +58,15 @@ namespace BetterPowerInfo
 
 		protected abstract void UpdatePower();
 
+		public virtual void SetMode(DisplayMode mode)
+		{
+			if (Mode != mode)
+			{
+				Mode = mode;
+				UpdatePower();
+			}
+		}
+
 		protected bool ShouldSkipUpdate()
 		{
 			return MainMenuOrStillLoading() || IsWrongGameState() || IsInCameraMode() || Player.main == null;
@@ -68,6 +86,24 @@ namespace BetterPowerInfo
 		{
 			uGUI_CameraDrone cameraDrone = uGUI_CameraDrone.main;
 			return cameraDrone != null && cameraDrone.GetCamera() != null;
+		}
+
+		protected PowerRelay GetCurrentPowerRelay()
+		{
+			Player player = Player.main;
+			if (player.escapePod.value && player.currentEscapePod != null)
+			{
+				return player.currentEscapePod.GetComponent<PowerRelay>();
+			}
+			else if (player.currentSub != null && player.currentSub.isBase)
+			{
+				return player.currentSub.GetComponent<PowerRelay>();
+			}
+			else if (player.currentSub != null && player.currentSub.powerRelay != null)
+			{
+				return player.currentSub.powerRelay;
+			}
+			return null;
 		}
 	}
 }

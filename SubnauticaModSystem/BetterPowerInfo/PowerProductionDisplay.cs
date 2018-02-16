@@ -28,7 +28,7 @@ namespace BetterPowerInfo
 			}
 			else
 			{
-				text.text = "No Powered System";
+				text.text = "";
 			}
 		}
 
@@ -150,20 +150,39 @@ namespace BetterPowerInfo
 
 		private string UpdatePowerText(PowerRelay power)
 		{
-			string t = GetCurrentAndMaxPowerText(power);
-			t += GetPowerStatusText(power);
-			foreach (var entry in powerSources)
+			if (Mode == DisplayMode.Minimal)
 			{
-				t += GetTextForPowerSource(entry);
+				return GetCurrentAndMaxPowerTextMinimal(power);
 			}
-			return t;
+			else
+			{
+				string t = GetCurrentAndMaxPowerTextVerbose(power);
+				foreach (var entry in powerSources)
+				{
+					t += GetTextForPowerSource(entry);
+				}
+				return t;
+			}
 		}
 
-		private string GetCurrentAndMaxPowerText(PowerRelay power)
+		private string GetCurrentAndMaxPowerTextMinimal(PowerRelay power)
 		{
 			float totalProduction = Mathf.RoundToInt(GetTotalProductionPerMinute());
-			string firstLine = string.Format("{0} <color={2}>+{1}</color>", power.name.Replace("(Clone)", ""), totalProduction, totalProduction > 0 ? "lime" : "silver");
-			return string.Format("{0}\nPower: {1} / {2}", firstLine, Mathf.RoundToInt(power.GetPower()), Mathf.RoundToInt(power.GetMaxPower()));
+			return string.Format("<color={1}><b>+{0}</b></color>", totalProduction, totalProduction > 0 ? "lime" : "silver");
+		}
+
+		private string GetCurrentAndMaxPowerTextVerbose(PowerRelay power)
+		{
+			float totalProduction = Mathf.RoundToInt(GetTotalProductionPerMinute());
+			string name = power.name.Replace("(Clone)", "").Replace("Base", "Habitat").Replace("Module", "").Replace("-MainPrefab", "");
+			name = System.Text.RegularExpressions.Regex.Replace(name, "[A-Z]", " $0").Trim();
+			string firstLine = string.Format("{0} <color={2}><b>+{1}</b></color>", name, totalProduction, totalProduction > 0 ? "lime" : "silver");
+			return string.Format("{0}\n<b>{1} / {2} {3}</b>", 
+				firstLine, 
+				Mathf.RoundToInt(power.GetPower()), 
+				Mathf.RoundToInt(power.GetMaxPower()),
+				GetPowerStatusText(power)
+			);
 		}
 
 		private string GetTextForPowerSource(PowerSourceInfoBase source)
@@ -200,24 +219,6 @@ namespace BetterPowerInfo
 		private string GetPowerStatusText(PowerSystem.Status status)
 		{
 			return status.ToString();
-		}
-
-		private PowerRelay GetCurrentPowerRelay()
-		{
-			Player player = Player.main;
-			if (player.escapePod.value && player.currentEscapePod != null)
-			{
-				return player.currentEscapePod.GetComponent<PowerRelay>();
-			}
-			else if (player.currentSub != null && player.currentSub.isBase)
-			{
-				return player.currentSub.GetComponent<PowerRelay>();
-			}
-			else if (player.currentSub != null && player.currentSub.powerRelay != null)
-			{
-				return player.currentSub.powerRelay;
-			}
-			return null;
 		}
 	}
 }

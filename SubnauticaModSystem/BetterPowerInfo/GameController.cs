@@ -37,6 +37,21 @@ namespace BetterPowerInfo
 				consumerDisplay = CreateNewText(hud, 500, TextAnchor.UpperLeft).AddComponent<PowerConsumerDisplay>();
 			}
 
+			if (productionDisplay != null && consumerDisplay != null)
+			{
+				bool keyDown = Input.GetKey(KeyCode.P);
+				if (keyDown && productionDisplay.Mode == DisplayMode.Minimal)
+				{
+					productionDisplay.SetMode(DisplayMode.Verbose);
+					consumerDisplay.SetMode(DisplayMode.Verbose);
+				}
+				else if (!keyDown && productionDisplay.Mode == DisplayMode.Verbose)
+				{
+					productionDisplay.SetMode(DisplayMode.Minimal);
+					consumerDisplay.SetMode(DisplayMode.Minimal);
+				}
+			}
+
 			//if (Input.GetKeyDown(KeyCode.I)) MoveAllDisplays(new Vector2(0, 1));
 			//if (Input.GetKeyDown(KeyCode.K)) MoveAllDisplays(new Vector2(0, -1));
 			//if (Input.GetKeyDown(KeyCode.J)) MoveAllDisplays(new Vector2(-1, 0));

@@ -12,7 +12,15 @@ namespace BetterPowerInfo
 	{
 		protected override void UpdatePower()
 		{
-			text.text = "PowerConsumerDisplay";
+			PowerRelay power = GetCurrentPowerRelay();
+			if (power != null)
+			{
+				text.text = "PowerConsumerDisplay";
+			}
+			else
+			{
+				text.text = "";
+			}
 		}
 	}
 }
