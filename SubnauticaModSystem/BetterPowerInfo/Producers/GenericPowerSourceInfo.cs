@@ -22,16 +22,21 @@ namespace BetterPowerInfo.Producers
 
 		protected override string GetPowerSourceDisplayText()
 		{
-			string name = (iSource as Component).name.Replace("(Clone)", "").Replace("Base", "").Replace("Module", "");
-			name = System.Text.RegularExpressions.Regex.Replace(name, "[A-Z]", " $0").Trim();
-			if (Input.GetKey(KeyCode.X))
+			if ((iSource as Component) != null)
 			{
-				foreach (var c in (iSource as Component).gameObject.GetComponents<Component>())
+				string name = (iSource as Component).name.Replace("(Clone)", "").Replace("Base", "").Replace("Module", "");
+				name = System.Text.RegularExpressions.Regex.Replace(name, "[A-Z]", " $0").Trim();
+				if (Input.GetKey(KeyCode.X))
 				{
-					name += "," + c.GetType();
+					foreach (var c in (iSource as Component).gameObject.GetComponents<Component>())
+					{
+						name += "," + c.GetType();
+					}
 				}
+				return name;
 			}
-			return name;
+
+			return iSource.ToString();
 		}
 	}
 }

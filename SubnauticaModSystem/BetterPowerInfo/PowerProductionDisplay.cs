@@ -34,14 +34,14 @@ namespace BetterPowerInfo
 
 		private void AccumulatePowerSources(PowerRelay power)
 		{
-			if (power.internalPowerSource != null)
-			{
-				AddPowerSourceEntry(power.internalPowerSource);
-			}
-
 			List<IPowerInterface> inboundPowerSources = GetInboundPowerSources(power);
 			foreach (IPowerInterface iSource in inboundPowerSources)
 			{
+				if (iSource == null)
+				{
+					continue;
+				}
+
 				PowerSource source = TryGetPowerSource(iSource);
 				PowerRelay relay = TryGetPowerRelay(iSource);
 				BatterySource battery = TryGetBatterySource(iSource);
@@ -60,8 +60,6 @@ namespace BetterPowerInfo
 					AddGenericPowerEntry(battery);
 					continue;
 				}
-
-				powerSources.Add(new GenericPowerSourceInfo(iSource, name));
 			}
 		}
 
@@ -129,7 +127,7 @@ namespace BetterPowerInfo
 		private PowerSource TryGetPowerSource(IPowerInterface power)
 		{
 			PowerSource source = power as PowerSource;
-			if (source == null)
+			if (source == null && (power as Component) != null)
 				source = (power as Component).gameObject.GetComponent<PowerSource>();
 			return source;
 		}
@@ -143,7 +141,7 @@ namespace BetterPowerInfo
 		private BatterySource TryGetBatterySource(IPowerInterface power)
 		{
 			BatterySource source = power as BatterySource;
-			if (source == null)
+			if (source == null && (power as Component) != null)
 				source = (power as Component).gameObject.GetComponent<BatterySource>();
 			return source;
 		}
@@ -157,6 +155,7 @@ namespace BetterPowerInfo
 			else
 			{
 				string t = GetCurrentAndMaxPowerTextVerbose(power);
+				powerSources.Sort((p1, p2) => p1.DisplayText.Substring(0, 5).CompareTo(p2.DisplayText.Substring(0, 5)));
 				foreach (var entry in powerSources)
 				{
 					t += GetTextForPowerSource(entry);
@@ -177,11 +176,8 @@ namespace BetterPowerInfo
 			string name = power.name.Replace("(Clone)", "").Replace("Base", "Habitat").Replace("Module", "").Replace("-MainPrefab", "");
 			name = System.Text.RegularExpressions.Regex.Replace(name, "[A-Z]", " $0").Trim();
 			string firstLine = string.Format("{0} <color={2}><b>+{1}</b></color>", name, totalProduction, totalProduction > 0 ? "lime" : "silver");
-			return string.Format("{0}\n<b>{1} / {2} {3}</b>", 
-				firstLine, 
-				Mathf.RoundToInt(power.GetPower()), 
-				Mathf.RoundToInt(power.GetMaxPower()),
-				GetPowerStatusText(power)
+			return string.Format("{0}\n<b><color=lightblue>Power Sources</color></b>", 
+				firstLine
 			);
 		}
 
