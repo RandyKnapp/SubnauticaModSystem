@@ -21,7 +21,10 @@ namespace MoreQuickSlots.Patches
 
 		private static void InstantiateGameController(uGUI_QuickSlots instance)
 		{
-			instance.gameObject.AddComponent<GameController>();
+			if (instance.gameObject.GetComponent<GameController>() == null)
+			{
+				instance.gameObject.AddComponent<GameController>();
+			}
 		}
 
 		private static void AddHotkeyLabels(uGUI_QuickSlots instance)

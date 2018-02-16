@@ -96,36 +96,22 @@ namespace BetterPowerInfo
 
 		private void AccumulateBaseConsumers(BaseRoot root)
 		{
-			AccumulateBaseChargers(root.gameObject);
-			AccumulateSpotLights(root.gameObject);
-			AccumulateFiltrationMachines(root.gameObject);
+			AccumulateBaseObjects<Charger, ChargerPowerConsumerInfo>(root.gameObject);
+			AccumulateBaseObjects<BaseSpotLight, SpotLightPowerConsumerInfo>(root.gameObject);
+			AccumulateBaseObjects<FiltrationMachine, FiltrationMachinePowerConsumerInfo>(root.gameObject);
+			AccumulateBaseObjects<MapRoomFunctionality, ScannerRoomPowerConsumerInfo>(root.gameObject);
 		}
 
-		private void AccumulateBaseChargers(GameObject root)
+		private List<ObjectT> AccumulateBaseObjects<ObjectT, ConsumerInfoT>(GameObject root)
+			where ObjectT : Component
+			where ConsumerInfoT : PowerConsumerInfoBase
 		{
-			List<Charger> objs = root.GetAllComponentsInChildren<Charger>().Distinct().ToList();
+			List<ObjectT> objs = root.GetAllComponentsInChildren<ObjectT>().Distinct().ToList();
 			foreach (var obj in objs)
 			{
-				consumers.Add(new ChargerPowerConsumerInfo(obj));
+				consumers.Add((ConsumerInfoT)Activator.CreateInstance(typeof(ConsumerInfoT), new object[] { obj }));
 			}
-		}
-
-		private void AccumulateSpotLights(GameObject root)
-		{
-			List<BaseSpotLight> objs = root.GetAllComponentsInChildren<BaseSpotLight>().Distinct().ToList();
-			foreach (var obj in objs)
-			{
-				consumers.Add(new SpotLightPowerConsumerInfo(obj));
-			}
-		}
-
-		private void AccumulateFiltrationMachines(GameObject root)
-		{
-			List<FiltrationMachine> objs = root.GetAllComponentsInChildren<FiltrationMachine>().Distinct().ToList();
-			foreach (var obj in objs)
-			{
-				consumers.Add(new FiltrationMachinePowerConsumerInfo(obj));
-			}
+			return objs;
 		}
 
 		private void AccumulateCyclopsConsumers(SubRoot root)

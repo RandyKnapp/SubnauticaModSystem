@@ -81,6 +81,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Consumers\ScannerRoomPowerConsumerInfo.cs" />
+    <Compile Include="Consumers\TechLightPowerConsumerInfo.cs" />
     <Compile Include="Consumers\ChargerPowerConsumerInfo.cs" />
     <Compile Include="Consumers\FiltrationMachinePowerConsumerInfo.cs" />
     <Compile Include="Consumers\PowerConsumerInfoBase.cs" />

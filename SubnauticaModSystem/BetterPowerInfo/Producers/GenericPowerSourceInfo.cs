@@ -24,8 +24,7 @@ namespace BetterPowerInfo.Producers
 		{
 			if ((iSource as Component) != null)
 			{
-				string name = (iSource as Component).name.Replace("(Clone)", "").Replace("Base", "").Replace("Module", "");
-				name = System.Text.RegularExpressions.Regex.Replace(name, "[A-Z]", " $0").Trim();
+				string name = Mod.FormatName((iSource as Component).name).Replace("Base", "").Replace("Module", "");
 				if (Input.GetKey(KeyCode.X))
 				{
 					foreach (var c in (iSource as Component).gameObject.GetComponents<Component>())

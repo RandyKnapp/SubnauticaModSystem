@@ -173,8 +173,7 @@ namespace BetterPowerInfo
 		private string GetCurrentAndMaxPowerTextVerbose(PowerRelay power)
 		{
 			float totalProduction = Mathf.RoundToInt(GetTotalProductionPerMinute());
-			string name = power.name.Replace("(Clone)", "").Replace("Base", "Habitat").Replace("Module", "").Replace("-MainPrefab", "");
-			name = System.Text.RegularExpressions.Regex.Replace(name, "[A-Z]", " $0").Trim();
+			string name = Mod.FormatName(power.name).Replace("Base", "Habitat").Replace("Module", "").Replace("-MainPrefab", "");
 			string firstLine = string.Format("{0} <color={2}><b>+{1}</b></color>", name, totalProduction, totalProduction > 0 ? "lime" : "silver");
 			return string.Format("{0}\n<b><color=lightblue>Power Sources</color></b>", 
 				firstLine

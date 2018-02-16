@@ -28,9 +28,7 @@ namespace BetterPowerInfo.Producers
 
 		private string GetDefaultPowerSourceDisplayText()
 		{
-			string name = source.name.Replace("(Clone)", "").Replace("Base", "").Replace("Module", "");
-			name = System.Text.RegularExpressions.Regex.Replace(name, "[A-Z]", " $0").Trim();
-			return name;
+			return Mod.FormatName(source.name).Replace("Base", "").Replace("Module", "");
 		}
 
 		protected virtual float GetPowerProductionPerMinute()

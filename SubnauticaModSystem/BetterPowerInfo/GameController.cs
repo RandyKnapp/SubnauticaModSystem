@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -14,6 +15,7 @@ namespace BetterPowerInfo
 		private void Awake()
 		{
 			DevConsole.RegisterConsoleCommand(this, "deplete", false, false);
+			DevConsole.RegisterConsoleCommand(this, "depletecamera", false, false);
 			Logger.Log("GameController Added");
 		}
 
@@ -83,6 +85,25 @@ namespace BetterPowerInfo
 				}
 			}
 			ErrorMessage.AddDebug("Depleting batteries and powercells");
+		}
+
+		private void OnConsoleCommand_depletecamera()
+		{
+			if (Player.main != null)
+			{
+				foreach (MapRoomCamera camera in GameObject.FindObjectsOfType<MapRoomCamera>())
+				{
+					var controllingPlayer = (Player)camera.GetType().GetField("controllingPlayer", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(camera);
+					if (controllingPlayer != null && controllingPlayer == Player.main)
+					{
+						camera.energyMixin.ModifyCharge(-camera.energyMixin.energy * 0.9f);
+						ErrorMessage.AddDebug("Depleting camera drone energy by 90%");
+						return;
+					}
+				}
+			}
+
+			ErrorMessage.AddDebug("Not currently controlling camera drone");
 		}
 
 		private static GameObject CreateNewText(Transform parent, int x, TextAnchor anchor)

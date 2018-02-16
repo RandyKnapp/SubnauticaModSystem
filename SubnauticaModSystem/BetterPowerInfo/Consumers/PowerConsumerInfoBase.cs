@@ -7,6 +7,7 @@ namespace BetterPowerInfo.Consumers
 {
 	public class PowerConsumerInfoBase
 	{
+		public virtual bool Show { get { return ShouldShowInList(); } }
 		public virtual float PowerConsumedPerMinute { get { return GetPowerConsumedPerMinute(); } }
 		public virtual string DisplayText { get { return GetDisplayText(); } }
 
@@ -19,6 +20,11 @@ namespace BetterPowerInfo.Consumers
 			this.consumption = consumption;
 		}
 
+		protected virtual bool ShouldShowInList()
+		{
+			return true;
+		}
+
 		protected virtual float GetPowerConsumedPerMinute()
 		{
 			return consumption;
@@ -26,9 +32,7 @@ namespace BetterPowerInfo.Consumers
 
 		protected virtual string GetDisplayText()
 		{
-			string s = name.Replace("(Clone)", "");
-			s = System.Text.RegularExpressions.Regex.Replace(s, "[A-Z]", " $0").Trim();
-			return s;
+			return Mod.FormatName(name);
 		}
 	}
 }

@@ -8,6 +8,10 @@ namespace BetterPowerInfo
 {
 	public static class Mod
 	{
+		private static readonly Color ChargeColorEmpty = Color.red;
+		private static readonly Color ChargeColorHalf = Color.yellow;
+		private static readonly Color ChargeColorFull = new Color(0, 1, 0);
+
 		public static Config config;
 
 		private static string modDirectory;
@@ -54,6 +58,23 @@ namespace BetterPowerInfo
 				config = defaultConfig;
 				return;
 			}
+		}
+
+		public static string FormatName(string name)
+		{
+			string s = name.Replace("(Clone)", "");
+			s = System.Text.RegularExpressions.Regex.Replace(s, "[A-Z]", " $0").Trim();
+			return s;
+		}
+
+		public static Color GetChargeColor(float percentCharged)
+		{
+			return (percentCharged >= 0.5f) ? Color.Lerp(ChargeColorHalf, ChargeColorFull, 2f * percentCharged - 1f) : Color.Lerp(ChargeColorEmpty, ChargeColorHalf, 2f * percentCharged);
+		}
+
+		public static string GetChargeColorString(float percentCharged)
+		{
+			return "#" + ColorUtility.ToHtmlStringRGBA(GetChargeColor(percentCharged));
 		}
 	}
 }
