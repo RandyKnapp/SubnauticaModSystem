@@ -22,7 +22,7 @@ namespace BetterPowerInfo.Producers
 
 		protected override string GetPowerSourceDisplayText()
 		{
-			string name = "?? " + (iSource as Component).name.Replace("(Clone)", "").Replace("Base", "").Replace("Module", "");
+			string name = (iSource as Component).name.Replace("(Clone)", "").Replace("Base", "").Replace("Module", "");
 			name = System.Text.RegularExpressions.Regex.Replace(name, "[A-Z]", " $0").Trim();
 			if (Input.GetKey(KeyCode.X))
 			{

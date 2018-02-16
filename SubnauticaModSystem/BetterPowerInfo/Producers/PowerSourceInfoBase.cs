@@ -35,19 +35,7 @@ namespace BetterPowerInfo.Producers
 
 		protected virtual float GetPowerProductionPerMinute()
 		{
-			float powerProduction = 0;
-			if (GetPowerProductionPerMinute(source.gameObject.GetComponent<RegeneratePowerSource>(), out powerProduction))
-			{
-				return powerProduction;
-			}
-
 			return 0;
-		}
-
-		protected bool GetPowerProductionPerMinute(RegeneratePowerSource source, out float result)
-		{
-			result = source != null ? source.regenerationAmount / (source.regenerationInterval / 60) : 0;
-			return source != null;
 		}
 	}
 }

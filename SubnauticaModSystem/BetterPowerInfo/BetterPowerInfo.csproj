@@ -94,6 +94,7 @@
     <Compile Include="Producers\GenericPowerSourceInfo.cs" />
     <Compile Include="Producers\NuclearReactorPowerSourceInfo.cs" />
     <Compile Include="Producers\PowerSourceInfoBase.cs" />
+    <Compile Include="Producers\RegenPowerSourceInfo.cs" />
     <Compile Include="Producers\SolarPanelPowerSourceInfo.cs" />
     <Compile Include="Producers\ThermalPlantPowerSourceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
