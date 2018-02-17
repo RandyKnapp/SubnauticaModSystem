@@ -1,0 +1,11 @@
+{
+  "Id": "QuitToDesktop",
+  "DisplayName": "QuitToDesktop",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "QuitToDesktop.dll",
+  "EntryMethod": "QuitToDesktop.QPatch.Patch",
+  "Config": { }
+}

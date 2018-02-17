@@ -1,0 +1,13 @@
+{
+  "Id": "BlueprintTracker",
+  "DisplayName": "BlueprintTracker",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "BlueprintTracker.dll",
+  "EntryMethod": "BlueprintTracker.QPatch.Patch",
+  "Config": {
+    "MaxPinnedBlueprints": 4
+  }
+}

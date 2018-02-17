@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModInjector_MoreQuickSlots"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterPowerInfo", "BetterPowerInfo\BetterPowerInfo.csproj", "{0D86304E-0A53-422A-99E6-0C687D9DBBC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueprintTracker", "BlueprintTracker\BlueprintTracker.csproj", "{CF7E5EA0-EE32-4330-AF9C-E720E9A64681}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuitToDesktop", "QuitToDesktop\QuitToDesktop.csproj", "{BFFEC1AE-67D2-4CBA-B76B-76DF2BA9C053}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{0D86304E-0A53-422A-99E6-0C687D9DBBC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D86304E-0A53-422A-99E6-0C687D9DBBC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D86304E-0A53-422A-99E6-0C687D9DBBC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF7E5EA0-EE32-4330-AF9C-E720E9A64681}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF7E5EA0-EE32-4330-AF9C-E720E9A64681}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF7E5EA0-EE32-4330-AF9C-E720E9A64681}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF7E5EA0-EE32-4330-AF9C-E720E9A64681}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFFEC1AE-67D2-4CBA-B76B-76DF2BA9C053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFFEC1AE-67D2-4CBA-B76B-76DF2BA9C053}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFFEC1AE-67D2-4CBA-B76B-76DF2BA9C053}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFFEC1AE-67D2-4CBA-B76B-76DF2BA9C053}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
