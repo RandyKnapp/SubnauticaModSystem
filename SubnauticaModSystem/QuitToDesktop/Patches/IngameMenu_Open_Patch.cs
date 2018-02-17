@@ -18,15 +18,30 @@ namespace QuitToDesktop.Patches
 
 		private static void Postfix(IngameMenu __instance)
 		{
+			if (GameModeUtils.IsPermadeath())
+			{
+				return;
+			}
+
 			if (__instance != null && quitButton == null)
 			{
 				var prefab = __instance.quitToMainMenuButton.transform.parent.GetChild(0).gameObject.GetComponent<Button>();
 				quitButton = GameObject.Instantiate(prefab, __instance.quitToMainMenuButton.transform.parent);
 				quitButton.name = "ButtonQuitToDesktop";
-				quitButton.GetComponentInChildren<Text>().text = "Quit to Desktop";
-				quitButton.GetComponent<EventTrigger>().enabled = false;
-				quitButton.GetComponent<EventTrigger>().triggers.Clear();
+				quitButton.onClick.RemoveAllListeners();
 				quitButton.onClick.AddListener(() => { __instance.QuitGame(true); });
+
+				var texts = quitButton.GetComponents<Text>().Concat(quitButton.GetComponentsInChildren<Text>());
+				foreach (Text text in texts)
+				{
+					text.text = "Quit to Desktop";
+				}
+
+				texts = __instance.quitToMainMenuButton.GetComponents<Text>().Concat(__instance.quitToMainMenuButton.GetComponentsInChildren<Text>());
+				foreach (Text text in texts)
+				{
+					text.text = "Quit to Main Menu";
+				}
 			}
 		}
 	}
