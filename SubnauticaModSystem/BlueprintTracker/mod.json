@@ -9,10 +9,9 @@
   "EntryMethod": "BlueprintTracker.QPatch.Patch",
   "Config": {
     "MaxPinnedBlueprints": 20,
+    "Position": "TopRight",
     "CornerOffsetX": 20,
     "CornerOffsetY": 20,
-    "Position": "TopRight",
-    "ShowWhilePiloting": false,
-    "PositionWhilePiloting": "TopLeft"
+    "ShowWhilePiloting": true
   }
 }

@@ -107,11 +107,15 @@ namespace BlueprintTracker
 			rectTransform.pivot = new Vector2(Mod.Left ? 0 : 1, Mod.Top ? 1 : 0);
 			rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Width);
 			rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Height);
-			rectTransform.anchoredPosition = new Vector2(Mod.Left ? 20 : -20, Mod.Top ? -20 : 20);
+			rectTransform.anchoredPosition = new Vector2(
+				Mod.Left ? Mod.config.CornerOffsetX : -Mod.config.CornerOffsetX, 
+				Mod.Top ? -Mod.config.CornerOffsetY : Mod.config.CornerOffsetY);
 
 			layout = gameObject.AddComponent<VerticalLayoutGroup>();
 			layout.spacing = Spacing;
-			layout.childAlignment = Mod.Left ? (Mod.Top ? TextAnchor.UpperLeft : TextAnchor.LowerLeft) : (Mod.Top ? TextAnchor.UpperRight : TextAnchor.LowerRight);
+			layout.childAlignment = Mod.Left ? 
+				(Mod.Top ? TextAnchor.UpperLeft : TextAnchor.LowerLeft) : 
+				(Mod.Top ? TextAnchor.UpperRight : TextAnchor.LowerRight);
 			layout.childControlWidth = true;
 			layout.childControlHeight = true;
 			layout.childForceExpandHeight = false;
@@ -148,6 +152,20 @@ namespace BlueprintTracker
 				}
 				initialTech.Clear();
 			}
+
+			if (PlayerIsPiloting() && !Mod.config.ShowWhilePiloting)
+			{
+				ShowTrackers(false);
+			}
+			else
+			{
+				ShowTrackers(true);
+			}
+		}
+
+		private bool PlayerIsPiloting()
+		{
+			return Player.main != null && (Player.main.GetMode() == Player.Mode.LockedPiloting || Player.main.GetMode() == Player.Mode.Piloting);
 		}
 
 		private void Save()
@@ -190,6 +208,14 @@ namespace BlueprintTracker
 		private void LogStatus()
 		{
 			Logger.Log("Tracking: " + string.Join(", ", tracked.Select(x => x.ToString()).ToArray()));
+		}
+
+		private void ShowTrackers(bool show)
+		{
+			foreach (Transform child in transform)
+			{
+				child.gameObject.SetActive(show);
+			}
 		}
 
 		private void OnDestroy()
