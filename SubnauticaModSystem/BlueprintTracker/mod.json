@@ -12,7 +12,10 @@
     "Position": "TopRight",
     "CornerOffsetX": 20,
     "CornerOffsetY": 20,
-    "TrackerScale": 2.0,
-    "ShowWhilePiloting": true
+    "TrackerScale": 1.0,
+    "FontSize": 16,
+    "BackgroundAlpha": 0.5,
+    "ShowWhilePiloting": false,
+    "ColorblindMode": false
   }
 }
