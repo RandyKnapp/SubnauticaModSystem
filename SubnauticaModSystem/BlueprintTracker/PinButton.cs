@@ -13,9 +13,11 @@ namespace BlueprintTracker
 		private static readonly Vector3 DownScale = new Vector3(0.9f, 0.9f, 1);
 		private static readonly Vector3 HoverScale = new Vector3(1.2f, 1.2f, 1);
 		private static readonly Color HoverColor = new Color(0.956f, 0.796f, 0.258f);
+		private static readonly Color CrossColor = new Color(1, 0, 0, 0.5f);
 
 		private static Sprite addPinSprite;
 		private static Sprite removePinSprite;
+		private static Sprite crossSprite;
 
 		public Action onClick = delegate { };
 
@@ -26,7 +28,7 @@ namespace BlueprintTracker
 		private bool down;
 		private Mode mode;
 
-		public enum Mode { Add, Remove }
+		public enum Mode { Add, Remove, Cross }
 
 		private void Awake()
 		{
@@ -34,6 +36,7 @@ namespace BlueprintTracker
 			{
 				addPinSprite = ImageUtils.LoadSprite(Mod.GetAssetPath("pin_not_pinned.png"));
 				removePinSprite = ImageUtils.LoadSprite(Mod.GetAssetPath("pin_pinned.png"));
+				crossSprite = ImageUtils.LoadSprite(Mod.GetAssetPath("remove_pin.png"));
 			}
 
 			rectTransform = transform as RectTransform;
@@ -61,13 +64,36 @@ namespace BlueprintTracker
 		public void SetMode(PinButton.Mode mode)
 		{
 			this.mode = mode;
-			image.sprite = mode == Mode.Add ? addPinSprite : removePinSprite;
+			switch (mode)
+			{
+				case Mode.Add:
+					image.sprite = addPinSprite;
+					break;
+				case Mode.Remove:
+					image.sprite = removePinSprite;
+					break;
+				case Mode.Cross:
+					image.sprite = crossSprite;
+					break;
+			}
 		}
 
 		private void Update()
 		{
 			image.transform.localScale = down ? DownScale : hover ? HoverScale : new Vector3(1, 1, 1);
-			image.color = mode == Mode.Remove || hover ? HoverColor : Color.white;
+
+			switch (mode)
+			{
+				case Mode.Add:
+					image.color = hover ? HoverColor : Color.white;
+					break;
+				case Mode.Remove:
+					image.color = HoverColor;
+					break;
+				case Mode.Cross:
+					image.color = CrossColor;
+					break;
+			}
 		}
 
 		public void OnPointerClick(PointerEventData eventData)

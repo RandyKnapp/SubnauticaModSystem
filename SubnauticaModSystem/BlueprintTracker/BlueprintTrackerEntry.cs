@@ -14,8 +14,11 @@ namespace BlueprintTracker
 
 		private LayoutElement layout;
 		private HorizontalLayoutGroup contents;
+		private BlueprintTrackerIcon mainIcon;
+		private List<BlueprintTrackerIcon> icons = new List<BlueprintTrackerIcon>();
+		private BlueprintTrackerRemoveButton removeButton;
 
-		public TechType techType;
+		public TechType techType { get; private set; }
 
 		public static BlueprintTrackerEntry Create(Transform parent, TechType techType)
 		{
@@ -53,7 +56,7 @@ namespace BlueprintTracker
 			contents.padding.left = 0;
 		}
 
-		public void SetTechType(TechType techType)
+		private void SetTechType(TechType techType)
 		{
 			if (this.techType == techType)
 			{
@@ -73,32 +76,55 @@ namespace BlueprintTracker
 
 			bool locked = false;
 
-			
-
 			string tooltipText;
 			List<TooltipIcon> iconData = new List<TooltipIcon>();
 			TooltipFactory.BuildTech(techType, locked, out tooltipText, iconData);
 
 			if (Mod.Left)
 			{
-				BlueprintTrackerIcon.Create(contents.transform, null, SpriteManager.Get(techType), true, false);
+				mainIcon = BlueprintTrackerIcon.Create(contents.transform, null, SpriteManager.Get(techType), true, false);
+			}
+			else
+			{
+				removeButton = BlueprintTrackerRemoveButton.Create(contents.transform, techType, true, false);
 			}
 
+			icons.Clear();
 			for (int i = 0; i < techData.ingredientCount; ++i)
 			{
 				IIngredient ingredient = techData.GetIngredient(i);
 				Atlas.Sprite sprite = iconData[i].sprite;
 
-				BlueprintTrackerIcon.Create(contents.transform, ingredient, sprite,
+				var icon = BlueprintTrackerIcon.Create(contents.transform, ingredient, sprite,
 					Mod.Left ? false : i == 0, 
 					Mod.Left ? i == techData.ingredientCount - 1 : false
 				);
+				icons.Add(icon);
 			}
 
 			if (!Mod.Left)
 			{
-				BlueprintTrackerIcon.Create(contents.transform, null, SpriteManager.Get(techType), false, true);
+				mainIcon = BlueprintTrackerIcon.Create(contents.transform, null, SpriteManager.Get(techType), false, true);
 			}
+			else
+			{
+				removeButton = BlueprintTrackerRemoveButton.Create(contents.transform, techType, false, true);
+			}
+		}
+
+		private void Update()
+		{
+			var pda = Player.main.GetPDA();
+			bool pdaOpen = pda != null && pda.isInUse;
+			bool blueprintsTabOpen = pdaOpen && pda.ui.currentTabType == PDATab.Journal;
+
+			foreach (var icon in icons)
+			{
+				icon.gameObject.SetActive(!pdaOpen);
+			}
+
+			mainIcon.gameObject.SetActive(blueprintsTabOpen || !pdaOpen);
+			removeButton.gameObject.SetActive(blueprintsTabOpen);
 		}
 	}
 }

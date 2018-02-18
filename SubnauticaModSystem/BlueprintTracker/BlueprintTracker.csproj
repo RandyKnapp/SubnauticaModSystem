@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlueprintTrackerRemoveButton.cs" />
     <Compile Include="PinButton.cs" />
     <Compile Include="BlueprintTracker.cs" />
     <Compile Include="BlueprintTrackerEntry.cs" />
