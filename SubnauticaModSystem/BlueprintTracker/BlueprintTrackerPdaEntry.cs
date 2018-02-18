@@ -20,7 +20,14 @@ namespace BlueprintTracker
 			addPinButton = CreateButton("AddPin", PinButton.Mode.Add, OnAddPinButtonClicked);
 			removePinButton = CreateButton("RemovePin", PinButton.Mode.Remove, OnRemovePinButtonClicked);
 
+			BlueprintTracker.onTrackingChanged += Refresh;
+
 			Refresh();
+		}
+
+		public void OnDestroy()
+		{
+			BlueprintTracker.onTrackingChanged -= Refresh;
 		}
 
 		private void Refresh()

@@ -13,6 +13,7 @@ namespace BlueprintTracker
 		public const float Height = (BlueprintTrackerEntry.Height * Mod.MaxPins) + (Spacing * (Mod.MaxPins - 1));
 
 		private static BlueprintTracker instance;
+		public static Action onTrackingChanged = delegate { };
 
 		public RectTransform rectTransform;
 		private VerticalLayoutGroup layout;
@@ -76,6 +77,7 @@ namespace BlueprintTracker
 			}
 
 			instance.AddTracker(techType);
+			onTrackingChanged.Invoke();
 			return true;
 		}
 
@@ -88,6 +90,7 @@ namespace BlueprintTracker
 			}
 
 			instance.RemoveTracker(techType);
+			onTrackingChanged.Invoke();
 			return true;
 		}
 

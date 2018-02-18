@@ -98,7 +98,10 @@ namespace BlueprintTracker
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			onClick.Invoke();
+			if (mode != Mode.Cross)
+			{
+				onClick.Invoke();
+			}
 		}
 
 		public void OnPointerEnter(PointerEventData eventData)
@@ -113,6 +116,10 @@ namespace BlueprintTracker
 
 		public void OnPointerDown(PointerEventData eventData)
 		{
+			if (mode == Mode.Cross)
+			{
+				onClick.Invoke();
+			}
 			down = true;
 		}
 
