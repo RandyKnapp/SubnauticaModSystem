@@ -15,8 +15,8 @@ namespace BlueprintTracker
 		public const string IngredientColorGood = "#94DE00FF";
 		public const string IngredientColorBad = "#DF4026FF";
 
-		private static Color goodColor;
-		private static Color badColor;
+		private Color goodColor;
+		private Color badColor;
 
 		public IIngredient ingredient;
 
@@ -84,11 +84,8 @@ namespace BlueprintTracker
 			text.fontSize = 16;
 			text.raycastTarget = false;
 
-			if (goodColor == null || badColor == null)
-			{
-				ColorUtility.TryParseHtmlString(IngredientColorGood, out goodColor);
-				ColorUtility.TryParseHtmlString(IngredientColorBad, out badColor);
-			}
+			ColorUtility.TryParseHtmlString(IngredientColorGood, out goodColor);
+			ColorUtility.TryParseHtmlString(IngredientColorBad, out badColor);
 
 			UpdateText();
 		}

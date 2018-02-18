@@ -6,5 +6,6 @@ namespace BlueprintTracker
 	class Config
 	{
 		public int MaxPinnedBlueprints = 4;
+		public string Position = "TopRight";
 	}
 }

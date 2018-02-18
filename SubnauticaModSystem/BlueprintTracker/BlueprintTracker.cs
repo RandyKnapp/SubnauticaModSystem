@@ -9,7 +9,7 @@ namespace BlueprintTracker
 	class BlueprintTracker : MonoBehaviour
 	{
 		public const float Spacing = 10;
-		public const float Width = 400;
+		public const float Width = 500;
 		public const float Height = (BlueprintTrackerEntry.Height * Mod.MaxPins) + (Spacing * (Mod.MaxPins - 1));
 
 		private static BlueprintTracker instance;

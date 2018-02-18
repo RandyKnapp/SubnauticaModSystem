@@ -15,10 +15,10 @@ namespace BlueprintTracker
 		public const int MinPins = 1;
 
 		public static Config config;
+		public static bool Left;
+		public static bool Top;
 
 		private static string modDirectory;
-
-		public static List<TechType> CurrentPins = new List<TechType>();
 
 		public static void Patch(string modDirectory = null)
 		{
@@ -78,13 +78,26 @@ namespace BlueprintTracker
 
 			if (config.MaxPinnedBlueprints < MinPins || config.MaxPinnedBlueprints > MaxPins)
 			{
-				Logger.Log("Config value for {0} ({1}) was not valid. Must be between {2} and {3}",
+				Logger.Log("Config value for '{0}' ({1}) was not valid. Must be between {2} and {3}",
 					"MaxPinnedBlueprints",
 					config.MaxPinnedBlueprints,
 					MinPins,
 					MaxPins
 				);
 				config.MaxPinnedBlueprints = defaultConfig.MaxPinnedBlueprints;
+			}
+			
+			switch (config.Position)
+			{
+				case "TopLeft":		Left = true;	Top = true;		break;
+				case "TopRight":	Left = false;	Top = true;		break;
+				case "BottomLeft":	Left = true;	Top = false;	break;
+				case "BottomRight":	Left = false;	Top = false;	break;
+
+				default:
+					Logger.Log("Config value for '{0}' ({1}) as not valid. Must be one of: TopLeft, TopRight, BottomLeft, BottomRight", "Position", config.Position);
+					config.Position = defaultConfig.Position;
+					break;
 			}
 		}
 
