@@ -11,7 +11,8 @@ namespace BlueprintTracker
 {
 	static class Mod
 	{
-		public const int MaxPins = 6;
+		public const string SaveDataFilename = "BlueprintTrackerSave.json";
+		public const int MaxPins = 20;
 		public const int MinPins = 1;
 
 		public static Config config;
@@ -24,6 +25,8 @@ namespace BlueprintTracker
 		{
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
 			LoadConfig();
+
+			DevConsole.disableConsole = false;
 
 			HarmonyInstance harmony = HarmonyInstance.Create("com.blueprinttracker.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
@@ -149,6 +152,40 @@ namespace BlueprintTracker
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 100);
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100);
 			return text;
+		}
+
+		public static string GetSaveDataDirectory()
+		{
+			return Path.Combine(Path.Combine(Path.GetFullPath("SNAppData"), "SavedGames"), Utils.GetSavegameDir());
+		}
+
+		public static SaveData LoadSaveData()
+		{
+			var saveDir = GetSaveDataDirectory();
+			var saveFile = Path.Combine(saveDir, SaveDataFilename);
+			if (File.Exists(saveFile))
+			{
+				SaveData saveData = JsonUtility.FromJson<SaveData>(File.ReadAllText(saveFile));
+				if (saveData != null)
+				{
+					Logger.Log("Save Data Loaded");
+					return saveData;
+				}
+			}
+
+			Logger.Log("Save Data not found, save data instance created");
+			return new SaveData();
+		}
+
+		public static void Save(SaveData newSaveData)
+		{
+			if (newSaveData != null)
+			{
+				var saveDir = GetSaveDataDirectory();
+				var saveFile = Path.Combine(saveDir, SaveDataFilename);
+				string saveDataJson = JsonUtility.ToJson(newSaveData);
+				File.WriteAllText(saveFile, saveDataJson);
+			}
 		}
 	}
 }
