@@ -16,8 +16,8 @@ namespace BlueprintTracker
 		public const int MinPins = 1;
 
 		public static Config config;
-		public static bool Left;
-		public static bool Top;
+		public static bool Left = false;
+		public static bool Top = true;
 
 		private static string modDirectory;
 
@@ -79,17 +79,8 @@ namespace BlueprintTracker
 				return;
 			}
 
-			if (config.MaxPinnedBlueprints < MinPins || config.MaxPinnedBlueprints > MaxPins)
-			{
-				Logger.Log("Config value for '{0}' ({1}) was not valid. Must be between {2} and {3}",
-					"MaxPinnedBlueprints",
-					config.MaxPinnedBlueprints,
-					MinPins,
-					MaxPins
-				);
-				config.MaxPinnedBlueprints = defaultConfig.MaxPinnedBlueprints;
-			}
-			
+			ValidateConfigValue("MaxPinnedBlueprints", MinPins, MaxPins, defaultConfig);
+
 			switch (config.Position)
 			{
 				case "TopLeft":		Left = true;	Top = true;		break;
@@ -103,10 +94,24 @@ namespace BlueprintTracker
 					break;
 			}
 
-			if (config.TrackerScale < 0.01f)
+			ValidateConfigValue("TrackerScale", 0.01f, 5.0f, defaultConfig);
+			ValidateConfigValue("FontSize", 10, 60, defaultConfig);
+			ValidateConfigValue("BackgroundAlpha", 0.0f, 1.0f, defaultConfig);
+		}
+
+		private static void ValidateConfigValue<T>(string field, T min, T max, Config defaultConfig) where T : IComparable
+		{
+			var fieldInfo = typeof(Config).GetField(field, BindingFlags.Public | BindingFlags.Instance);
+			T value = (T)fieldInfo.GetValue(config);
+			if (value.CompareTo(min) < 0 || value.CompareTo(max) > 0)
 			{
-				Logger.Log("Config value for '{0}' ({1}) as not valid. Must greater than 0.01", "TrackerScale", config.TrackerScale);
-				config.TrackerScale = defaultConfig.TrackerScale;
+				Logger.Log("Config value for '{0}' ({1}) was not valid. Must be between {2} and {3}",
+					field,
+					value,
+					min,
+					max
+				);
+				fieldInfo.SetValue(config, fieldInfo.GetValue(defaultConfig));
 			}
 		}
 

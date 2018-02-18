@@ -15,6 +15,9 @@ namespace BlueprintTracker
 		public const string IngredientColorGood = "#94DE00FF";
 		public const string IngredientColorBad = "#DF4026FF";
 
+		public const string IngredientColorGoodColorblind = "#00FFEDFF";
+		public const string IngredientColorBadColorblind = "#F8B5FFFF";
+
 		private Color goodColor;
 		private Color badColor;
 
@@ -53,7 +56,7 @@ namespace BlueprintTracker
 			layout.minHeight = bgSprite.rect.height;
 
 			background = gameObject.AddComponent<Image>();
-			background.color = new Color(1, 1, 1, 0.5f);
+			background.color = new Color(1, 1, 1, Mod.config.BackgroundAlpha);
 			background.raycastTarget = false;
 			background.material = quickSlots.materialBackground;
 			background.sprite = bgSprite;
@@ -78,32 +81,32 @@ namespace BlueprintTracker
 			if (!mainIcon)
 			{
 				text = Mod.InstantiateNewText("Text", transform);
-				RectTransformExtensions.SetSize(text.rectTransform, Width, 30);
+				RectTransformExtensions.SetSize(text.rectTransform, Width, Width);
 				text.rectTransform.anchorMin = new Vector2(0.5f, 0);
 				text.rectTransform.anchorMax = new Vector2(0.5f, 0);
 				text.rectTransform.pivot = new Vector2(0.5f, 0);
 				text.rectTransform.anchoredPosition = new Vector2(0, 0);
 				text.alignment = TextAnchor.LowerCenter;
-				text.fontSize = 16;
+				text.fontSize = Mod.config.FontSize;
 				text.raycastTarget = false;
 
-				ColorUtility.TryParseHtmlString(IngredientColorGood, out goodColor);
-				ColorUtility.TryParseHtmlString(IngredientColorBad, out badColor);
+				ColorUtility.TryParseHtmlString(Mod.config.ColorblindMode ? IngredientColorGoodColorblind : IngredientColorGood, out goodColor);
+				ColorUtility.TryParseHtmlString(Mod.config.ColorblindMode ? IngredientColorBadColorblind : IngredientColorBad, out badColor);
 			}
 
 			UpdateText();
 		}
 
-		private IEnumerator Start()
+		private void OnEnable()
 		{
-			for(;;)
+			StartCoroutine(UpdateRoutine());
+		}
+
+		private IEnumerator UpdateRoutine()
+		{
+			for (;;)
 			{
 				yield return new WaitForSeconds(0.2f + UnityEngine.Random.Range(0, 0.05f));
-				if (ingredient == null)
-				{
-					break;
-				}
-
 				UpdateText();
 			}
 		}
@@ -123,6 +126,14 @@ namespace BlueprintTracker
 
 				text.color = hasEnough ? goodColor : badColor;
 				text.text = string.Format("{0}/{1}", Math.Min(currentAmount, required), required);
+			}
+		}
+
+		private void DebugLog(string message)
+		{
+			if (ingredient != null && ingredient.techType == TechType.CopperWire)
+			{
+				Logger.Log(message);
 			}
 		}
 
