@@ -12,7 +12,7 @@ namespace BlueprintTracker
 	static class Mod
 	{
 		public const string SaveDataFilename = "BlueprintTrackerSave.json";
-		public const int MaxPins = 20;
+		public const int MaxPins = 13;
 		public const int MinPins = 1;
 
 		public static Config config;
@@ -101,6 +101,12 @@ namespace BlueprintTracker
 					Logger.Log("Config value for '{0}' ({1}) as not valid. Must be one of: TopLeft, TopRight, BottomLeft, BottomRight", "Position", config.Position);
 					config.Position = defaultConfig.Position;
 					break;
+			}
+
+			if (config.TrackerScale < 0.01f)
+			{
+				Logger.Log("Config value for '{0}' ({1}) as not valid. Must greater than 0.01", "TrackerScale", config.TrackerScale);
+				config.TrackerScale = defaultConfig.TrackerScale;
 			}
 		}
 

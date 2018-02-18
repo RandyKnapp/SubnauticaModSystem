@@ -110,6 +110,7 @@ namespace BlueprintTracker
 			rectTransform.anchoredPosition = new Vector2(
 				Mod.Left ? Mod.config.CornerOffsetX : -Mod.config.CornerOffsetX, 
 				Mod.Top ? -Mod.config.CornerOffsetY : Mod.config.CornerOffsetY);
+			rectTransform.localScale = new Vector3(Mod.config.TrackerScale, Mod.config.TrackerScale, 1);
 
 			layout = gameObject.AddComponent<VerticalLayoutGroup>();
 			layout.spacing = Spacing;

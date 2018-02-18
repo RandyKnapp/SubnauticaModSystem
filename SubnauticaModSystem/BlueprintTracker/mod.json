@@ -8,10 +8,11 @@
   "AssemblyName": "BlueprintTracker.dll",
   "EntryMethod": "BlueprintTracker.QPatch.Patch",
   "Config": {
-    "MaxPinnedBlueprints": 20,
+    "MaxPinnedBlueprints": 13,
     "Position": "TopRight",
     "CornerOffsetX": 20,
     "CornerOffsetY": 20,
+    "TrackerScale": 2.0,
     "ShowWhilePiloting": true
   }
 }
