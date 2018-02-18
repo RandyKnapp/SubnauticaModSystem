@@ -94,6 +94,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SaveData.cs" />
     <Compile Include="Utility\ImageUtils.cs" />
     <Compile Include="Utility\SimpleJSON.cs" />
   </ItemGroup>

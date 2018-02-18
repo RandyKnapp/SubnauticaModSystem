@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,6 +19,8 @@ namespace BlueprintTracker
 		public RectTransform rectTransform;
 		private VerticalLayoutGroup layout;
 		private List<TechType> tracked = new List<TechType>();
+		private List<TechType> initialTech;
+		private bool needsSave;
 
 		public static BlueprintTracker Create(Transform parent)
 		{
@@ -31,6 +34,8 @@ namespace BlueprintTracker
 			go.layer = parent.gameObject.layer;
 			var tracker = go.AddComponent<BlueprintTracker>();
 			Logger.Log("Tracker Created");
+
+			tracker.Load();
 
 			instance = tracker;
 			return tracker;
@@ -112,6 +117,50 @@ namespace BlueprintTracker
 			layout.childForceExpandHeight = false;
 			layout.childForceExpandWidth = true;
 			layout.padding = new RectOffset(10, 10, 10, 10);
+		}
+
+		private void Update()
+		{
+			while (!uGUI_SceneLoading.IsLoadingScreenFinished || uGUI.main.loading.IsLoading)
+			{
+				return;
+			}
+
+			if (SaveLoadManager.main != null)
+			{
+				if (SaveLoadManager.main.isSaving && !needsSave)
+				{
+					needsSave = true;
+				}
+
+				if (!SaveLoadManager.main.isSaving && needsSave)
+				{
+					Save();
+					needsSave = false;
+				}
+			}
+
+			if (initialTech != null && initialTech.Count > 0)
+			{
+				foreach (var tech in initialTech)
+				{
+					AddTracker(tech);
+				}
+				initialTech.Clear();
+			}
+		}
+
+		private void Save()
+		{
+			SaveData data = new SaveData();
+			data.TrackedTech = tracked;
+			Mod.Save(data);
+		}
+
+		private void Load()
+		{
+			SaveData data = Mod.LoadSaveData();
+			initialTech = data.TrackedTech;
 		}
 
 		private void AddTracker(TechType techType)

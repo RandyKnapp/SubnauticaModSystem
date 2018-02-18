@@ -40,6 +40,7 @@ namespace BlueprintTracker
 		private void Init(IIngredient ingredient, Atlas.Sprite sprite, bool first, bool last)
 		{
 			this.ingredient = ingredient;
+			bool mainIcon = ingredient == null;
 
 			var quickSlots = GameObject.FindObjectOfType<uGUI_QuickSlots>();
 			var bgSprite = first ? quickSlots.spriteLeft : last ? quickSlots.spriteRight : quickSlots.spriteCenter;
@@ -60,7 +61,7 @@ namespace BlueprintTracker
 			icon = new GameObject("Icon").AddComponent<uGUI_ItemIcon>();
 			icon.transform.SetParent(transform, false);
 			icon.SetForegroundSprite(sprite);
-			if ((first && Mod.Left) || (last && !Mod.Left))
+			if (mainIcon)
 			{
 				icon.SetSize(Width, Width);
 			}
@@ -74,18 +75,21 @@ namespace BlueprintTracker
 			icon.rectTransform.anchoredPosition = new Vector2(0, 0);
 			icon.raycastTarget = false;
 
-			text = Mod.InstantiateNewText("Text", transform);
-			RectTransformExtensions.SetSize(text.rectTransform, Width, 30);
-			text.rectTransform.anchorMin = new Vector2(0.5f, 0);
-			text.rectTransform.anchorMax = new Vector2(0.5f, 0);
-			text.rectTransform.pivot = new Vector2(0.5f, 0);
-			text.rectTransform.anchoredPosition = new Vector2(0, 0);
-			text.alignment = TextAnchor.LowerCenter;
-			text.fontSize = 16;
-			text.raycastTarget = false;
+			if (!mainIcon)
+			{
+				text = Mod.InstantiateNewText("Text", transform);
+				RectTransformExtensions.SetSize(text.rectTransform, Width, 30);
+				text.rectTransform.anchorMin = new Vector2(0.5f, 0);
+				text.rectTransform.anchorMax = new Vector2(0.5f, 0);
+				text.rectTransform.pivot = new Vector2(0.5f, 0);
+				text.rectTransform.anchoredPosition = new Vector2(0, 0);
+				text.alignment = TextAnchor.LowerCenter;
+				text.fontSize = 16;
+				text.raycastTarget = false;
 
-			ColorUtility.TryParseHtmlString(IngredientColorGood, out goodColor);
-			ColorUtility.TryParseHtmlString(IngredientColorBad, out badColor);
+				ColorUtility.TryParseHtmlString(IngredientColorGood, out goodColor);
+				ColorUtility.TryParseHtmlString(IngredientColorBad, out badColor);
+			}
 
 			UpdateText();
 		}
@@ -94,7 +98,12 @@ namespace BlueprintTracker
 		{
 			for(;;)
 			{
-				yield return new WaitForSeconds(0.5f);
+				yield return new WaitForSeconds(0.2f + UnityEngine.Random.Range(0, 0.05f));
+				if (ingredient == null)
+				{
+					break;
+				}
+
 				UpdateText();
 			}
 		}

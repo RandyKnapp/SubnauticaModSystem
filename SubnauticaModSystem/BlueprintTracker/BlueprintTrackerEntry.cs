@@ -33,8 +33,6 @@ namespace BlueprintTracker
 
 		private void Awake()
 		{
-			var quickSlots = GameObject.FindObjectOfType<uGUI_QuickSlots>();
-
 			layout = gameObject.AddComponent<LayoutElement>();
 			layout.minHeight = Height;
 
@@ -58,11 +56,6 @@ namespace BlueprintTracker
 
 		private void SetTechType(TechType techType)
 		{
-			if (this.techType == techType)
-			{
-				return;
-			}
-
 			this.techType = techType;
 
 			ITechData techData = CraftData.Get(techType, true);
@@ -71,14 +64,6 @@ namespace BlueprintTracker
 				Logger.Error("Could not find tech data for techtype: " + techType);
 				return;
 			}
-
-			var quickSlots = GameObject.FindObjectOfType<uGUI_QuickSlots>();
-
-			bool locked = false;
-
-			string tooltipText;
-			List<TooltipIcon> iconData = new List<TooltipIcon>();
-			TooltipFactory.BuildTech(techType, locked, out tooltipText, iconData);
 
 			if (Mod.Left)
 			{
@@ -93,7 +78,7 @@ namespace BlueprintTracker
 			for (int i = 0; i < techData.ingredientCount; ++i)
 			{
 				IIngredient ingredient = techData.GetIngredient(i);
-				Atlas.Sprite sprite = iconData[i].sprite;
+				Atlas.Sprite sprite = SpriteManager.Get(ingredient.techType);
 
 				var icon = BlueprintTrackerIcon.Create(contents.transform, ingredient, sprite,
 					Mod.Left ? false : i == 0, 
