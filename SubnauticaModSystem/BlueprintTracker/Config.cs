@@ -3,7 +3,7 @@
 namespace BlueprintTracker
 {
 	[Serializable]
-	public class Config
+	class Config
 	{
 		public int MaxPinnedBlueprints = 4;
 	}

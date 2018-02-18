@@ -11,7 +11,17 @@ namespace BlueprintTracker
 
 		public static void Log(string format, params object[] args)
 		{
-			Console.WriteLine("[BlueprintTracker] " + string.Format(format, args));
+			Log(string.Format(format, args));
+		}
+
+		public static void Error(string message)
+		{
+			Console.WriteLine("[BlueprintTracker:ERROR] " + message);
+		}
+
+		public static void Error(string format, params object[] args)
+		{
+			Error(string.Format(format, args));
 		}
 	}
 }

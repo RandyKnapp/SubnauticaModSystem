@@ -1,32 +1,14 @@
 ﻿using Harmony;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace BlueprintTracker.Patches
 {
 	[HarmonyPatch(typeof(uGUI_BlueprintEntry))]
-	[HarmonyPatch("Awake")]
-	public static class uGUI_BlueprintEntry_Awake_Patch
+	[HarmonyPatch("SetIcon")]
+	public static class uGUI_BlueprintEntry_SetIcon_Patch
 	{
-		private static void Postfix()
+		private static void Postfix(uGUI_BlueprintEntry __instance, TechType techType)
 		{
-			Logger.Log("uGUI_BlueprintEntry.Awake");
-		}
-	}
-
-	[HarmonyPatch(typeof(uGUI_BlueprintsTab))]
-	[HarmonyPatch("Awake")]
-	public static class uGUI_BlueprintsTab_Awake_Patch
-	{
-		private static void Postfix()
-		{
-			Logger.Log("uGUI_BlueprintsTab.Awake");
+			__instance.gameObject.AddComponent<BlueprintTrackerPdaEntry>().techType = techType;
 		}
 	}
 }

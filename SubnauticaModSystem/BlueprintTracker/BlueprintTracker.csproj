@@ -76,12 +76,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlueprintTracker.cs" />
+    <Compile Include="BlueprintTrackerEntry.cs" />
+    <Compile Include="BlueprintTrackerIcon.cs" />
+    <Compile Include="BlueprintTrackerPdaEntry.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="GameController.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Patches\uGUI_BlueprintEntry_SetIcon_Patch.cs" />
+    <Compile Include="Patches\uGUI_PowerIndicator_Initialize_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
