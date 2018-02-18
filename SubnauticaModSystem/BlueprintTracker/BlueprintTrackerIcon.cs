@@ -51,6 +51,7 @@ namespace BlueprintTracker
 			layout.minHeight = bgSprite.rect.height;
 
 			background = gameObject.AddComponent<Image>();
+			background.color = new Color(1, 1, 1, 0.5f);
 			background.raycastTarget = false;
 			background.material = quickSlots.materialBackground;
 			background.sprite = bgSprite;

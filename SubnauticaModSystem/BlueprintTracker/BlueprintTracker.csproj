@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PinButton.cs" />
     <Compile Include="BlueprintTracker.cs" />
     <Compile Include="BlueprintTrackerEntry.cs" />
     <Compile Include="BlueprintTrackerIcon.cs" />
@@ -92,6 +93,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utility\ImageUtils.cs" />
     <Compile Include="Utility\SimpleJSON.cs" />
   </ItemGroup>
   <ItemGroup>

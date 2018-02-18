@@ -1,41 +1,79 @@
-﻿using System;
+﻿using BlueprintTracker.Utility;
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace BlueprintTracker
 {
-	class BlueprintTrackerPdaEntry : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+	class BlueprintTrackerPdaEntry : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	{
-		private static bool once = false;
-
 		public TechType techType;
+
+		private PinButton addPinButton;
+		private PinButton removePinButton;
+		private bool hover;
 
 		public void Awake()
 		{
-			if (once)
-			{
-				return;
-			}
-			once = true;
+			addPinButton = CreateButton("AddPin", PinButton.Mode.Add, OnAddPinButtonClicked);
+			removePinButton = CreateButton("RemovePin", PinButton.Mode.Remove, OnRemovePinButtonClicked);
 
-			Logger.Log("Printing Game Object:");
-			Mod.PrintObject(gameObject);
+			Refresh();
+		}
+
+		private void Refresh()
+		{
+			bool isTracked = BlueprintTracker.IsTracked(techType);
+			bool canTrack = BlueprintTracker.CanTrack(techType);
+
+			if (isTracked)
+			{
+				addPinButton.gameObject.SetActive(false);
+				removePinButton.gameObject.SetActive(true);
+			}
+			else
+			{
+				removePinButton.gameObject.SetActive(false);
+				addPinButton.gameObject.SetActive(hover && canTrack);
+			}
 		}
 
 		public void OnPointerEnter(PointerEventData eventData)
 		{
-			Logger.Log("OnPointerEnter: " + techType);
+			hover = true;
+			Refresh();
 		}
 
 		public void OnPointerExit(PointerEventData eventData)
 		{
-			Logger.Log("OnPointerExit: " + techType);
+			hover = false;
+			Refresh();
 		}
 
-		public void OnPointerClick(PointerEventData eventData)
+		private void OnAddPinButtonClicked()
 		{
-			Logger.Log("OnPointerClick: " + techType);
+			BlueprintTracker.StartTracking(techType);
+			Refresh();
+		}
+
+		private void OnRemovePinButtonClicked()
+		{
+			Logger.Log("OnRemovePinButtonClicked");
+			BlueprintTracker.StopTracking(techType);
+			Refresh();
+		}
+
+		public PinButton CreateButton(string name, PinButton.Mode mode, Action onClick)
+		{
+			var button = new GameObject(name, typeof(RectTransform)).AddComponent<PinButton>();
+			button.transform.SetParent(transform, false);
+
+			button.SetMode(mode);
+			button.onClick += onClick;
+
+			return button;
 		}
 	}
 }

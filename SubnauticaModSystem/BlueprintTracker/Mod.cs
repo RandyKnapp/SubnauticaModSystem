@@ -31,9 +31,19 @@ namespace BlueprintTracker
 			Logger.Log("Patched");
 		}
 
+		public static string GetModPath()
+		{
+			return Environment.CurrentDirectory + "\\" + modDirectory;
+		}
+
+		public static string GetAssetPath(string filename)
+		{
+			return GetModPath() + @"\Assets\" + filename;
+		}
+
 		private static string GetModInfoPath()
 		{
-			return Environment.CurrentDirectory + "\\" + modDirectory + "\\mod.json";
+			return GetModPath() + "\\mod.json";
 		}
 
 		private static void LoadConfig()
