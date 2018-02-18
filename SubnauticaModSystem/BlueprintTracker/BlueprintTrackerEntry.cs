@@ -12,7 +12,6 @@ namespace BlueprintTracker
 		public const float Height = 70;
 		public const float IconSpacing = -6;
 
-		//private Image image;
 		private LayoutElement layout;
 		private HorizontalLayoutGroup contents;
 
@@ -51,7 +50,7 @@ namespace BlueprintTracker
 			contents.childForceExpandWidth = false;
 			contents.childControlHeight = true;
 			contents.childControlWidth = false;
-			contents.padding.left = 0;// (int)(Height);
+			contents.padding.left = 0;
 		}
 
 		public void SetTechType(TechType techType)
@@ -72,17 +71,7 @@ namespace BlueprintTracker
 
 			var quickSlots = GameObject.FindObjectOfType<uGUI_QuickSlots>();
 
-			bool locked = false;// !CrafterLogic.IsCraftRecipeUnlocked(techType);
-
-			/*var techIcon = new GameObject("TechIcon").AddComponent<uGUI_ItemIcon>();
-			techIcon.transform.SetParent(transform, false);
-			techIcon.SetForegroundSprite(SpriteManager.Get(techType));
-			techIcon.SetSize(Height, Height);
-			techIcon.rectTransform.anchorMin = new Vector2(0, 1);
-			techIcon.rectTransform.anchorMax = new Vector2(0, 1);
-			techIcon.rectTransform.pivot = new Vector2(0, 1);
-			techIcon.rectTransform.anchoredPosition = new Vector2(0, 0);
-			techIcon.raycastTarget = false;*/
+			bool locked = false;
 
 			BlueprintTrackerIcon.Create(contents.transform, null, SpriteManager.Get(techType), true, false);
 

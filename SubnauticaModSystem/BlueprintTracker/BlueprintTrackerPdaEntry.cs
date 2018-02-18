@@ -60,7 +60,6 @@ namespace BlueprintTracker
 
 		private void OnRemovePinButtonClicked()
 		{
-			Logger.Log("OnRemovePinButtonClicked");
 			BlueprintTracker.StopTracking(techType);
 			Refresh();
 		}

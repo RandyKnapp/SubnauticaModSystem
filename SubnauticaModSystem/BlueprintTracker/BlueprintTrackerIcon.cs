@@ -15,10 +15,11 @@ namespace BlueprintTracker
 		public const string IngredientColorGood = "#94DE00FF";
 		public const string IngredientColorBad = "#DF4026FF";
 
+		private static Color goodColor;
+		private static Color badColor;
+
 		public IIngredient ingredient;
 
-		private Color goodColor;
-		private Color badColor;
 		private uGUI_ItemIcon icon;
 		private Text text;
 		private LayoutElement layout;
@@ -61,8 +62,7 @@ namespace BlueprintTracker
 			icon.SetForegroundSprite(sprite);
 			if (first)
 			{
-				//icon.SetBackgroundSprite(new Atlas.Sprite(quickSlots.spriteNormal, false));
-				icon.SetSize(Width - 2, Width - 2);
+				icon.SetSize(Width, Width);
 			}
 			else
 			{
@@ -84,8 +84,11 @@ namespace BlueprintTracker
 			text.fontSize = 16;
 			text.raycastTarget = false;
 
-			ColorUtility.TryParseHtmlString(IngredientColorGood, out goodColor);
-			ColorUtility.TryParseHtmlString(IngredientColorBad, out badColor);
+			if (goodColor == null || badColor == null)
+			{
+				ColorUtility.TryParseHtmlString(IngredientColorGood, out goodColor);
+				ColorUtility.TryParseHtmlString(IngredientColorBad, out badColor);
+			}
 
 			UpdateText();
 		}

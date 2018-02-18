@@ -51,6 +51,13 @@ namespace BlueprintTracker
 			image.sprite = addPinSprite;
 		}
 
+		public void OnDisable()
+		{
+			hover = false;
+			down = false;
+			Update();
+		}
+
 		public void SetMode(PinButton.Mode mode)
 		{
 			this.mode = mode;

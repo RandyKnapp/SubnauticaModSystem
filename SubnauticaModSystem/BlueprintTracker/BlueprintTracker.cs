@@ -81,7 +81,6 @@ namespace BlueprintTracker
 
 		public static bool StopTracking(TechType techType)
 		{
-			Logger.Log("StopTracking: " + techType);
 			if (!IsTracked(techType))
 			{
 				Logger.Error("Can't stop tracking " + techType + " because it was not tracked");
@@ -102,10 +101,6 @@ namespace BlueprintTracker
 			rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Height);
 			rectTransform.anchoredPosition = new Vector2(20, -20);
 
-			/*var image = gameObject.AddComponent<Image>();
-			image.color = new Color(0, 0, 0, 0.5f);
-			image.raycastTarget = false;*/
-
 			layout = gameObject.AddComponent<VerticalLayoutGroup>();
 			layout.spacing = Spacing;
 			layout.childAlignment = TextAnchor.UpperRight;
@@ -114,14 +109,6 @@ namespace BlueprintTracker
 			layout.childForceExpandHeight = false;
 			layout.childForceExpandWidth = true;
 			layout.padding = new RectOffset(10, 10, 10, 10);
-
-			//BlueprintTrackerEntry.Create(transform, TechType.ComputerChip);
-			//BlueprintTrackerEntry.Create(transform, TechType.Battery);
-			//BlueprintTrackerEntry.Create(transform, TechType.TitaniumIngot);
-			//BlueprintTrackerEntry.Create(transform, TechType.Seamoth);
-
-			//Logger.Log("Printing Tracker:");
-			//Mod.PrintObject(gameObject);
 		}
 
 		private void AddTracker(TechType techType)
@@ -133,7 +120,6 @@ namespace BlueprintTracker
 
 		private void RemoveTracker(TechType techType)
 		{
-			Logger.Log("RemoveTracker: " + techType);
 			tracked.Remove(techType);
 
 			foreach (Transform child in transform)
@@ -142,11 +128,10 @@ namespace BlueprintTracker
 				if (entry != null && entry.techType == techType)
 				{
 					Destroy(child.gameObject);
-					return;
+					break;
 				}
 			}
 
-			Logger.Log("RemoveTracker got here");
 			LogStatus();
 		}
 
