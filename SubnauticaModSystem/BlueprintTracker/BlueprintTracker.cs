@@ -59,7 +59,7 @@ namespace BlueprintTracker
 				//Logger.Error("Can't start tracking " + techType + " because it is already being tracked");
 				return false;
 			}
-			if (instance.tracked.Count >= Mod.MaxPins)
+			if (instance.tracked.Count >= Mod.GetMaxPins())
 			{
 				//Logger.Error("Can't start tracking " + techType + " because we are tracking maximum tech");
 				return false;

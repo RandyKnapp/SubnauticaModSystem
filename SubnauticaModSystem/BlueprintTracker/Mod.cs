@@ -46,6 +46,11 @@ namespace BlueprintTracker
 			return GetModPath() + "\\mod.json";
 		}
 
+		public static int GetMaxPins()
+		{
+			return config.MaxPinnedBlueprints;
+		}
+
 		private static void LoadConfig()
 		{
 			string modInfoPath = GetModInfoPath();
