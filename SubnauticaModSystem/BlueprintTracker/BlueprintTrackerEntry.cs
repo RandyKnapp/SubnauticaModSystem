@@ -44,7 +44,7 @@ namespace BlueprintTracker
 
 			contents = iconContainer.AddComponent<HorizontalLayoutGroup>();
 			contents.transform.SetParent(transform, false);
-			contents.childAlignment = TextAnchor.UpperLeft;
+			contents.childAlignment = Mod.Left ? TextAnchor.MiddleLeft : TextAnchor.MiddleRight;
 			contents.spacing = IconSpacing;
 			contents.childForceExpandHeight = false;
 			contents.childForceExpandWidth = false;
@@ -73,18 +73,31 @@ namespace BlueprintTracker
 
 			bool locked = false;
 
-			BlueprintTrackerIcon.Create(contents.transform, null, SpriteManager.Get(techType), true, false);
+			
 
 			string tooltipText;
 			List<TooltipIcon> iconData = new List<TooltipIcon>();
 			TooltipFactory.BuildTech(techType, locked, out tooltipText, iconData);
+
+			if (Mod.Left)
+			{
+				BlueprintTrackerIcon.Create(contents.transform, null, SpriteManager.Get(techType), true, false);
+			}
 
 			for (int i = 0; i < techData.ingredientCount; ++i)
 			{
 				IIngredient ingredient = techData.GetIngredient(i);
 				Atlas.Sprite sprite = iconData[i].sprite;
 
-				BlueprintTrackerIcon.Create(contents.transform, ingredient, sprite, false, i == techData.ingredientCount - 1);
+				BlueprintTrackerIcon.Create(contents.transform, ingredient, sprite,
+					Mod.Left ? false : i == 0, 
+					Mod.Left ? i == techData.ingredientCount - 1 : false
+				);
+			}
+
+			if (!Mod.Left)
+			{
+				BlueprintTrackerIcon.Create(contents.transform, null, SpriteManager.Get(techType), false, true);
 			}
 		}
 	}

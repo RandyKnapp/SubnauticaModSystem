@@ -94,16 +94,16 @@ namespace BlueprintTracker
 		private void Awake()
 		{
 			rectTransform = (RectTransform)transform;
-			rectTransform.anchorMin = new Vector2(0, 1);
-			rectTransform.anchorMax = new Vector2(0, 1);
-			rectTransform.pivot = new Vector2(0, 1);
+			rectTransform.anchorMin = new Vector2(Mod.Left ? 0 : 1, Mod.Top ? 1 : 0);
+			rectTransform.anchorMax = new Vector2(Mod.Left ? 0 : 1, Mod.Top ? 1 : 0);
+			rectTransform.pivot = new Vector2(Mod.Left ? 0 : 1, Mod.Top ? 1 : 0);
 			rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Width);
 			rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Height);
-			rectTransform.anchoredPosition = new Vector2(20, -20);
+			rectTransform.anchoredPosition = new Vector2(Mod.Left ? 20 : -20, Mod.Top ? -20 : 20);
 
 			layout = gameObject.AddComponent<VerticalLayoutGroup>();
 			layout.spacing = Spacing;
-			layout.childAlignment = TextAnchor.UpperRight;
+			layout.childAlignment = Mod.Left ? (Mod.Top ? TextAnchor.UpperLeft : TextAnchor.LowerLeft) : (Mod.Top ? TextAnchor.UpperRight : TextAnchor.LowerRight);
 			layout.childControlWidth = true;
 			layout.childControlHeight = true;
 			layout.childForceExpandHeight = false;

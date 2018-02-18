@@ -9,6 +9,6 @@
   "EntryMethod": "BlueprintTracker.QPatch.Patch",
   "Config": {
     "MaxPinnedBlueprints": 6,
-    "Position": "TopLeft"
+    "Position": "TopRight"
   }
 }

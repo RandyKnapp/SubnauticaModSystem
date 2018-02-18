@@ -60,7 +60,7 @@ namespace BlueprintTracker
 			icon = new GameObject("Icon").AddComponent<uGUI_ItemIcon>();
 			icon.transform.SetParent(transform, false);
 			icon.SetForegroundSprite(sprite);
-			if (first)
+			if ((first && Mod.Left) || (last && !Mod.Left))
 			{
 				icon.SetSize(Width, Width);
 			}
