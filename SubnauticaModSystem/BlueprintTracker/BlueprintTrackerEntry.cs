@@ -27,6 +27,7 @@ namespace BlueprintTracker
 			go.layer = parent.gameObject.layer;
 			var entry = go.AddComponent<BlueprintTrackerEntry>();
 			entry.SetTechType(techType);
+			entry.Update();
 
 			return entry;
 		}

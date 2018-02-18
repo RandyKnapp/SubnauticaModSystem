@@ -11,7 +11,6 @@ namespace BlueprintTracker
 	class BlueprintTrackerRemoveButton : MonoBehaviour
 	{
 		public const float Width = BlueprintTrackerEntry.Height;
-		public const float IconWidth = 50;
 
 		private TechType techType;
 		private LayoutElement layout;
@@ -53,6 +52,7 @@ namespace BlueprintTracker
 			var brt = button.transform as RectTransform;
 			RectTransformExtensions.SetParams(brt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), transform);
 			brt.anchoredPosition = new Vector2(0, 0);
+			RectTransformExtensions.SetSize(brt, 30, 30);
 
 			button.SetMode(PinButton.Mode.Cross);
 			button.onClick += OnButtonClick;

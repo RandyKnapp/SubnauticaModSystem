@@ -76,6 +76,7 @@ namespace BlueprintTracker
 					image.sprite = crossSprite;
 					break;
 			}
+			Update();
 		}
 
 		private void Update()
