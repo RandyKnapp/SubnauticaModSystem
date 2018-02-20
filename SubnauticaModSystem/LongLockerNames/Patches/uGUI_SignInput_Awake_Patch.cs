@@ -103,7 +103,7 @@ namespace LongLockerNames.Patches
 
 		private static void PatchSign(uGUI_SignInput __instance)
 		{
-			__instance.inputField.lineType = InputField.LineType.MultiLineNewline;
+			//__instance.inputField.lineType = InputField.LineType.MultiLineNewline;
 			__instance.inputField.characterLimit = Mod.config.SignTextLimit;
 		}
 
