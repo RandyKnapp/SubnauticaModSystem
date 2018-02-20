@@ -10,25 +10,60 @@ using UnityEngine.UI;
 
 namespace BetterPowerInfo
 {
-	public class PowerProductionDisplay : PowerDisplayBase
+	class PowerProductionDisplay : PowerDisplayBase
 	{
 		private static FieldInfo PowerSource_inboundPowerSources;
 
-		private List<PowerSourceInfoBase> powerSources = new List<PowerSourceInfoBase>();
+		private List<PowerSourceInfo> powerSources = new List<PowerSourceInfo>();
+		private bool hasPowerSource;
 
-		protected override void UpdatePower()
+		protected override IEnumerator UpdatePower()
 		{
 			PowerRelay power = GetCurrentPowerRelay();
+			hasPowerSource = power != null;
+			powerSources.Clear();
 			if (power != null)
 			{
-				powerSources.Clear();
 				AccumulatePowerSources(power);
-
-				text.text = UpdatePowerText(power);
 			}
-			else
+			UpdateEntriesForSources();
+
+			text.text = UpdateMainText(power);
+			yield return null;
+			yield return base.UpdatePower();
+		}
+
+		protected override bool ShouldShow()
+		{
+			return hasPowerSource && base.ShouldShow();
+		}
+
+		private void UpdateEntriesForSources()
+		{
+			foreach (var source in powerSources)
 			{
-				text.text = "";
+				if (!entries.ContainsKey(source.TechType))
+				{
+					var newEntry = CreateDisplayEntryForTechType(source.TechType);
+					entries.Add(source.TechType, newEntry);
+				}
+			}
+
+			foreach (var entry in entries)
+			{
+				TechType tech = entry.Value.techType;
+				var techSources = powerSources.Where((PowerSourceInfo s) => s.TechType == tech).ToList();
+				entry.Value.SetSources(techSources);
+				var count = techSources.Count;
+			}
+		}
+
+		private PowerDisplayEntry CreateDisplayEntryForTechType(TechType techType)
+		{
+			switch (techType)
+			{
+				default:
+					return PowerDisplayEntry.Create("Power" + techType, transform, techType);
 			}
 		}
 
@@ -87,7 +122,7 @@ namespace BetterPowerInfo
 			}
 			else
 			{
-				powerSources.Add(new PowerSourceInfoBase(source));
+				powerSources.Add(new PowerSourceInfo(source, TechType.None));
 			}
 		}
 
@@ -109,7 +144,7 @@ namespace BetterPowerInfo
 			return sum;
 		}
 
-		public List<PowerSourceInfoBase> GetPowerSources()
+		public List<PowerSourceInfo> GetPowerSources()
 		{
 			return powerSources;
 		}
@@ -146,7 +181,7 @@ namespace BetterPowerInfo
 			return source;
 		}
 
-		private string UpdatePowerText(PowerRelay power)
+		private string UpdateMainText(PowerRelay power)
 		{
 			if (Mode == DisplayMode.Minimal)
 			{
@@ -154,13 +189,13 @@ namespace BetterPowerInfo
 			}
 			else if (Mode == DisplayMode.Verbose)
 			{
-				string t = GetCurrentAndMaxPowerTextVerbose(power);
-				powerSources.Sort((p1, p2) => p1.DisplayText.CompareTo(p2.DisplayText));
+				return GetCurrentAndMaxPowerTextVerbose(power);
+				/*powerSources.Sort((p1, p2) => p1.CustomText.CompareTo(p2.CustomText));
 				foreach (var entry in powerSources)
 				{
 					t += GetTextForPowerSource(entry);
 				}
-				return t;
+				return t;*/
 			}
 
 			return "";
@@ -182,12 +217,12 @@ namespace BetterPowerInfo
 			);
 		}
 
-		private string GetTextForPowerSource(PowerSourceInfoBase source)
+		private string GetTextForPowerSource(PowerSourceInfo source)
 		{
 			string productionColor = source.ProductionPerMinute == 0 ? "grey" : "lime";
 			string productionString = string.Format(" <color={1}>+{0:0.0}</color>", source.ProductionPerMinute, productionColor);
 			return string.Format("\n{0} <color={4}>{1}/{2}</color>{3} >",
-				source.DisplayText,
+				source.CustomText,
 				source.CurrentPower,
 				source.MaxPower,
 				productionString,

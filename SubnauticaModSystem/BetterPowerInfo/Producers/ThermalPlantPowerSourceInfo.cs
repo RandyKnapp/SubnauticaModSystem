@@ -2,11 +2,11 @@
 
 namespace BetterPowerInfo.Producers
 {
-	class ThermalPlantPowerSourceInfo : PowerSourceInfoBase
+	class ThermalPlantPowerSourceInfo : PowerSourceInfo
 	{
 		private ThermalPlant plant;
 
-		public ThermalPlantPowerSourceInfo(PowerSource source) : base(source)
+		public ThermalPlantPowerSourceInfo(PowerSource source) : base(source, TechType.ThermalPlant)
 		{
 			plant = source.gameObject.GetComponent<ThermalPlant>();
 		}
@@ -18,10 +18,10 @@ namespace BetterPowerInfo.Producers
 			return num2 * 30;
 		}
 
-		protected override string GetPowerSourceDisplayText()
+		protected override string GetPowerSourceCustomText()
 		{
 			Color color = plant.temperatureText.color;
-			string name =  base.GetPowerSourceDisplayText();
+			string name =  base.GetPowerSourceCustomText();
 			return string.Format("{0} <color=#{2}>({1})</color>", name, plant.temperatureText.text, ColorUtility.ToHtmlStringRGBA(color));
 		}
 	}

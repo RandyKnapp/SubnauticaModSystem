@@ -5,11 +5,11 @@ using System.Text;
 
 namespace BetterPowerInfo.Producers
 {
-	public class RegenPowerSourceInfo : PowerSourceInfoBase
+	public class RegenPowerSourceInfo : PowerSourceInfo
 	{
 		private RegeneratePowerSource regen;
 
-		public RegenPowerSourceInfo(PowerSource source) : base(source)
+		public RegenPowerSourceInfo(PowerSource source) : base(source, TechType.PowerCell)
 		{
 			regen = source.gameObject.GetComponent<RegeneratePowerSource>();
 		}

@@ -7,21 +7,21 @@ using UnityEngine;
 
 namespace BetterPowerInfo.Producers
 {
-	public class BioreactorPowerSourceInfo : PowerSourceInfoBase
+	public class BioreactorPowerSourceInfo : PowerSourceInfo
 	{
 		protected static MethodInfo BaseBioreactor_get_container;
 		protected static FieldInfo BaseBioreactor_charge;
 
 		private BaseBioReactor reactor;
 
-		public BioreactorPowerSourceInfo(PowerSource source) : base(source)
+		public BioreactorPowerSourceInfo(PowerSource source) : base(source, TechType.BaseBioReactor)
 		{
 			reactor = source.GetComponent<BaseBioReactor>();
 		}
 
-		protected override string GetPowerSourceDisplayText()
+		protected override string GetPowerSourceCustomText()
 		{
-			bool inactive = !reactor.producingPower && (source.GetPower() < source.GetMaxPower());
+			bool inactive = !reactor.producingPower && (Source.GetPower() < Source.GetMaxPower());
 			float availableCharge = GetBioreactorAvailableCharge(reactor);
 			return string.Format("Bioreactor <color={0}</color>",
 				(inactive ? "red>[Inactive]" : "silver>[" + Mathf.RoundToInt(availableCharge) + "]")

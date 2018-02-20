@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace BetterPowerInfo
 {
@@ -78,6 +79,34 @@ namespace BetterPowerInfo
 		public static string GetChargeColorString(float percentCharged)
 		{
 			return "#" + ColorUtility.ToHtmlStringRGBA(GetChargeColor(percentCharged));
+		}
+
+		public static Text GetTextPrefab()
+		{
+			Text prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
+			if (prefab == null)
+			{
+				Logger.Log("Could not find text prefab! (HandReticle.interactPrimaryText)");
+				return null;
+			}
+
+			return prefab;
+		}
+
+		public static Text InstantiateNewText(string name, Transform parent)
+		{
+			var text = GameObject.Instantiate(GetTextPrefab());
+			text.gameObject.layer = parent.gameObject.layer;
+			text.gameObject.name = name;
+			text.transform.SetParent(parent, false);
+			text.transform.localScale = new Vector3(1, 1, 1);
+			text.gameObject.SetActive(true);
+			text.enabled = true;
+
+			RectTransformExtensions.SetParams(text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 100);
+			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100);
+			return text;
 		}
 	}
 }

@@ -92,14 +92,14 @@
     <Compile Include="ModLoaderIntegration.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Patches\uGUI_PowerIndicator_Initialize_Patch.cs" />
-    <Compile Include="PowerConsumerDisplay.cs" />
     <Compile Include="PowerDisplayBase.cs" />
+    <Compile Include="PowerDisplayEntry.cs" />
     <Compile Include="PowerProductionDisplay.cs" />
     <Compile Include="PowerProductionTracker.cs" />
     <Compile Include="Producers\BioreactorPowerSourceInfo.cs" />
     <Compile Include="Producers\GenericPowerSourceInfo.cs" />
     <Compile Include="Producers\NuclearReactorPowerSourceInfo.cs" />
-    <Compile Include="Producers\PowerSourceInfoBase.cs" />
+    <Compile Include="Producers\PowerSourceInfo.cs" />
     <Compile Include="Producers\RegenPowerSourceInfo.cs" />
     <Compile Include="Producers\SolarPanelPowerSourceInfo.cs" />
     <Compile Include="Producers\ThermalPlantPowerSourceInfo.cs" />

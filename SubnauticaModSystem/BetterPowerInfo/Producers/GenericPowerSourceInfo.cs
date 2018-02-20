@@ -6,12 +6,12 @@ using UnityEngine;
 
 namespace BetterPowerInfo.Producers
 {
-	public class GenericPowerSourceInfo : PowerSourceInfoBase
+	public class GenericPowerSourceInfo : PowerSourceInfo
 	{
 		private IPowerInterface iSource;
 		private string displayOverride;
 
-		public GenericPowerSourceInfo(IPowerInterface source, string displayOverride = null) : base(null)
+		public GenericPowerSourceInfo(IPowerInterface source, string displayOverride = null) : base(null, TechType.None)
 		{
 			iSource = source;
 			this.displayOverride = displayOverride;
@@ -20,7 +20,7 @@ namespace BetterPowerInfo.Producers
 		public override int CurrentPower { get { return Mathf.RoundToInt(iSource.GetPower()); } }
 		public override int MaxPower { get { return Mathf.RoundToInt(iSource.GetMaxPower()); } }
 
-		protected override string GetPowerSourceDisplayText()
+		protected override string GetPowerSourceCustomText()
 		{
 			if ((iSource as Component) != null)
 			{

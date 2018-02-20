@@ -7,13 +7,13 @@ using UnityEngine;
 
 namespace BetterPowerInfo.Producers
 {
-	class SolarPanelPowerSourceInfo : PowerSourceInfoBase
+	class SolarPanelPowerSourceInfo : PowerSourceInfo
 	{
 		protected static MethodInfo SolarPanel_GetRechargeScalar;
 
 		private SolarPanel panel;
 
-		public SolarPanelPowerSourceInfo(PowerSource source) : base(source)
+		public SolarPanelPowerSourceInfo(PowerSource source) : base(source, TechType.SolarPanel)
 		{
 			panel = source.gameObject.GetComponent<SolarPanel>();
 		}
@@ -24,9 +24,9 @@ namespace BetterPowerInfo.Producers
 			return rechargeScalar * 0.25f * 5.0f * 60;
 		}
 
-		protected override string GetPowerSourceDisplayText()
+		protected override string GetPowerSourceCustomText()
 		{
-			string name = base.GetPowerSourceDisplayText();
+			string name = base.GetPowerSourceCustomText();
 			float rechargeScalar = GetRechargeScalar();
 			return string.Format("{0} (<color={2}>{1}%</color>)", name, Mathf.RoundToInt(rechargeScalar * 100), Mod.GetChargeColorString(rechargeScalar));
 		}

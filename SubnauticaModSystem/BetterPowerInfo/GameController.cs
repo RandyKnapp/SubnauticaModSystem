@@ -10,12 +10,11 @@ namespace BetterPowerInfo
 	public class GameController : MonoBehaviour
 	{
 		private PowerProductionDisplay productionDisplay;
-		private PowerConsumerDisplay consumerDisplay;
+		//private PowerConsumerDisplay consumerDisplay;
 
 		private void Awake()
 		{
 			DevConsole.RegisterConsoleCommand(this, "deplete", false, false);
-			DevConsole.RegisterConsoleCommand(this, "depletecamera", false, false);
 			Logger.Log("GameController Added");
 		}
 
@@ -35,32 +34,20 @@ namespace BetterPowerInfo
 			{
 				Logger.Log("Creating Text Objects...");
 				Transform hud = GameObject.FindObjectOfType<uGUI_PowerIndicator>().transform;
-				productionDisplay = CreateNewText(hud, -500, TextAnchor.UpperRight).AddComponent<PowerProductionDisplay>();
-				consumerDisplay = CreateNewText(hud, 500, TextAnchor.UpperLeft).AddComponent<PowerConsumerDisplay>();
+				productionDisplay = CreatePowerDisplay("PowerProduction", hud, -515).AddComponent<PowerProductionDisplay>();
+				//consumerDisplay = CreatePowerDisplay("PowerConsumers", hud, 515).AddComponent<PowerConsumerDisplay>();
 			}
 
-			if (productionDisplay != null && consumerDisplay != null)
+			if (productionDisplay != null /*&& consumerDisplay != null*/)
 			{
 				bool keyDown = Input.GetKeyDown(Mod.config.ViewToggleKey);
 				if (keyDown)
 				{
 					productionDisplay.SetMode((DisplayMode)(((int)productionDisplay.Mode + 1) % 3));
-					consumerDisplay.SetMode(productionDisplay.Mode);
+					//consumerDisplay.SetMode(productionDisplay.Mode);
 				}
 			}
-
-			//if (Input.GetKeyDown(KeyCode.I)) MoveAllDisplays(new Vector2(0, 1));
-			//if (Input.GetKeyDown(KeyCode.K)) MoveAllDisplays(new Vector2(0, -1));
-			//if (Input.GetKeyDown(KeyCode.J)) MoveAllDisplays(new Vector2(-1, 0));
-			//if (Input.GetKeyDown(KeyCode.L)) MoveAllDisplays(new Vector2(1, 0));
 		}
-
-		//private void MoveAllDisplays(Vector2 offset)
-		//{
-		//	productionDisplay.text.rectTransform.anchoredPosition += offset;
-		//	consumerDisplay.text.rectTransform.anchoredPosition += new Vector2(-offset.x, offset.y);
-		//	Logger.Log("Position = " + productionDisplay.text.rectTransform.anchoredPosition);
-		//}
 
 		private void OnConsoleCommand_deplete()
 		{
@@ -82,26 +69,19 @@ namespace BetterPowerInfo
 			ErrorMessage.AddDebug("Depleting batteries and powercells");
 		}
 
-		private void OnConsoleCommand_depletecamera()
+		private static GameObject CreatePowerDisplay(string name, Transform parent, int x)
 		{
-			if (Player.main != null)
-			{
-				foreach (MapRoomCamera camera in GameObject.FindObjectsOfType<MapRoomCamera>())
-				{
-					var controllingPlayer = (Player)camera.GetType().GetField("controllingPlayer", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(camera);
-					if (controllingPlayer != null && controllingPlayer == Player.main)
-					{
-						camera.energyMixin.ModifyCharge(-camera.energyMixin.energy * 0.9f);
-						ErrorMessage.AddDebug("Depleting camera drone energy by 90%");
-						return;
-					}
-				}
-			}
+			var go = new GameObject(name, typeof(RectTransform));
+			var rt = go.transform as RectTransform;
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 1), new Vector2(0.5f, 0.5f), parent);
+			rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 700);
+			rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 800);
+			rt.anchoredPosition = new Vector3(x, -425);
 
-			ErrorMessage.AddDebug("Not currently controlling camera drone");
+			return go;
 		}
 
-		private static GameObject CreateNewText(Transform parent, int x, TextAnchor anchor)
+		public static GameObject CreateNewText(string name, Transform parent, TextAnchor anchor)
 		{
 			Text prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
 			if (prefab == null)
@@ -112,17 +92,17 @@ namespace BetterPowerInfo
 
 			Text text = GameObject.Instantiate(prefab);
 			text.gameObject.layer = parent.gameObject.layer;
-			text.gameObject.name = "PowerIndicatorDisplayText";
+			text.gameObject.name = name;
 			text.transform.SetParent(parent, false);
 			text.transform.localScale = new Vector3(1, 1, 1);
 			text.gameObject.SetActive(true);
 			text.enabled = true;
 			text.text = "";
 			text.fontSize = 20;
-			RectTransformExtensions.SetParams(text.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 0.5f), parent);
+			RectTransformExtensions.SetParams(text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 700);
-			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 800);
-			text.rectTransform.anchoredPosition = new Vector3(x, -428);
+			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 30);
+			text.rectTransform.anchoredPosition = new Vector3(0, 0);
 			text.alignment = anchor;
 			text.raycastTarget = false;
 

@@ -7,21 +7,21 @@ using UnityEngine;
 
 namespace BetterPowerInfo.Producers
 {
-	public class NuclearReactorPowerSourceInfo : PowerSourceInfoBase
+	public class NuclearReactorPowerSourceInfo : PowerSourceInfo
 	{
 		protected static MethodInfo BaseNuclearReactor_get_equipment;
 		protected static FieldInfo BaseNuclearReactor_charge;
 
 		private BaseNuclearReactor reactor;
 
-		public NuclearReactorPowerSourceInfo(PowerSource source) : base(source)
+		public NuclearReactorPowerSourceInfo(PowerSource source) : base(source, TechType.BaseNuclearReactor)
 		{
 			reactor = source.GetComponent<BaseNuclearReactor>();
 		}
 
-		protected override string GetPowerSourceDisplayText()
+		protected override string GetPowerSourceCustomText()
 		{
-			bool inactive = !reactor.producingPower && (source.GetPower() < source.GetMaxPower());
+			bool inactive = !reactor.producingPower && (Source.GetPower() < Source.GetMaxPower());
 			float availableCharge = GetNuclearReactorAvailableCharge(reactor);
 			return string.Format("Nuclear Reactor <color={0}</color>",
 				(inactive ? "red>[Inactive]" : "silver>[" + Mathf.RoundToInt(availableCharge) + "]")
