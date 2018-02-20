@@ -7,5 +7,8 @@
   "Enable": true,
   "AssemblyName": "LongLockerNames.dll",
   "EntryMethod": "LongLockerNames.QPatch.Patch",
-  "Config": {}
+  "Config": {
+    "SmallLockerTextLimit": 60,
+    "SignTextLimit": 100
+  }
 }

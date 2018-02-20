@@ -26,8 +26,6 @@ namespace BlueprintTracker
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
 			LoadConfig();
 
-			DevConsole.disableConsole = false;
-
 			HarmonyInstance harmony = HarmonyInstance.Create("com.blueprinttracker.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 

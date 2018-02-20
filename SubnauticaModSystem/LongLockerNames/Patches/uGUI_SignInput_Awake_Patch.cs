@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using LongLockerNames.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace LongLockerNames.Patches
 
 		private static void Postfix(uGUI_SignInput __instance)
 		{
+			AddColors(__instance);
 			if (IsOnSmallLocker(__instance))
 			{
 				PatchSmallLocker(__instance);
@@ -26,7 +28,6 @@ namespace LongLockerNames.Patches
 			{
 				PatchSign(__instance);
 			}
-			AddColors(__instance);
 		}
 
 		private static bool IsOnSmallLocker(uGUI_SignInput __instance)
@@ -37,7 +38,7 @@ namespace LongLockerNames.Patches
 		private static void PatchSmallLocker(uGUI_SignInput __instance)
 		{
 			__instance.inputField.lineType = InputField.LineType.MultiLineNewline;
-			__instance.inputField.characterLimit = 60;
+			__instance.inputField.characterLimit = Mod.config.SmallLockerTextLimit;
 
 			var rt = __instance.inputField.transform as RectTransform;
 			RectTransformExtensions.SetSize(rt, rt.rect.width, TextFieldHeight);
@@ -45,14 +46,65 @@ namespace LongLockerNames.Patches
 			GameObject.Destroy(__instance.inputField.textComponent.GetComponent<ContentSizeFitter>());
 			rt = __instance.inputField.textComponent.transform as RectTransform;
 			RectTransformExtensions.SetSize(rt, rt.rect.width, TextFieldHeight);
-			Logger.Log("TextComponent Rect: " + rt.rect);
 
 			__instance.inputField.textComponent.alignment = TextAnchor.MiddleCenter;
+
+			AddColorBackButton(__instance);
+
+			Mod.PrintObject(__instance.gameObject);
+		}
+
+		private static void AddColorBackButton(uGUI_SignInput __instance)
+		{
+			var currentButton = __instance.transform.GetChild(1).GetComponent<Button>();
+			if (currentButton != null)
+			{
+				var crt = (currentButton.transform as RectTransform);
+				var w = crt.rect.width;
+				var h = crt.rect.height;
+
+				var newButton = GameObject.Instantiate(currentButton);
+				newButton.name = "ColorSelectorBack";
+				newButton.transform.SetParent(__instance.transform, false);
+
+				var rt = newButton.transform as RectTransform;
+				RectTransformExtensions.SetSize(rt, w, h);
+				rt.anchoredPosition += new Vector2(0, 95);
+
+				var go = newButton.gameObject;
+				GameObject.DestroyImmediate(newButton);
+				newButton = go.AddComponent<Button>();
+				newButton.transition = currentButton.transition;
+				newButton.targetGraphic = go.GetComponentInChildren<Image>();
+				newButton.colors = currentButton.colors;
+
+				newButton.onClick.RemoveAllListeners();
+				var instance = __instance;
+				newButton.onClick.AddListener(() => {
+					int old = instance.colorIndex;
+					int c = instance.colorIndex - 1;
+					int newColor = ((c < 0) ? instance.colors.Length + c : c);
+					__instance.colorIndex = newColor;
+				});
+
+				currentButton.GetComponentInChildren<Image>().sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("color_down.png"));
+				newButton.GetComponentInChildren<Image>().sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("color_up.png"));
+
+				__instance.editOnly = __instance.editOnly.Add(newButton.gameObject).ToArray();
+				__instance.colorizedElements = __instance.colorizedElements.Add(newButton.GetComponentInChildren<Image>()).ToArray();
+			}
+		}
+
+		private static void SetColorPrevious(uGUI_SignInput __instance)
+		{
+			int num = __instance.colorIndex - 1;
+			__instance.colorIndex = ((num < 0) ? __instance.colors.Length - 1 : num);
 		}
 
 		private static void PatchSign(uGUI_SignInput __instance)
 		{
-			__instance.inputField.characterLimit = 100;
+			__instance.inputField.lineType = InputField.LineType.MultiLineNewline;
+			__instance.inputField.characterLimit = Mod.config.SignTextLimit;
 		}
 
 		private static void AddColors(uGUI_SignInput __instance)
@@ -75,6 +127,11 @@ namespace LongLockerNames.Patches
 				new Color(192 / 255f, 192 / 255f, 192 / 255f),
 				new Color(112 / 255f, 128 / 255f, 144 / 255f)
 			}).ToArray();
+
+			if (Mod.config.AdditionalColors != null)
+			{
+				__instance.colors = __instance.colors.Concat(Mod.config.AdditionalColors).ToArray();
+			}
 		}
 	}
 }

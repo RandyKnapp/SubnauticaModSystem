@@ -76,7 +76,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Mod.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
     <Compile Include="Patches\uGUI_SignInput_Awake_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -85,6 +87,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utility\ImageUtils.cs" />
+    <Compile Include="Utility\SimpleJSON.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />
