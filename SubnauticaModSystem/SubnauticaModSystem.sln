@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueprintTracker", "Bluepri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuitToDesktop", "QuitToDesktop\QuitToDesktop.csproj", "{BFFEC1AE-67D2-4CBA-B76B-76DF2BA9C053}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LongLockerNames", "LongLockerNames\LongLockerNames.csproj", "{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{BFFEC1AE-67D2-4CBA-B76B-76DF2BA9C053}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFFEC1AE-67D2-4CBA-B76B-76DF2BA9C053}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFFEC1AE-67D2-4CBA-B76B-76DF2BA9C053}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

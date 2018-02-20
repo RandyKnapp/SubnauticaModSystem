@@ -1,0 +1,11 @@
+{
+  "Id": "LongLockerNames",
+  "DisplayName": "LongLockerNames",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "LongLockerNames.dll",
+  "EntryMethod": "LongLockerNames.QPatch.Patch",
+  "Config": {}
+}
