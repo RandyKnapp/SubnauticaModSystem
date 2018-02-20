@@ -8,6 +8,9 @@ namespace LongLockerNames
 	{
 		public int SmallLockerTextLimit = 60;
 		public int SignTextLimit = 100;
-		public Color[] AdditionalColors = null;
+		public bool ColorPickerOnLockers = true;
+		public bool ExtraColorsOnLockers = true;
+		public bool ColorPickerOnSigns = true;
+		public bool ExtraColorsOnSigns = true;
 	}
 }

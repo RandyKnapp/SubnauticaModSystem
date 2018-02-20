@@ -9,6 +9,10 @@
   "EntryMethod": "LongLockerNames.QPatch.Patch",
   "Config": {
     "SmallLockerTextLimit": 60,
-    "SignTextLimit": 100
+    "SignTextLimit": 100,
+    "ColorPickerOnLockers": true,
+    "ExtraColorsOnLockers": true,
+    "ColorPickerOnSigns": true,
+    "ExtraColorsOnSigns": true
   }
 }

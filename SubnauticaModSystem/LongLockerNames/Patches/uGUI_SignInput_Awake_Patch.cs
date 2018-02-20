@@ -66,11 +66,15 @@ namespace LongLockerNames.Patches
 
 			__instance.inputField.textComponent.alignment = TextAnchor.MiddleCenter;
 
-			var currentButton = __instance.transform.GetChild(1).GetComponent<Button>();
-			AddColorPickerSystem(__instance, currentButton, "LOCKER", -20);
+			if (Mod.config.ColorPickerOnLockers)
+			{
+				var currentButton = __instance.transform.GetChild(1).GetComponent<Button>();
+				var height = Mod.config.ExtraColorsOnLockers ? 1200 : 210;
+				AddColorPickerSystem(__instance, currentButton, "LOCKER", -20, height);
+			}
 		}
 
-		private static void AddColorPickerSystem(uGUI_SignInput __instance, Button currentButton, string label, int xOffset)
+		private static void AddColorPickerSystem(uGUI_SignInput __instance, Button currentButton, string label, int xOffset, int pickerHeight)
 		{
 			if (currentButton != null)
 			{
@@ -79,7 +83,7 @@ namespace LongLockerNames.Patches
 					CreateButtonPrefab();
 				}
 
-				var picker = AddColorPicker(__instance, label, xOffset);
+				var picker = AddColorPicker(__instance, label, xOffset, pickerHeight);
 
 				var go = currentButton.gameObject;
 				GameObject.DestroyImmediate(currentButton);
@@ -115,14 +119,14 @@ namespace LongLockerNames.Patches
 			go.SetActive(true);
 		}
 
-		private static GameObject AddColorPicker(uGUI_SignInput __instance, string label, int xOffset)
+		private static GameObject AddColorPicker(uGUI_SignInput __instance, string label, int xOffset, int pickerHeight)
 		{
 			var picker = new GameObject("ColorPicker", typeof(RectTransform));
 			picker.SetActive(false);
 
 			var rt = picker.transform as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), __instance.transform);
-			RectTransformExtensions.SetSize(rt, 430, 1200);
+			RectTransformExtensions.SetSize(rt, 430, pickerHeight);
 			rt.anchoredPosition += new Vector2(xOffset, 0);
 
 			var image = picker.gameObject.AddComponent<Image>();
@@ -183,13 +187,27 @@ namespace LongLockerNames.Patches
 		private static void PatchSign(uGUI_SignInput __instance)
 		{
 			__instance.inputField.characterLimit = Mod.config.SignTextLimit;
-			var currentButton = __instance.transform.GetChild(0).GetChild(8).GetComponent<Button>();
-			AddColorPickerSystem(__instance, currentButton, "SIGN", -100);
+
+			if (Mod.config.ColorPickerOnSigns)
+			{
+				var currentButton = __instance.transform.GetChild(0).GetChild(8).GetComponent<Button>();
+				var height = Mod.config.ExtraColorsOnSigns ? 1200 : 210 + 55;
+				AddColorPickerSystem(__instance, currentButton, "SIGN", -100, height);
+			}
 		}
 
 		private static void AddColors(uGUI_SignInput __instance)
 		{
 			var originalColorCount = __instance.colors.Length;
+
+			if (originalColorCount == 7 && !Mod.config.ExtraColorsOnLockers)
+			{
+				return;
+			}
+			if (originalColorCount == 8 && !Mod.config.ExtraColorsOnSigns)
+			{
+				return;
+			}
 
 			var newColors = new Color[] {
 				rgb(205, 92, 92),
@@ -325,11 +343,6 @@ namespace LongLockerNames.Patches
 			}
 
 			__instance.colors = __instance.colors.Concat(newColors).ToArray();
-
-			if (Mod.config.AdditionalColors != null)
-			{
-				__instance.colors = __instance.colors.Concat(Mod.config.AdditionalColors).ToArray();
-			}
 		}
 
 		private static Color rgb(int r, int g, int b)
