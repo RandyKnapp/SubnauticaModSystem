@@ -1,4 +1,6 @@
-﻿namespace LongLockerNames
+﻿using UnityEngine;
+
+namespace LongLockerNames
 {
 	// QMods by qwiso https://github.com/Qwiso/QModManager
 	public static class QPatch
