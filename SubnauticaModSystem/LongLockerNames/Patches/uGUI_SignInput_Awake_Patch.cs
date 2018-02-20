@@ -69,7 +69,7 @@ namespace LongLockerNames.Patches
 
 				var rt = newButton.transform as RectTransform;
 				RectTransformExtensions.SetSize(rt, w, h);
-				rt.anchoredPosition += new Vector2(0, 95);
+				rt.anchoredPosition += new Vector2(0, 96);
 
 				var go = newButton.gameObject;
 				GameObject.DestroyImmediate(newButton);
