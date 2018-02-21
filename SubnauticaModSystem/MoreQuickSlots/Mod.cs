@@ -14,11 +14,20 @@ namespace MoreQuickSlots
 		public static Config config;
 
 		private static string modDirectory;
+		private static string[] keys = new string[MaxSlots];
 
 		public static void Patch(string modDirectory = null)
 		{
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
 			LoadConfig();
+
+			keys[5] = config.Slot6Key;
+			keys[6] = config.Slot7Key;
+			keys[7] = config.Slot8Key;
+			keys[8] = config.Slot9Key;
+			keys[9] = config.Slot10Key;
+			keys[10] = config.Slot11Key;
+			keys[11] = config.Slot12Key;
 
 			HarmonyInstance harmony = HarmonyInstance.Create("com.morequickslots.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
@@ -62,20 +71,23 @@ namespace MoreQuickSlots
 			}
 		}
 
-		public static KeyCode GetKeyCodeForSlot(int slotID)
+		public static string GetInputForSlot(int slotID)
 		{
-			if (slotID == 9) return KeyCode.Alpha0;
-			if (slotID == 10) return KeyCode.Minus;
-			if (slotID == 11) return KeyCode.Equals;
-			else return KeyCode.Alpha1 + slotID;
+			if (slotID < Player.quickSlotButtonsCount)
+			{
+				return GameInput.GetBindingName(GameInput.Button.Slot1 + slotID, GameInput.BindingSet.Primary);
+			}
+			if (slotID < 0 || slotID >= MaxSlots)
+			{
+				return "???";
+			}
+
+			return keys[slotID];
 		}
 
-		public static string GetHintTextForSlot(int slotID)
+		public static bool GetKeyDownForSlot(int slotID)
 		{
-			if (slotID == 9) return "0";
-			if (slotID == 10) return "-";
-			if (slotID == 11) return "=";
-			else return (slotID + 1).ToString();
+			return slotID >= Player.quickSlotButtonsCount && slotID < Mod.MaxSlots && Input.GetKeyDown(Mod.GetInputForSlot(slotID));
 		}
 	}
 }

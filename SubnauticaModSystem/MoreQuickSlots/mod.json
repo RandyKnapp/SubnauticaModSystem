@@ -9,6 +9,13 @@
   "EntryMethod": "MoreQuickSlots.QPatch.Patch",
   "Config": {
     "SlotCount": 12,
-    "ShowInputText": true
+    "ShowInputText": true,
+    "Slot6Key": "6",
+    "Slot7Key": "7",
+    "Slot8Key": "8",
+    "Slot9Key": "9",
+    "Slot10Key": "0",
+    "Slot11Key": "-",
+    "Slot12Key": "="
   }
 }

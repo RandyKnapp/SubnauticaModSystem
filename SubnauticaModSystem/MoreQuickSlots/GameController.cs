@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MoreQuickSlots.Patches;
+using System;
+using System.Collections;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -7,6 +10,10 @@ namespace MoreQuickSlots
 {
 	public class GameController : MonoBehaviour
 	{
+		private static FieldInfo uGUI_QuickSlots_icons = typeof(uGUI_QuickSlots).GetField("icons", BindingFlags.NonPublic | BindingFlags.Instance);
+
+		private bool createdLabels = false;
+
 		private void Awake()
 		{
 			Logger.Log("GameController Added");
@@ -24,67 +31,120 @@ namespace MoreQuickSlots
 				return;
 			}
 
+			if (!createdLabels && Mod.config.ShowInputText)
+			{
+				var quickSlots = GameObject.FindObjectsOfType<uGUI_QuickSlots>();
+				foreach (var quickSlotInstance in quickSlots)
+				{
+					if (quickSlotInstance != null)
+					{
+						AddHotkeyLabels(quickSlotInstance);
+						if (createdLabels)
+						{
+							break;
+						}
+					}
+				}
+			}
+
+			if (CanSetQuickSlots())
+			{
+				for (int i = Player.quickSlotButtonsCount; i < Mod.config.SlotCount; ++i)
+				{
+					if (Mod.GetKeyDownForSlot(i))
+					{
+						SelectQuickSlot(i);
+					}
+				}
+			}
+		}
+
+		private bool CanSetQuickSlots()
+		{
 			if (Inventory.main == null)
+			{
+				return false;
+			}
+
+			bool isIntroActive = IntroVignette.isIntroActive;
+			if (isIntroActive)
+			{
+				return false;
+			}
+
+			Player player = Player.main;
+			return player != null && player.GetMode() != Player.Mode.Piloting && player.GetCanItemBeUsed();
+		}
+		
+		private void SelectQuickSlot(int slotID)
+		{
+			Inventory.main.quickSlots.SlotKeyDown(slotID);
+		}
+
+		public void AddHotkeyLabels(uGUI_QuickSlots instance)
+		{
+			if (instance == null || !instance.gameObject.activeSelf || !instance.gameObject.activeInHierarchy)
+			{
+				return;
+			}
+			
+			Text textPrefab = GetTextPrefab();
+			if (textPrefab == null)
 			{
 				return;
 			}
 
-			for (int i = Player.quickSlotButtonsCount; i < Mod.config.SlotCount; ++i)
+			uGUI_ItemIcon[] icons = (uGUI_ItemIcon[])uGUI_QuickSlots_icons.GetValue(instance);
+			if (icons == null || icons.Length == 0)
 			{
-				KeyCode key = Mod.GetKeyCodeForSlot(i);
-				if (Input.GetKeyDown(key))
-				{
-					SelectQuickSlot(i);
-				}
+				return;
 			}
 
-			/*if (Input.GetKeyDown(KeyCode.I)) MoveAllLabels(new Vector2(0, 1));
-			if (Input.GetKeyDown(KeyCode.K)) MoveAllLabels(new Vector2(0, -1));
-			if (Input.GetKeyDown(KeyCode.J)) MoveAllLabels(new Vector2(-1, 0));
-			if (Input.GetKeyDown(KeyCode.L)) MoveAllLabels(new Vector2(1, 0));
-			if (Input.GetKeyDown(KeyCode.U)) SetTextSize(-1);
-			if (Input.GetKeyDown(KeyCode.O)) SetTextSize(1);*/
+			for (int i = 0; i < icons.Length; ++i)
+			{
+				uGUI_ItemIcon icon = icons[i];
+				var text = CreateNewText(textPrefab, icon.transform, Mod.GetInputForSlot(i), i);
+			}
+
+			createdLabels = true;
 		}
 
-		/*private void MoveAllLabels(Vector2 offset)
+		private static Text GetTextPrefab()
 		{
-			GameObject[] labels = GetAllLabels();
-			foreach(var label in labels)
+			var prefabObject = GameObject.FindObjectOfType<HandReticle>();
+			if (prefabObject == null)
 			{
-				RectTransform rt = label.transform as RectTransform;
-				rt.anchoredPosition = rt.anchoredPosition + offset;
+				return null;
 			}
-			Logger.Log("Label Position = " + (labels[0].transform as RectTransform).anchoredPosition);
-		}*/
 
-		/*private void SetTextSize(int offset)
-		{
-			GameObject[] labels = GetAllLabels();
-			foreach (var label in labels)
+			Text prefab = prefabObject.interactPrimaryText;
+			if (prefab == null)
 			{
-				Text t = label.GetComponent<Text>();
-				t.fontSize = t.fontSize + offset;
+				return null;
 			}
-			Logger.Log("Label Font Size = " + labels[0].GetComponent<Text>().fontSize);
-		}*/
 
-		private GameObject[] GetAllLabels()
-		{
-			GameObject[] labels = new GameObject[Mod.config.SlotCount];
-			for (int i = 0; i < Mod.config.SlotCount; ++i)
-			{
-				GameObject label = GameObject.Find("QuickSlotText" + i.ToString());
-				if (label != null)
-				{
-					labels[i] = label;
-				}
-			}
-			return labels;
+			return prefab;
 		}
 
-		private void SelectQuickSlot(int slotID)
+		private static Text CreateNewText(Text prefab, Transform parent, string newText, int index = -1)
 		{
-			Inventory.main.quickSlots.Select(slotID);
+			Text text = GameObject.Instantiate(prefab);
+			text.gameObject.layer = parent.gameObject.layer;
+			text.gameObject.name = "QuickSlotText" + (index >= 0 ? index.ToString() : "");
+			text.transform.SetParent(parent, false);
+			text.transform.localScale = new Vector3(1, 1, 1);
+			text.gameObject.SetActive(true);
+			text.enabled = true;
+			text.text = newText;
+			text.fontSize = 17;
+			RectTransformExtensions.SetParams(text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 100);
+			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100);
+			text.rectTransform.anchoredPosition = new Vector3(0, -36);
+			text.alignment = TextAnchor.MiddleCenter;
+			text.raycastTarget = false;
+
+			return text;
 		}
 	}
 }

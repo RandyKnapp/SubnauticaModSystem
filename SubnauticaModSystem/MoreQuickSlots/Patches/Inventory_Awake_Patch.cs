@@ -1,6 +1,7 @@
 ﻿using Harmony;
 using System;
 using System.Reflection;
+using UnityEngine;
 
 namespace MoreQuickSlots.Patches
 {

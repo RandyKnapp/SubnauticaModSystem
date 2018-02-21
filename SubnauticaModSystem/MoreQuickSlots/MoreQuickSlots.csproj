@@ -92,7 +92,6 @@
     <Compile Include="Utility\SimpleJSON.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="info.json" />
     <None Include="mod.json" />
   </ItemGroup>
   <ItemGroup>
