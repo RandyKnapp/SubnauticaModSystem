@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Mod;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +81,7 @@ namespace BlueprintTracker
 
 			if (!mainIcon)
 			{
-				text = Mod.InstantiateNewText("Text", transform);
+				text = ModUtils.InstantiateNewText("Text", transform);
 				RectTransformExtensions.SetSize(text.rectTransform, Width, Width);
 				text.rectTransform.anchorMin = new Vector2(0.5f, 0);
 				text.rectTransform.anchorMax = new Vector2(0.5f, 0);
