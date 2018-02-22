@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>dd1d2dc7-3bdc-4dc1-99c8-2d0ccbf2b171</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Common</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\ImageUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\ModUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\SimpleJSON.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Utility\" />
+  </ItemGroup>
+</Project>

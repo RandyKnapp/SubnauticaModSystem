@@ -112,7 +112,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace BlueprintTracker
+namespace Common.Utility
 {
 	public enum JSONNodeType
 	{

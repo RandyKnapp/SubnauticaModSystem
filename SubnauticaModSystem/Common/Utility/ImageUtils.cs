@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace LongLockerNames.Utility
+namespace Common.Utility
 {
 	public static class ImageUtils
 	{
@@ -32,7 +32,7 @@ namespace LongLockerNames.Utility
 			}
 			else
 			{
-				Logger.Error("File not found " + path);
+				Console.WriteLine("[ImageUtils] ERROR: File not found " + path);
 			}
 			return null;
 		}

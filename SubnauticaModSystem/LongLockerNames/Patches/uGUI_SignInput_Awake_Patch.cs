@@ -1,12 +1,6 @@
 ﻿using Harmony;
-using LongLockerNames.Utility;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace LongLockerNames.Patches
