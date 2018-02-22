@@ -17,32 +17,37 @@ namespace AutosortLockers.Patches
 
 		private static void Postfix()
 		{
-			GameObject prefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
-			GameObject newPrefab = GameObject.Instantiate(prefab);
 			TechType techType = (TechType)CustomTechType.AutosortLocker;
 			string classID = PrefabPrefix + CustomTechType.AutosortLocker;
 
-			newPrefab.name = CustomTechType.AutosortLocker.ToString();
-			var meshRenderers = newPrefab.GetComponentsInChildren<MeshRenderer>();
-			foreach (var meshRenderer in meshRenderers)
+			GameObject newPrefab = BuilderUtils.GetPrefab(techType);
+			if (newPrefab == null)
 			{
-				meshRenderer.material.color = new Color(1, 0, 0);
+				GameObject prefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+				newPrefab = GameObject.Instantiate(prefab);
+
+				newPrefab.name = CustomTechType.AutosortLocker.ToString();
+				var meshRenderers = newPrefab.GetComponentsInChildren<MeshRenderer>();
+				foreach (var meshRenderer in meshRenderers)
+				{
+					meshRenderer.material.color = new Color(1, 0, 0);
+				}
+
+				var constructable = newPrefab.GetComponent<Constructable>();
+				constructable.techType = techType;
+
+				var techTag = newPrefab.GetComponent<TechTag>();
+				techTag.type = techType;
+
+				var prefabIdentifier = newPrefab.GetComponent<PrefabIdentifier>();
+				prefabIdentifier.ClassId = classID;
+
+				ModUtils.PrintObject(newPrefab);
+				BuilderUtils.AddPrefab(techType, classID, newPrefab);
 			}
-
-			var constructable = newPrefab.GetComponent<Constructable>();
-			constructable.techType = techType;
-
-			var techTag = newPrefab.GetComponent<TechTag>();
-			techTag.type = techType;
-
-			var prefabIdentifier = newPrefab.GetComponent<PrefabIdentifier>();
-			prefabIdentifier.ClassId = classID;
-
-			ModUtils.PrintObject(newPrefab);
 
 			PrefabDatabase.prefabFiles.Add(classID, classID);
 			PrefabDatabase.AddToCache(classID, newPrefab);
-			BuilderUtils.AddPrefab(techType, classID, newPrefab);
 		}
 	}
 

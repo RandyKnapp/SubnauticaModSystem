@@ -43,6 +43,8 @@ namespace AutosortLockers
 				techCategory = TechCategory.InteriorModule,
 				knownAtStart = true,
 				assetPath = "Submarine/Build/AutosortLocker",
+				displayString = "Autosort Locker",
+				techTypeKey = CustomTechType.AutosortLocker.ToString(),
 				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(GetAssetPath("AutosortLocker.png"))),
 				recipe = new List<CustomIngredient>
 				{

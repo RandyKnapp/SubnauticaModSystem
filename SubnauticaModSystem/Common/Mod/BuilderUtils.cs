@@ -13,6 +13,13 @@ namespace Common.Mod
 		private static FieldInfo CraftData_techData = typeof(CraftData).GetField("techData", BindingFlags.NonPublic | BindingFlags.Static);
 		private static FieldInfo CraftData_techMapping = typeof(CraftData).GetField("techMapping", BindingFlags.NonPublic | BindingFlags.Static);
 
+		private static Dictionary<TechType, string> TechType_stringsNormal			= (Dictionary<TechType, string>)typeof(TechTypeExtensions).GetField("stringsNormal", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+		private static Dictionary<TechType, string> TechType_stringsLowercase		= (Dictionary<TechType, string>)typeof(TechTypeExtensions).GetField("stringsLowercase", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+		private static Dictionary<string, TechType> TechType_techTypesNormal		= (Dictionary<string, TechType>)typeof(TechTypeExtensions).GetField("techTypesNormal", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+		private static Dictionary<string, TechType> TechType_techTypesIgnoreCase	= (Dictionary<string, TechType>)typeof(TechTypeExtensions).GetField("techTypesIgnoreCase", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+		private static Dictionary<TechType, string> TechType_techTypeKeys			= (Dictionary<TechType, string>)typeof(TechTypeExtensions).GetField("techTypeKeys", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+		private static Dictionary<string, TechType> TechType_keyTechTypes			= (Dictionary<string, TechType>)typeof(TechTypeExtensions).GetField("keyTechTypes", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+
 		private static readonly Dictionary<TechType, CustomTechInfo> techData = new Dictionary<TechType, CustomTechInfo>();
 		private static readonly Dictionary<TechType, GameObject> prefabsByTechType = new Dictionary<TechType, GameObject>();
 		private static readonly Dictionary<string, GameObject> prefabsByClassID = new Dictionary<string, GameObject>();
@@ -38,6 +45,15 @@ namespace Common.Mod
 			{
 				Console.WriteLine("-" + techType);
 			}
+
+			string techTypeKey = info.techTypeKey;
+			string intValueString = ((int)(info.techType)).ToString();
+			TechType_stringsNormal[info.techType] = techTypeKey;
+			TechType_stringsLowercase[info.techType] = techTypeKey.ToLower();
+			TechType_techTypesNormal[techTypeKey] = info.techType;
+			TechType_techTypesIgnoreCase[techTypeKey] = info.techType;
+			TechType_techTypeKeys.Add(info.techType, intValueString);
+			TechType_keyTechTypes.Add(intValueString, info.techType);
 
 			Console.WriteLine("[BuilderUtils] Added builder entry for " + info.techType);
 		}
@@ -113,9 +129,29 @@ namespace Common.Mod
 			return info;
 		}
 
+		public static CustomTechInfo GetCustomTechDataByKey(string key)
+		{
+			foreach (var entry in techData)
+			{
+				if (entry.Key.ToString() == key)
+				{
+					return entry.Value;
+				}
+			}
+
+			return null;
+		}
+
 		public static ITechData GetTechData(TechType techType)
 		{
 			return GetCustomTechData(techType);
 		}
+
+		/*private static Dictionary<TechType, string> stringsNormal;
+		private static Dictionary<TechType, string> stringsLowercase;
+		private static Dictionary<string, TechType> techTypesNormal;
+		private static Dictionary<string, TechType> techTypesIgnoreCase;
+		private static Dictionary<TechType, string> techTypeKeys;
+		private static Dictionary<string, TechType> keyTechTypes;*/
 	}
 }

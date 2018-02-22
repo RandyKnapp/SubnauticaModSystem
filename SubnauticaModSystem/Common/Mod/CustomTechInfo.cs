@@ -21,6 +21,8 @@ namespace Common.Mod
 		public string assetPath;
 		public bool knownAtStart;
 		public Atlas.Sprite sprite;
+		public string displayString;
+		public string techTypeKey;
 		public List<CustomIngredient> recipe = new List<CustomIngredient>();
 		public List<TechType> linkedItems = new List<TechType>();
 
