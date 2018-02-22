@@ -30,20 +30,29 @@ namespace LongLockerNames.Patches
 
 		private static void Postfix(uGUI_SignInput __instance)
 		{
-			AddColors(__instance);
 			if (IsOnSmallLocker(__instance))
 			{
+				AddColors(__instance);
 				PatchSmallLocker(__instance);
 			}
-			else
+			else if (IsOnSign(__instance))
 			{
+				AddColors(__instance);
 				PatchSign(__instance);
 			}
 		}
 
 		private static bool IsOnSmallLocker(uGUI_SignInput __instance)
 		{
-			return __instance.inputField.characterLimit == 10;
+			var root = __instance.gameObject.GetComponentInParent<Constructable>();
+			return root.gameObject.name.Contains("SmallLocker");
+		}
+
+		private static bool IsOnSign(uGUI_SignInput __instance)
+		{
+			var root = __instance.gameObject.GetComponentInParent<Constructable>();
+			Logger.Log("IsOnSign: " + root.gameObject.name);
+			return root.gameObject.name.Contains("Sign");
 		}
 
 		private static void PatchSmallLocker(uGUI_SignInput __instance)

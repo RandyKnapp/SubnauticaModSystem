@@ -9,12 +9,13 @@
     <Import_RootNamespace>Common</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Mod\BuilderUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mod\CustomTechInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ImageUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\ModUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SimpleJSON.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Mod\" />
     <Folder Include="$(MSBuildThisFileDirectory)Utility\" />
   </ItemGroup>
 </Project>
