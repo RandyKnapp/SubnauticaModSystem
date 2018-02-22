@@ -17,10 +17,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LongLockerNames", "LongLock
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common", "Common\Common.shproj", "{DD1D2DC7-3BDC-4DC1-99C8-2D0CCBF2B171}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutosortLockers", "AutosortLockers\AutosortLockers.csproj", "{6C883B28-31E6-4C26-B32B-BF5BE0D70190}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{0d86304e-0a53-422a-99e6-0c687d9dbbc6}*SharedItemsImports = 4
 		Common\Common.projitems*{2b390daa-56b9-42d9-bad4-8a47736c0563}*SharedItemsImports = 4
+		Common\Common.projitems*{6c883b28-31e6-4c26-b32b-bf5be0d70190}*SharedItemsImports = 4
 		Common\Common.projitems*{7b7cdbe9-9fac-4e28-a42c-80a21066d7ab}*SharedItemsImports = 4
 		Common\Common.projitems*{cf7e5ea0-ee32-4330-af9c-e720e9a64681}*SharedItemsImports = 4
 		Common\Common.projitems*{dd1d2dc7-3bdc-4dc1-99c8-2d0ccbf2b171}*SharedItemsImports = 13
@@ -54,6 +57,10 @@ Global
 		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

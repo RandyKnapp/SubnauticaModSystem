@@ -1,0 +1,12 @@
+{
+  "Id": "AutosortLockers",
+  "DisplayName": "AutosortLockers",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "AutosortLockers.dll",
+  "EntryMethod": "AutosortLockers.QPatch.Patch",
+  "Config": {
+  }
+}
