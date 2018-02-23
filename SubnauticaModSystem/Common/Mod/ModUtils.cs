@@ -125,5 +125,28 @@ namespace Common.Mod
 		{
 			return Path.Combine(Path.Combine(Path.GetFullPath("SNAppData"), "SavedGames"), Utils.GetSavegameDir());
 		}
+
+		public static GameObject GetChildByName(GameObject parent, string name, bool recursive = false)
+		{
+			GameObject found = null;
+			foreach (Transform child in parent.transform)
+			{
+				if (child.gameObject.name == name)
+				{
+					found = child.gameObject;
+					break;
+				}
+
+				if (found == null && recursive)
+				{
+					found = GetChildByName(child.gameObject, name, recursive);
+					if (found != null)
+					{
+						break;
+					}
+				}
+			}
+			return found;
+		}
 	}
 }

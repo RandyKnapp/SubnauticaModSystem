@@ -13,13 +13,7 @@ namespace AutosortLockers
 	{
 		private void Awake()
 		{
-			gameObject.name = "Autosorter";
-
-			var meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-			foreach (var meshRenderer in meshRenderers)
-			{
-				meshRenderer.material.color = new Color(1, 0, 0);
-			}
+			
 		}
 
 
@@ -65,6 +59,30 @@ namespace AutosortLockers
 		{
 			GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
+
+			prefab.name = "Autosorter";
+
+			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
+			foreach (var meshRenderer in meshRenderers)
+			{
+				meshRenderer.material.color = new Color(1, 0, 0);
+			}
+
+			var label = ModUtils.GetChildByName(prefab, "Label");
+			DestroyImmediate(label.GetComponent<ColoredLabel>());
+			DestroyImmediate(label.GetComponent<ChildObjectIdentifier>());
+
+			var image = label.AddComponent<Image>();
+			image.color = new Color(1, 1, 1, 0.5f);
+
+			foreach (Transform child in label.transform)
+			{
+				DestroyImmediate(child.gameObject);
+			}
+
+			var text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
+			text.transform.SetParent(label.transform, false);
+			text.text = "Autosorter";
 
 			prefab.AddComponent<AutosortLocker>();
 

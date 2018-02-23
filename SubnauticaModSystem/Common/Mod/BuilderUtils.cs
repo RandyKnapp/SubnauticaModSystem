@@ -52,7 +52,7 @@ namespace Common.Mod
 			string tooltipKey = "Tooltip_" + info.techTypeKey;
 			valueToString[info.techType] = tooltipKey;
 
-			Console.WriteLine("[BuilderUtils] Added builder entry for " + info.techType);
+			Console.WriteLine("[BuilderUtils] Added builder entry for " + info.techTypeKey + " (" + info.techType + ")");
 		}
 
 		public static void OnTechMappingInitialized()

@@ -22,6 +22,11 @@ namespace AutosortLockers
 			}
 		}
 
+		private void Update()
+		{
+
+		}
+
 
 		public static void AddBuildable()
 		{
