@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace Common.Mod
 {
+	public delegate GameObject GetPrefabDelegate();
+
 	public class CustomIngredient : IIngredient
 	{
 		public TechType techType;
@@ -15,7 +18,10 @@ namespace Common.Mod
 
 	public class CustomTechInfo : ITechData
 	{
+		public GetPrefabDelegate getPrefab;
+
 		public TechType techType;
+		public string classID;
 		public TechGroup techGroup;
 		public TechCategory techCategory;
 		public string assetPath;

@@ -17,37 +17,7 @@ namespace AutosortLockers.Patches
 
 		private static void Postfix()
 		{
-			TechType techType = (TechType)CustomTechType.AutosortLocker;
-			string classID = PrefabPrefix + CustomTechType.AutosortLocker;
-
-			GameObject newPrefab = BuilderUtils.GetPrefab(techType);
-			if (newPrefab == null)
-			{
-				GameObject prefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
-				newPrefab = GameObject.Instantiate(prefab);
-
-				newPrefab.name = CustomTechType.AutosortLocker.ToString();
-				var meshRenderers = newPrefab.GetComponentsInChildren<MeshRenderer>();
-				foreach (var meshRenderer in meshRenderers)
-				{
-					meshRenderer.material.color = new Color(1, 0, 0);
-				}
-
-				var constructable = newPrefab.GetComponent<Constructable>();
-				constructable.techType = techType;
-
-				var techTag = newPrefab.GetComponent<TechTag>();
-				techTag.type = techType;
-
-				var prefabIdentifier = newPrefab.GetComponent<PrefabIdentifier>();
-				prefabIdentifier.ClassId = classID;
-
-				ModUtils.PrintObject(newPrefab);
-				BuilderUtils.AddPrefab(techType, classID, newPrefab);
-			}
-
-			PrefabDatabase.prefabFiles.Add(classID, classID);
-			PrefabDatabase.AddToCache(classID, newPrefab);
+			BuilderUtils.OnPrefabDatabaseInitialized();
 		}
 	}
 
@@ -66,20 +36,4 @@ namespace AutosortLockers.Patches
 			return true;
 		}
 	}
-
-	/*[HarmonyPatch(typeof(PrefabDatabase))]
-	[HarmonyPatch("GetPrefabAsync")]
-	class PrefabDatabase_GetPrefabAsync_Patch
-	{
-		private static bool Prefix(ref IPrefabRequest __result, string classId)
-		{
-			var prefab = BuilderUtils.GetPrefab(classId);
-			if (prefab != null)
-			{
-				__result = new LoadedPrefabRequest(prefab);
-				return false;
-			}
-			return true;
-		}
-	}*/
 }

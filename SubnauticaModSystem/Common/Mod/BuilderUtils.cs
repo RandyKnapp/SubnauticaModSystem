@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using UWE;
 
 namespace Common.Mod
 {
@@ -104,6 +105,48 @@ namespace Common.Mod
 				strings[info.techTypeKey] = info.displayString;
 				strings[intValueString] = info.displayString;
 				strings[tooltipKey] = info.tooltip;
+			}
+		}
+
+		public static void OnPrefabDatabaseInitialized()
+		{
+			Console.WriteLine("[BuilderUtils] Initializing prefabs");
+			foreach (var entry in techData)
+			{
+				var info = entry.Value;
+				var prefab = GetPrefab(info.techType);
+				if (prefab == null && info.getPrefab != null)
+				{
+					prefab = info.getPrefab.Invoke();
+				}
+
+				if (prefab == null)
+				{
+					Console.WriteLine("[BuilderUtils] ERROR creating prefab for " + info.techTypeKey);
+					continue;
+				}
+
+				var constructable = prefab.GetComponent<Constructable>();
+				if (constructable != null)
+				{
+					constructable.techType = info.techType;
+				}
+
+				var techTag = prefab.GetComponent<TechTag>();
+				if (techTag != null)
+				{
+					techTag.type = info.techType;
+				}
+
+				var prefabIdentifier = prefab.GetComponent<PrefabIdentifier>();
+				if (prefabIdentifier != null)
+				{
+					prefabIdentifier.ClassId = info.assetPath;
+				}
+
+				AddPrefab(info.techType, info.assetPath, prefab);
+				PrefabDatabase.prefabFiles[info.assetPath] = info.assetPath;
+				PrefabDatabase.AddToCache(info.assetPath, prefab);
 			}
 		}
 

@@ -80,6 +80,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutosortTarget.cs" />
+    <Compile Include="AutosortLocker.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
