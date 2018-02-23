@@ -23,6 +23,7 @@ namespace Common.Mod
 		public Atlas.Sprite sprite;
 		public string displayString;
 		public string techTypeKey;
+		public string tooltip;
 		public List<CustomIngredient> recipe = new List<CustomIngredient>();
 		public List<TechType> linkedItems = new List<TechType>();
 

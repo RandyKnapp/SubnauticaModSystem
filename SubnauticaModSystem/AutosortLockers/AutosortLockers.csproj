@@ -88,6 +88,7 @@
     <Compile Include="Patches\CraftData_Get_Patch.cs" />
     <Compile Include="Patches\CraftData_PreparePrefabIDCache_Patch.cs" />
     <Compile Include="Patches\KnownTech_Initialize_Patch.cs" />
+    <Compile Include="Patches\Language_LoadLanguageFile_Patch.cs" />
     <Compile Include="Patches\PrefabDatabase_Patches.cs" />
     <Compile Include="Patches\SpriteManager_Get_Patch.cs" />
     <Compile Include="Patches\TechTypeExtensions_Patches.cs" />

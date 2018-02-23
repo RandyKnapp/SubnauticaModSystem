@@ -44,6 +44,7 @@ namespace AutosortLockers
 				knownAtStart = true,
 				assetPath = "Submarine/Build/AutosortLocker",
 				displayString = "Autosort Locker",
+				tooltip = "TOOLTIP TEXT",
 				techTypeKey = CustomTechType.AutosortLocker.ToString(),
 				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(GetAssetPath("AutosortLocker.png"))),
 				recipe = new List<CustomIngredient>

@@ -12,6 +12,8 @@ namespace Common.Mod
 		private static FieldInfo CraftData_buildables = typeof(CraftData).GetField("buildables", BindingFlags.NonPublic | BindingFlags.Static);
 		private static FieldInfo CraftData_techData = typeof(CraftData).GetField("techData", BindingFlags.NonPublic | BindingFlags.Static);
 		private static FieldInfo CraftData_techMapping = typeof(CraftData).GetField("techMapping", BindingFlags.NonPublic | BindingFlags.Static);
+		private static FieldInfo CachedEnumString_valueToString = typeof(CachedEnumString<TechType>).GetField("valueToString", BindingFlags.NonPublic | BindingFlags.Instance);
+		private static FieldInfo Language_strings = typeof(Language).GetField("strings", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		private static Dictionary<TechType, string> TechType_stringsNormal			= (Dictionary<TechType, string>)typeof(TechTypeExtensions).GetField("stringsNormal", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
 		private static Dictionary<TechType, string> TechType_stringsLowercase		= (Dictionary<TechType, string>)typeof(TechTypeExtensions).GetField("stringsLowercase", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
@@ -32,19 +34,9 @@ namespace Common.Mod
 
 			var groups = (Dictionary<TechGroup, Dictionary<TechCategory, List<TechType>>>)CraftData_groups.GetValue(null);
 			groups[info.techGroup][info.techCategory].Add(info.techType);
-			Console.WriteLine("[BuilderUtils] All entries in " + info.techGroup + ">" + info.techCategory + ":");
-			foreach (var techType in groups[info.techGroup][info.techCategory])
-			{
-				Console.WriteLine("-" + techType);
-			}
 
 			var buildables = (List<TechType>)CraftData_buildables.GetValue(null);
 			buildables.Add(info.techType);
-			Console.WriteLine("[BuilderUtils] All entries in buildabiles:");
-			foreach (var techType in buildables)
-			{
-				Console.WriteLine("-" + techType);
-			}
 
 			string techTypeKey = info.techTypeKey;
 			string intValueString = ((int)(info.techType)).ToString();
@@ -54,6 +46,10 @@ namespace Common.Mod
 			TechType_techTypesIgnoreCase[techTypeKey] = info.techType;
 			TechType_techTypeKeys.Add(info.techType, intValueString);
 			TechType_keyTechTypes.Add(intValueString, info.techType);
+
+			var valueToString = (Dictionary<TechType, string>)CachedEnumString_valueToString.GetValue(TooltipFactory.techTypeTooltipStrings);
+			string tooltipKey = "Tooltip_" + info.techTypeKey;
+			valueToString[info.techType] = tooltipKey;
 
 			Console.WriteLine("[BuilderUtils] Added builder entry for " + info.techType);
 		}
@@ -65,17 +61,12 @@ namespace Common.Mod
 				return;
 			}
 
+			Console.WriteLine("[BuilderUtils] Initializing tech mapping");
 			var techMapping = (Dictionary<TechType, string>)CraftData_techMapping.GetValue(null);
 			foreach (var entry in techData)
 			{
 				var info = entry.Value;
 				techMapping.Add(info.techType, info.assetPath);
-			}
-			
-			Console.WriteLine("[BuilderUtils] All entries in techMapping:");
-			foreach (var entry in techMapping)
-			{
-				Console.WriteLine("-" + entry.Key + ":" + entry.Value);
 			}
 
 			techMappingInitialized = true;
@@ -88,6 +79,7 @@ namespace Common.Mod
 				return;
 			}
 
+			Console.WriteLine("[BuilderUtils] Adding initially known blueprints to KnownTech");
 			foreach (var entry in techData)
 			{
 				var info = entry.Value;
@@ -98,6 +90,21 @@ namespace Common.Mod
 			}
 
 			knownTechInitialized = true;
+		}
+
+		public static void OnLanguageStringsInitialized()
+		{
+			Console.WriteLine("[BuilderUtils] Adding tooltip strings to language file");
+			Dictionary <string, string> strings = (Dictionary<string, string>)Language_strings.GetValue(Language.main);
+			foreach (var entry in techData)
+			{
+				var info = entry.Value;
+				string tooltipKey = "Tooltip_" + info.techTypeKey;
+				string intValueString = ((int)(info.techType)).ToString();
+				strings[info.techTypeKey] = info.displayString;
+				strings[intValueString] = info.displayString;
+				strings[tooltipKey] = info.tooltip;
+			}
 		}
 
 		public static void AddPrefab(TechType techType, string classID, GameObject prefab)
@@ -146,12 +153,5 @@ namespace Common.Mod
 		{
 			return GetCustomTechData(techType);
 		}
-
-		/*private static Dictionary<TechType, string> stringsNormal;
-		private static Dictionary<TechType, string> stringsLowercase;
-		private static Dictionary<string, TechType> techTypesNormal;
-		private static Dictionary<string, TechType> techTypesIgnoreCase;
-		private static Dictionary<TechType, string> techTypeKeys;
-		private static Dictionary<string, TechType> keyTechTypes;*/
 	}
 }
