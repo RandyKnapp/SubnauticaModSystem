@@ -43,11 +43,18 @@ namespace AutosortLockers
 				techCategory = TechCategory.InteriorModule,
 				knownAtStart = true,
 				assetPath = "Submarine/Build/AutosortLocker",
-				displayString = "Autosort Locker",
-				tooltip = "TOOLTIP TEXT",
+				displayString = "Autosorter",
+				tooltip = "Small, wall-mounted smart-locker that automatically transfers items into linked Autosort Receptacles.",
 				techTypeKey = CustomTechType.AutosortLocker.ToString(),
 				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(GetAssetPath("AutosortLocker.png"))),
-				recipe = new List<CustomIngredient>
+				recipe = config.EasyBuild
+				? new List<CustomIngredient> {
+					new CustomIngredient() {
+						techType = TechType.Titanium,
+						amount = 2
+					}
+				}
+				: new List <CustomIngredient>
 				{
 					new CustomIngredient() {
 						techType = TechType.Titanium,
@@ -59,6 +66,41 @@ namespace AutosortLockers
 					},
 					new CustomIngredient() {
 						techType = TechType.AluminumOxide,
+						amount = 2
+					}
+				}
+			});
+
+			Logger.Log("Add Buildable: " + CustomTechType.AutosortTarget);
+			BuilderUtils.AddBuildable(new CustomTechInfo() {
+				techType = GetTechType(CustomTechType.AutosortTarget),
+				techGroup = TechGroup.InteriorModules,
+				techCategory = TechCategory.InteriorModule,
+				knownAtStart = true,
+				assetPath = "Submarine/Build/AutosortTarget",
+				displayString = "Autosort Receptacle",
+				tooltip = "Wall locker linked to an Autosorter that stores the items.",
+				techTypeKey = CustomTechType.AutosortTarget.ToString(),
+				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(GetAssetPath("AutosortTarget.png"))),
+				recipe = config.EasyBuild
+				? new List<CustomIngredient> {
+					new CustomIngredient() {
+						techType = TechType.Titanium,
+						amount = 2
+					}
+				}
+				: new List<CustomIngredient>
+				{
+					new CustomIngredient() {
+						techType = TechType.Titanium,
+						amount = 2
+					},
+					new CustomIngredient() {
+						techType = TechType.UraniniteCrystal,
+						amount = 1
+					},
+					new CustomIngredient() {
+						techType = TechType.Magnetite,
 						amount = 1
 					}
 				}
