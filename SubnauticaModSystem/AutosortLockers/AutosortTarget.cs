@@ -11,21 +11,23 @@ namespace AutosortLockers
 {
 	public class AutosortTarget : MonoBehaviour
 	{
+		private StorageContainer container;
+
 		private void Awake()
 		{
-			gameObject.name = "AutosortReceptacle";
-
-			var meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-			foreach (var meshRenderer in meshRenderers)
-			{
-				meshRenderer.material.color = new Color(0.3f, 0.3f, 0.3f);
-			}
+			container = gameObject.GetComponent<StorageContainer>();
 		}
 
-		private void Update()
+		internal void AddItem(Pickupable item)
 		{
-
+			container.container.AddItem(item);
 		}
+
+		internal bool CanAddItem(Pickupable item)
+		{
+			return container.container.HasRoomFor(item);
+		}
+
 
 
 		public static void AddBuildable()
@@ -70,6 +72,14 @@ namespace AutosortLockers
 		{
 			GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
+
+			prefab.name = "AutosortReceptacle";
+
+			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
+			foreach (var meshRenderer in meshRenderers)
+			{
+				meshRenderer.material.color = new Color(0.3f, 0.3f, 0.3f);
+			}
 
 			prefab.AddComponent<AutosortTarget>();
 

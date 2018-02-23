@@ -8,5 +8,7 @@
   "AssemblyName": "AutosortLockers.dll",
   "EntryMethod": "AutosortLockers.QPatch.Patch",
   "Config": {
+    "EasyBuild": false,
+    "SortInterval": 1.0
   }
 }
