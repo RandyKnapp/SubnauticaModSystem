@@ -1,9 +1,8 @@
 ﻿using Common.Mod;
 using Common.Utility;
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,12 +10,112 @@ namespace AutosortLockers
 {
 	public class AutosortLocker : MonoBehaviour
 	{
+		private bool initialized;
+		private Constructable constructable;
+		private StorageContainer container;
+		private List<AutosortTarget> targets = new List<AutosortTarget>();
+		
 		private void Awake()
 		{
-			
+			constructable = GetComponent<Constructable>();
+			container = GetComponent<StorageContainer>();
+			targets.Clear();
+		}
+
+		private void Update()
+		{
+			if (!initialized && constructable._constructed && transform.parent != null)
+			{
+				Initialize();
+			}
+
+			if (!initialized || !constructable._constructed)
+			{
+				return;
+			}
+		}
+
+		private void Initialize()
+		{
+			Logger.Log("Autosorter Initialize");
+			var label = gameObject.FindChild("Label");
+			var labelPos = label.transform.position;
+			DestroyImmediate(label);
+
+			initialized = true;
+		}
+
+		private IEnumerator Start()
+		{
+			while (true)
+			{
+				yield return new WaitForSeconds(Mod.config.SortInterval);
+				
+				Sort();
+			}
+		}
+
+		private void AccumulateTargets()
+		{
+			targets.Clear();
+
+			BaseRoot baseRoot = gameObject.GetComponentInParent<BaseRoot>();
+			if (baseRoot == null)
+			{
+				return;
+			}
+
+			targets = baseRoot.GetComponentsInChildren<AutosortTarget>().ToList();
+		}
+
+		private void Sort()
+		{
+			if (!initialized || container.IsEmpty())
+			{
+				return;
+			}
+
+			AccumulateTargets();
+			if (targets.Count <= 0)
+			{
+				return;
+			}
+
+			Pickupable item = GetFirstItem();
+			container.container.RemoveItem(item, true);
+
+			AutosortTarget target = FindTarget(item);
+			if (target != null)
+			{
+				target.AddItem(item);
+			}
+		}
+
+		private Pickupable GetFirstItem()
+		{
+			foreach (var item in container.container)
+			{
+				return item.item;
+			}
+
+			return null;
+		}
+
+		private AutosortTarget FindTarget(Pickupable item)
+		{
+			foreach (AutosortTarget target in targets)
+			{
+				if (target.CanAddItem(item))
+				{
+					return target;
+				}
+			}
+			return null;
 		}
 
 
+
+		///////////////////////////////////////////////////////////////////////////////////////////
 		public static void AddBuildable()
 		{
 			BuilderUtils.AddBuildable(new CustomTechInfo() {
@@ -67,22 +166,6 @@ namespace AutosortLockers
 			{
 				meshRenderer.material.color = new Color(1, 0, 0);
 			}
-
-			var label = ModUtils.GetChildByName(prefab, "Label");
-			DestroyImmediate(label.GetComponent<ColoredLabel>());
-			DestroyImmediate(label.GetComponent<ChildObjectIdentifier>());
-
-			var image = label.AddComponent<Image>();
-			image.color = new Color(1, 1, 1, 0.5f);
-
-			foreach (Transform child in label.transform)
-			{
-				DestroyImmediate(child.gameObject);
-			}
-
-			var text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
-			text.transform.SetParent(label.transform, false);
-			text.text = "Autosorter";
 
 			prefab.AddComponent<AutosortLocker>();
 

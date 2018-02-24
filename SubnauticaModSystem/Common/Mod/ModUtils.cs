@@ -81,7 +81,7 @@ namespace Common.Mod
 			var lastC = obj.GetComponents<Component>().Last();
 			foreach (var c in obj.GetComponents<Component>())
 			{
-				Console.WriteLine(indent + "    " + c);
+				Console.WriteLine(indent + "    (" + c.GetType().ToString() + ")");
 			}
 			Console.WriteLine(indent + "  }");
 			Console.WriteLine(indent + "  Children:");

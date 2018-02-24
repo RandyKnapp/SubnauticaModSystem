@@ -126,6 +126,8 @@ namespace Common.Mod
 					continue;
 				}
 
+				prefab.SetActive(false);
+
 				var constructable = prefab.GetComponent<Constructable>();
 				if (constructable != null)
 				{
@@ -159,12 +161,20 @@ namespace Common.Mod
 		public static GameObject GetPrefab(TechType techType)
 		{
 			prefabsByTechType.TryGetValue(techType, out GameObject result);
+			if (result != null)
+			{
+				result.SetActive(true);
+			}
 			return result;
 		}
 
 		public static GameObject GetPrefab(string classID)
 		{
 			prefabsByClassID.TryGetValue(classID, out GameObject result);
+			if (result != null)
+			{
+				result.SetActive(true);
+			}
 			return result;
 		}
 

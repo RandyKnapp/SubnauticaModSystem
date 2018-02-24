@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Common.Utility
 {
@@ -16,7 +17,18 @@ namespace Common.Utility
 			{
 				return null;
 			}
-			return TextureToSprite(texture2D);
+			return TextureToSprite(texture2D, pixelsPerUnit, spriteType);
+		}
+
+		public static Sprite Load9SliceSprite(string path, RectOffset slices, TextureFormat format = TextureFormat.DXT5, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight)
+		{
+			Texture2D texture2D = ImageUtils.LoadTexture(path, format);
+			if (!texture2D)
+			{
+				return null;
+			}
+			Vector4 border = new Vector4(slices.left, slices.right, slices.top, slices.bottom);
+			return TextureToSprite(texture2D, pixelsPerUnit, spriteType, border);
 		}
 
 		public static Texture2D LoadTexture(string path, TextureFormat format = TextureFormat.DXT5)
@@ -37,9 +49,9 @@ namespace Common.Utility
 			return null;
 		}
 
-		public static Sprite TextureToSprite(Texture2D tex, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight)
+		public static Sprite TextureToSprite(Texture2D tex, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight, Vector4 border = new Vector4())
 		{
-			return Sprite.Create(tex, new Rect(0f, 0f, (float)tex.width, (float)tex.height), new Vector2(0f, 0f), pixelsPerUnit, 0u, spriteType);
+			return Sprite.Create(tex, new Rect(0f, 0f, (float)tex.width, (float)tex.height), new Vector2(0f, 0f), pixelsPerUnit, 0u, spriteType, border);
 		}
 	}
 }
