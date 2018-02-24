@@ -51,7 +51,6 @@ namespace LongLockerNames.Patches
 		private static bool IsOnSign(uGUI_SignInput __instance)
 		{
 			var root = __instance.gameObject.GetComponentInParent<Constructable>();
-			Logger.Log("IsOnSign: " + root.gameObject.name);
 			return root.gameObject.name.Contains("Sign");
 		}
 

@@ -36,4 +36,20 @@ namespace AutosortLockers.Patches
 			return true;
 		}
 	}
+
+	[HarmonyPatch(typeof(PrefabDatabase))]
+	[HarmonyPatch("GetPrefabAsync")]
+	class PrefabDatabase_GetPrefabAsync_Patch
+	{
+		private static bool Prefix(ref IPrefabRequest __result, string classId)
+		{
+			var prefab = BuilderUtils.GetPrefab(classId);
+			if (prefab != null)
+			{
+				__result = new LoadedPrefabRequest(prefab);
+				return false;
+			}
+			return true;
+		}
+	}
 }

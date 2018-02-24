@@ -115,6 +115,11 @@ namespace Common.Mod
 			{
 				var info = entry.Value;
 				var prefab = GetPrefab(info.techType);
+				if (prefab != null)
+				{
+					continue;
+				}
+
 				if (prefab == null && info.getPrefab != null)
 				{
 					prefab = info.getPrefab.Invoke();
@@ -144,6 +149,7 @@ namespace Common.Mod
 				if (prefabIdentifier != null)
 				{
 					prefabIdentifier.ClassId = info.assetPath;
+					prefabIdentifier.Id = info.assetPath;
 				}
 
 				AddPrefab(info.techType, info.assetPath, prefab);

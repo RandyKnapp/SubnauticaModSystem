@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 namespace AutosortLockers
 {
@@ -14,6 +15,13 @@ namespace AutosortLockers
 		private Constructable constructable;
 		private StorageContainer container;
 		private List<AutosortTarget> targets = new List<AutosortTarget>();
+
+		[SerializeField]
+		private Image background;
+		[SerializeField]
+		private Image icon;
+		[SerializeField]
+		private Text text;
 		
 		private void Awake()
 		{
@@ -35,72 +43,68 @@ namespace AutosortLockers
 			{
 				return;
 			}
+
+			var amount = Input.GetKey(KeyCode.LeftControl) ? 0.1f : 0.01f;
+			var t = GetComponentInChildren<Canvas>().transform;
+			if (Input.GetKeyDown(KeyCode.Keypad4))
+			{
+				t.localPosition += new Vector3(-amount, 0, 0);
+				LogPos(t.localPosition);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad6))
+			{
+				t.localPosition += new Vector3(amount, 0, 0);
+				LogPos(t.localPosition);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad5))
+			{
+				t.localPosition += new Vector3(0, -amount, 0);
+				LogPos(t.localPosition);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad8))
+			{
+				t.localPosition += new Vector3(0, amount, 0);
+				LogPos(t.localPosition);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad9))
+			{
+				t.localPosition += new Vector3(0, 0, -amount);
+				LogPos(t.localPosition);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad3))
+			{
+				t.localPosition += new Vector3(0, 0, amount);
+				LogPos(t.localPosition);
+			}
+			/*else if (Input.GetKeyDown(KeyCode.KeypadMinus))
+			{
+				if (Input.GetKey(KeyCode.LeftShift))
+					t.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, t.rect.height - amount);
+				else
+					t.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, t.rect.width - amount);
+				Logger.Log("canvas rect=" + t.rect);
+			}
+			else if (Input.GetKeyDown(KeyCode.KeypadPlus))
+			{
+				if (Input.GetKey(KeyCode.LeftShift))
+					t.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, t.rect.height + amount);
+				else
+					t.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, t.rect.width + amount);
+				Logger.Log("canvas rect=" + t.rect);
+			}*/
+		}
+
+		private void LogPos(Vector3 pos)
+		{
+			Logger.Log("canvas pos=(" + pos.x + "," + pos.y + "," + pos.z + ")");
 		}
 
 		private void Initialize()
 		{
 			Logger.Log("Autosorter Initialize");
-			var prefabText = gameObject.GetComponentInChildren<Text>();
-			var label = gameObject.FindChild("Label");
-			if (label != null)
-			{
-				DestroyImmediate(label);
-			}
 
-			var mapRoomPrefab = Resources.Load<GameObject>("Submarine/Build/MapRoomFunctionality");
-			var mapRoomScreenPrefab = mapRoomPrefab.GetComponentInChildren<uGUI_MapRoomScanner>();
-			var mapRoomScreen = GameObject.Instantiate(mapRoomScreenPrefab);
-			var screen = mapRoomScreen.gameObject;
-			mapRoomPrefab = null;
-			mapRoomScreenPrefab = null;
-			DestroyImmediate(screen.GetComponent<uGUI_MapRoomScanner>());
-
-			var canvasScalar = gameObject.AddComponent<CanvasScaler>();
-			canvasScalar.dynamicPixelsPerUnit = 20;
-
-			screen.transform.SetParent(transform, false);
-			var t = screen.transform;
-			t.localPosition = new Vector3(0, 0, 0.375f);
-			t.localRotation = new Quaternion(0, 1, 0, 0);
-
-			DestroyImmediate(screen.FindChild("scanning"));
-			DestroyImmediate(screen.FindChild("foreground"));
-
-			var background = screen.FindChild("background");
-			var rt = background.transform as RectTransform;
-			rt.localScale = new Vector3(0.3f, 0.3f, 0);
-			rt.anchoredPosition = new Vector2(0, 2);
-			RectTransformExtensions.SetSize(rt, 188, 391);
-			var image = background.GetComponent<Image>();
-			image.color = new Color(0, 0, 0, 1);
-			var sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(20, 20, 20, 20));
-			image.sprite = sprite;
-			image.type = Image.Type.Sliced;
-
-			var icon = new GameObject("icon", typeof(RectTransform)).AddComponent<Image>();
-			icon.transform.SetParent(background.transform, false);
-			icon.rectTransform.localPosition = new Vector3(0, 50, 0);
-			icon.color = new Color(1, 0.17f, 0.17f);
+			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(20, 20, 20, 20));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Sorter.png"));
-			RectTransformExtensions.SetSize(icon.rectTransform, 62, 62);
-
-			var text = new GameObject("text", typeof(RectTransform)).AddComponent<Text>();
-			rt = text.rectTransform;
-			rt.localScale = new Vector3(10, 10, 10);
-			rt.localPosition = new Vector3(0, -10, 0);
-			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), background.transform);
-			RectTransformExtensions.SetSize(rt, 189, 50);
-			text.color = icon.color;
-			text.font = prefabText.font;
-			text.fontSize = 30;
-			text.alignment = TextAnchor.MiddleCenter;
-			text.text = "AUTOSORTER";
-			text.horizontalOverflow = HorizontalWrapMode.Overflow;
-
-			var list = screen.FindChild("list");
-			DestroyImmediate(list);
-
-			ModUtils.PrintObject(screen);
 
 			initialized = true;
 		}
@@ -220,16 +224,95 @@ namespace AutosortLockers
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
 			prefab.name = "Autosorter";
-
+			
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
 			foreach (var meshRenderer in meshRenderers)
 			{
 				meshRenderer.material.color = new Color(1, 0, 0);
 			}
 
-			prefab.AddComponent<AutosortLocker>();
+			var prefabText = prefab.GetComponentInChildren<Text>();
+			var label = prefab.FindChild("Label");
+			DestroyImmediate(label);
+
+			var autoSorter = prefab.AddComponent<AutosortLocker>();
+			var color = new Color(1, 0.17f, 0.17f);
+
+			var canvas = CreateCanvas(prefab.transform);
+			autoSorter.background = CreateBackground(canvas.transform);
+			autoSorter.icon = CreateIcon(autoSorter.background.transform, color);
+			autoSorter.text = CreateText(autoSorter.background.transform, prefabText, color);
+
+			ModUtils.PrintObject(prefab);
 
 			return prefab;
+		}
+
+		private static Canvas CreateCanvas(Transform parent)
+		{
+			var canvas = new GameObject("Canvas", typeof(RectTransform)).AddComponent<Canvas>();
+			var t = canvas.transform;
+			t.SetParent(parent, false);
+
+			var rt = t as RectTransform;
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f));
+			RectTransformExtensions.SetSize(rt, 1, 2);
+
+			t.localPosition = new Vector3(0, 0, 0.345f);
+			t.localRotation = new Quaternion(0, 1, 0, 0);
+
+			canvas.scaleFactor = 0.01f;
+			canvas.renderMode = RenderMode.WorldSpace;
+			canvas.referencePixelsPerUnit = 100;
+
+			var scaler = canvas.gameObject.AddComponent<CanvasScaler>();
+			scaler.dynamicPixelsPerUnit = 20;
+
+			var image = canvas.gameObject.AddComponent<Image>();
+			image.color = new Color(1, 0, 0, 0.3f);
+
+			return canvas;
+		}
+
+		private static Image CreateBackground(Transform parent)
+		{
+			var background = new GameObject("Background", typeof(RectTransform)).AddComponent<Image>();
+			var rt = background.rectTransform;
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			RectTransformExtensions.SetSize(rt, 100, 100);
+			background.color = new Color(0, 0, 0);
+
+			background.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+
+			return background;
+		}
+
+		private static Image CreateIcon(Transform parent, Color color)
+		{
+			var icon = new GameObject("Text", typeof(RectTransform)).AddComponent<Image>();
+			var rt = icon.rectTransform;
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			RectTransformExtensions.SetSize(rt, 100, 100);
+
+			icon.color = color;
+
+			return icon;
+		}
+
+		private static Text CreateText(Transform parent, Text prefab, Color color)
+		{
+			var text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
+			var rt = text.rectTransform;
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			RectTransformExtensions.SetSize(rt, 100, 100);
+
+			text.font = prefab.font;
+			text.fontSize = 16;
+			text.color = color;
+			text.alignment = TextAnchor.MiddleCenter;
+			text.text = "AUTOSORTER";
+
+			return text;
 		}
 	}
 }
