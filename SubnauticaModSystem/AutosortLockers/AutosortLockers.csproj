@@ -83,6 +83,7 @@
     <Compile Include="AutosortTarget.cs" />
     <Compile Include="AutosortLocker.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="LockerPrefabShared.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
     <Compile Include="Mod.cs" />
