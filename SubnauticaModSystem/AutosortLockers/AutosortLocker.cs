@@ -44,29 +44,29 @@ namespace AutosortLockers
 				return;
 			}
 
-			var amount = Input.GetKey(KeyCode.LeftControl) ? 0.1f : 0.01f;
-			var t = GetComponentInChildren<Canvas>().transform;
+			var amount = Input.GetKey(KeyCode.LeftControl) ? 10f : 1f;
+			var t = GetEditObject();
 			if (Input.GetKeyDown(KeyCode.Keypad4))
 			{
-				t.localPosition += new Vector3(-amount, 0, 0);
-				LogPos(t.localPosition);
+				t.anchoredPosition += new Vector2(-amount, 0);
+				LogPos(t.anchoredPosition);
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad6))
 			{
-				t.localPosition += new Vector3(amount, 0, 0);
-				LogPos(t.localPosition);
+				t.anchoredPosition += new Vector2(amount, 0);
+				LogPos(t.anchoredPosition);
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad5))
 			{
-				t.localPosition += new Vector3(0, -amount, 0);
-				LogPos(t.localPosition);
+				t.anchoredPosition += new Vector2(0, -amount);
+				LogPos(t.anchoredPosition);
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad8))
 			{
-				t.localPosition += new Vector3(0, amount, 0);
-				LogPos(t.localPosition);
+				t.anchoredPosition += new Vector2(0, amount);
+				LogPos(t.anchoredPosition);
 			}
-			else if (Input.GetKeyDown(KeyCode.Keypad9))
+			/*else if (Input.GetKeyDown(KeyCode.Keypad9))
 			{
 				t.localPosition += new Vector3(0, 0, -amount);
 				LogPos(t.localPosition);
@@ -75,14 +75,14 @@ namespace AutosortLockers
 			{
 				t.localPosition += new Vector3(0, 0, amount);
 				LogPos(t.localPosition);
-			}
-			/*else if (Input.GetKeyDown(KeyCode.KeypadMinus))
+			}*/
+			else if (Input.GetKeyDown(KeyCode.KeypadMinus))
 			{
 				if (Input.GetKey(KeyCode.LeftShift))
 					t.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, t.rect.height - amount);
 				else
 					t.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, t.rect.width - amount);
-				Logger.Log("canvas rect=" + t.rect);
+				Logger.Log("rect=" + t.rect);
 			}
 			else if (Input.GetKeyDown(KeyCode.KeypadPlus))
 			{
@@ -90,13 +90,29 @@ namespace AutosortLockers
 					t.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, t.rect.height + amount);
 				else
 					t.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, t.rect.width + amount);
-				Logger.Log("canvas rect=" + t.rect);
-			}*/
+				Logger.Log("rect=" + t.rect);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad0))
+			{
+				obj = obj + 1 % 2;
+			}
 		}
 
-		private void LogPos(Vector3 pos)
+		private int obj = 0;
+		private RectTransform GetEditObject()
 		{
-			Logger.Log("canvas pos=(" + pos.x + "," + pos.y + "," + pos.z + ")");
+			switch (obj)
+			{
+				case 0: return background.rectTransform;
+				case 1: return icon.rectTransform;
+			}
+
+			return null;
+		}
+
+		private void LogPos(Vector2 pos)
+		{
+			Logger.Log("canvas pos=(" + pos.x + "," + pos.y + ")");
 		}
 
 		private void Initialize()
@@ -236,7 +252,7 @@ namespace AutosortLockers
 			DestroyImmediate(label);
 
 			var autoSorter = prefab.AddComponent<AutosortLocker>();
-			var color = new Color(1, 0.17f, 0.17f);
+			var color = new Color(1, 0.2f, 0.2f);
 
 			var canvas = CreateCanvas(prefab.transform);
 			autoSorter.background = CreateBackground(canvas.transform);
@@ -256,10 +272,11 @@ namespace AutosortLockers
 
 			var rt = t as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f));
-			RectTransformExtensions.SetSize(rt, 1, 2);
+			RectTransformExtensions.SetSize(rt, 1.7f, 3.0f);
 
 			t.localPosition = new Vector3(0, 0, 0.345f);
 			t.localRotation = new Quaternion(0, 1, 0, 0);
+			t.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
 			canvas.scaleFactor = 0.01f;
 			canvas.renderMode = RenderMode.WorldSpace;
@@ -267,9 +284,6 @@ namespace AutosortLockers
 
 			var scaler = canvas.gameObject.AddComponent<CanvasScaler>();
 			scaler.dynamicPixelsPerUnit = 20;
-
-			var image = canvas.gameObject.AddComponent<Image>();
-			image.color = new Color(1, 0, 0, 0.3f);
 
 			return canvas;
 		}
@@ -279,10 +293,11 @@ namespace AutosortLockers
 			var background = new GameObject("Background", typeof(RectTransform)).AddComponent<Image>();
 			var rt = background.rectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			RectTransformExtensions.SetSize(rt, 100, 100);
+			RectTransformExtensions.SetSize(rt, 114, 241);
 			background.color = new Color(0, 0, 0);
 
 			background.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+			background.type = Image.Type.Sliced;
 
 			return background;
 		}
@@ -292,8 +307,9 @@ namespace AutosortLockers
 			var icon = new GameObject("Text", typeof(RectTransform)).AddComponent<Image>();
 			var rt = icon.rectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			RectTransformExtensions.SetSize(rt, 100, 100);
+			RectTransformExtensions.SetSize(rt, 40, 40);
 
+			rt.anchoredPosition = new Vector2(0, 40);
 			icon.color = color;
 
 			return icon;
@@ -307,7 +323,7 @@ namespace AutosortLockers
 			RectTransformExtensions.SetSize(rt, 100, 100);
 
 			text.font = prefab.font;
-			text.fontSize = 16;
+			text.fontSize = 12;
 			text.color = color;
 			text.alignment = TextAnchor.MiddleCenter;
 			text.text = "AUTOSORTER";
