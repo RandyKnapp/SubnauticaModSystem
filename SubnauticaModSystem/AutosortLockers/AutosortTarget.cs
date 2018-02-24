@@ -126,7 +126,7 @@ namespace AutosortLockers
 				knownAtStart = true,
 				assetPath = "Submarine/Build/AutosortTarget",
 				displayString = "Autosort Receptacle",
-				tooltip = "Wall locker linked to an Autosorter that stores the items.",
+				tooltip = "Wall locker linked to an Autosorter that receives sorted items.",
 				techTypeKey = CustomTechType.AutosortTarget.ToString(),
 				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(Mod.GetAssetPath("AutosortTarget.png"))),
 				recipe = Mod.config.EasyBuild
