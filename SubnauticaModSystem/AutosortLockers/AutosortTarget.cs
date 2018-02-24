@@ -11,6 +11,8 @@ namespace AutosortLockers
 {
 	public class AutosortTarget : MonoBehaviour
 	{
+		public const int MaxTypes = 7;
+
 		private bool initialized;
 		private Constructable constructable;
 		private StorageContainer container;
@@ -22,12 +24,19 @@ namespace AutosortLockers
 		[SerializeField]
 		private Text text;
 		[SerializeField]
+		private AutosortTypePicker picker;
+		[SerializeField]
 		private HashSet<TechType> allowedTypes;
 
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();
 			container = gameObject.GetComponent<StorageContainer>();
+		}
+
+		public HashSet<TechType> GetTechTypes()
+		{
+			return allowedTypes;
 		}
 
 		public void SetTechTypes(HashSet<TechType> types)
@@ -74,6 +83,8 @@ namespace AutosortLockers
 			{
 				return;
 			}
+
+			container.enabled = !picker.isActiveAndEnabled;
 		}
 
 		private void Initialize()
@@ -86,6 +97,8 @@ namespace AutosortLockers
 
 			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(20, 20, 20, 20));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
+
+			picker.Initialize(this);
 
 			SetTechTypes(new HashSet<TechType>() {
 				TechType.Titanium,
@@ -170,6 +183,9 @@ namespace AutosortLockers
 			autosortTarget.background.gameObject.SetActive(false);
 			autosortTarget.icon.gameObject.SetActive(false);
 			autosortTarget.text.gameObject.SetActive(false);
+
+			autosortTarget.picker = AutosortTypePicker.Create(prefab.transform);
+			autosortTarget.picker.gameObject.SetActive(false);
 
 			return prefab;
 		}
