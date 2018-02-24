@@ -19,6 +19,8 @@ namespace AutosortLockers
 		{
 			constructable = GetComponent<Constructable>();
 			container = GetComponent<StorageContainer>();
+			container.hoverText = "Open autosorter";
+			container.storageLabel = "Autosorter";
 			targets.Clear();
 		}
 
@@ -38,9 +40,67 @@ namespace AutosortLockers
 		private void Initialize()
 		{
 			Logger.Log("Autosorter Initialize");
+			var prefabText = gameObject.GetComponentInChildren<Text>();
 			var label = gameObject.FindChild("Label");
-			var labelPos = label.transform.position;
-			DestroyImmediate(label);
+			if (label != null)
+			{
+				DestroyImmediate(label);
+			}
+
+			var mapRoomPrefab = Resources.Load<GameObject>("Submarine/Build/MapRoomFunctionality");
+			var mapRoomScreenPrefab = mapRoomPrefab.GetComponentInChildren<uGUI_MapRoomScanner>();
+			var mapRoomScreen = GameObject.Instantiate(mapRoomScreenPrefab);
+			var screen = mapRoomScreen.gameObject;
+			mapRoomPrefab = null;
+			mapRoomScreenPrefab = null;
+			DestroyImmediate(screen.GetComponent<uGUI_MapRoomScanner>());
+
+			var canvasScalar = gameObject.AddComponent<CanvasScaler>();
+			canvasScalar.dynamicPixelsPerUnit = 20;
+
+			screen.transform.SetParent(transform, false);
+			var t = screen.transform;
+			t.localPosition = new Vector3(0, 0, 0.375f);
+			t.localRotation = new Quaternion(0, 1, 0, 0);
+
+			DestroyImmediate(screen.FindChild("scanning"));
+			DestroyImmediate(screen.FindChild("foreground"));
+
+			var background = screen.FindChild("background");
+			var rt = background.transform as RectTransform;
+			rt.localScale = new Vector3(0.3f, 0.3f, 0);
+			rt.anchoredPosition = new Vector2(0, 2);
+			RectTransformExtensions.SetSize(rt, 188, 391);
+			var image = background.GetComponent<Image>();
+			image.color = new Color(0, 0, 0, 1);
+			var sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(20, 20, 20, 20));
+			image.sprite = sprite;
+			image.type = Image.Type.Sliced;
+
+			var icon = new GameObject("icon", typeof(RectTransform)).AddComponent<Image>();
+			icon.transform.SetParent(background.transform, false);
+			icon.rectTransform.localPosition = new Vector3(0, 50, 0);
+			icon.color = new Color(1, 0.17f, 0.17f);
+			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Sorter.png"));
+			RectTransformExtensions.SetSize(icon.rectTransform, 62, 62);
+
+			var text = new GameObject("text", typeof(RectTransform)).AddComponent<Text>();
+			rt = text.rectTransform;
+			rt.localScale = new Vector3(10, 10, 10);
+			rt.localPosition = new Vector3(0, -10, 0);
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), background.transform);
+			RectTransformExtensions.SetSize(rt, 189, 50);
+			text.color = icon.color;
+			text.font = prefabText.font;
+			text.fontSize = 30;
+			text.alignment = TextAnchor.MiddleCenter;
+			text.text = "AUTOSORTER";
+			text.horizontalOverflow = HorizontalWrapMode.Overflow;
+
+			var list = screen.FindChild("list");
+			DestroyImmediate(list);
+
+			ModUtils.PrintObject(screen);
 
 			initialized = true;
 		}
@@ -168,8 +228,6 @@ namespace AutosortLockers
 			}
 
 			prefab.AddComponent<AutosortLocker>();
-
-			ModUtils.PrintObject(prefab);
 
 			return prefab;
 		}
