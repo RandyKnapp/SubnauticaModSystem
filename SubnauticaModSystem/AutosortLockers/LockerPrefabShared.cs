@@ -14,6 +14,9 @@ namespace AutosortLockers
 			var canvas = new GameObject("Canvas", typeof(RectTransform)).AddComponent<Canvas>();
 			var t = canvas.transform;
 			t.SetParent(parent, false);
+			canvas.sortingLayerID = 1;
+
+			var raycaster = canvas.gameObject.AddComponent<uGUI_GraphicRaycaster>();
 
 			var rt = t as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f));

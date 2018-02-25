@@ -10,6 +10,8 @@ namespace Common.Utility
 {
 	public static class ImageUtils
 	{
+		private static Dictionary<string, Texture2D> textureCache = new Dictionary<string, Texture2D>();
+
 		public static Sprite LoadSprite(string path, TextureFormat format = TextureFormat.DXT5, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight)
 		{
 			Texture2D texture2D = ImageUtils.LoadTexture(path, format);
@@ -33,12 +35,17 @@ namespace Common.Utility
 
 		public static Texture2D LoadTexture(string path, TextureFormat format = TextureFormat.DXT5)
 		{
-			if (File.Exists(path))
+			if (textureCache.TryGetValue(path, out Texture2D tex))
+			{
+				return tex;
+			}
+			else if (File.Exists(path))
 			{
 				byte[] data = File.ReadAllBytes(path);
 				Texture2D texture2D = new Texture2D(2, 2, format, false);
 				if (texture2D.LoadImage(data))
 				{
+					textureCache.Add(path, texture2D);
 					return texture2D;
 				}
 			}

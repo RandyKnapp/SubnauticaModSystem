@@ -16,15 +16,20 @@ namespace AutosortLockers
 		private bool initialized;
 		private Constructable constructable;
 		private StorageContainer container;
+		private AutosortTypePicker picker;
 
+		[SerializeField]
+		private Text textPrefab;
 		[SerializeField]
 		private Image background;
 		[SerializeField]
 		private Image icon;
 		[SerializeField]
-		private Text text;
+		private ConfigureButton configureButton;
 		[SerializeField]
-		private AutosortTypePicker picker;
+		private Image configureButtonImage;
+		[SerializeField]
+		private Text text;
 		[SerializeField]
 		private HashSet<TechType> allowedTypes;
 
@@ -84,21 +89,43 @@ namespace AutosortLockers
 				return;
 			}
 
-			container.enabled = !picker.isActiveAndEnabled;
+			if (Player.main != null)
+			{
+				float distSq = (Player.main.transform.position - transform.position).sqrMagnitude;
+				configureButton.enabled = distSq <= 3 * 3;
+			}
+
+			container.enabled = ShouldEnableContainer();
+		}
+
+		private bool ShouldEnableContainer()
+		{
+			return !picker.isActiveAndEnabled && (!configureButton.pointerOver || !configureButton.enabled);
+		}
+
+		internal void ShowConfigureMenu()
+		{
+			picker.gameObject.SetActive(true);
+		}
+
+		internal void HideConfigureMenu()
+		{
+			picker.gameObject.SetActive(false);
 		}
 
 		private void Initialize()
 		{
-			Logger.Log("Autosort Target Initialize");
-
 			background.gameObject.SetActive(true);
 			icon.gameObject.SetActive(true);
 			text.gameObject.SetActive(true);
 
 			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(20, 20, 20, 20));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
+			configureButtonImage.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Configure.png"));
 
+			picker = AutosortTypePicker.Create(transform, textPrefab);
 			picker.Initialize(this);
+			picker.gameObject.SetActive(false);
 
 			SetTechTypes(new HashSet<TechType>() {
 				TechType.Titanium,
@@ -169,25 +196,35 @@ namespace AutosortLockers
 
 			var autosortTarget = prefab.AddComponent<AutosortTarget>();
 
-			var prefabText = prefab.GetComponentInChildren<Text>();
+			autosortTarget.textPrefab = GameObject.Instantiate(prefab.GetComponentInChildren<Text>());
 			var label = prefab.FindChild("Label");
 			DestroyImmediate(label);
 
-			var color = new Color(1, 0.2f, 0.2f);
-
 			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
 			autosortTarget.background = LockerPrefabShared.CreateBackground(canvas.transform);
-			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, prefabText.color, 80);
-			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, prefabText, prefabText.color, -20, 12, "Any");
+			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, autosortTarget.textPrefab.color, 80);
+			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, -20, 12, "Any");
+			autosortTarget.configureButton = CreateConfigureButton(autosortTarget.background.transform, autosortTarget.textPrefab.color, autosortTarget);
+			autosortTarget.configureButtonImage = autosortTarget.configureButton.GetComponent<Image>();
 
 			autosortTarget.background.gameObject.SetActive(false);
 			autosortTarget.icon.gameObject.SetActive(false);
 			autosortTarget.text.gameObject.SetActive(false);
 
-			autosortTarget.picker = AutosortTypePicker.Create(prefab.transform);
-			autosortTarget.picker.gameObject.SetActive(false);
-
 			return prefab;
+		}
+
+		private static ConfigureButton CreateConfigureButton(Transform parent, Color color, AutosortTarget target)
+		{
+			var config = LockerPrefabShared.CreateIcon(parent, color, 0);
+			RectTransformExtensions.SetSize(config.rectTransform, 20, 20);
+			config.rectTransform.anchoredPosition = new Vector2(40, -104);
+
+			config.gameObject.AddComponent<BoxCollider2D>();
+			var button = config.gameObject.AddComponent<ConfigureButton>();
+			button.target = target;
+
+			return button;
 		}
 	}
 }

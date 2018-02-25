@@ -53,8 +53,6 @@ namespace AutosortLockers
 
 		private void Initialize()
 		{
-			Logger.Log("Autosorter Initialize");
-
 			background.gameObject.SetActive(true);
 			icon.gameObject.SetActive(true);
 			text.gameObject.SetActive(true);

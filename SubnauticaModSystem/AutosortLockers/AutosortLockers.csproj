@@ -84,6 +84,8 @@
     <Compile Include="AutosortLocker.cs" />
     <Compile Include="AutosortTypePicker.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="PickerCloseButton.cs" />
+    <Compile Include="ConfigureButton.cs" />
     <Compile Include="LockerPrefabShared.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Patches\PrefabDatabase_Patches.cs" />
     <Compile Include="Patches\SpriteManager_Get_Patch.cs" />
     <Compile Include="Patches\TechTypeExtensions_Patches.cs" />
+    <Compile Include="PickerButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
