@@ -12,6 +12,10 @@ namespace Common.Mod
 {
     public static class ModUtils
     {
+		private static FieldInfo CraftData_techMapping = typeof(CraftData).GetField("techMapping", BindingFlags.NonPublic | BindingFlags.Static);
+
+		private static List<TechType> pickupableTypes;
+
 		public static ConfigT LoadConfig<ConfigT>(string modInfoPath) where ConfigT : new()
 		{
 			if (!File.Exists(modInfoPath))
@@ -147,6 +151,34 @@ namespace Common.Mod
 				}
 			}
 			return found;
+		}
+
+		public static List<TechType> GetPickupableTechTypes()
+		{
+			if (pickupableTypes != null)
+			{
+				return pickupableTypes;
+			}
+
+			Console.WriteLine("[ModUtils] Initialize Pickupable Types");
+			pickupableTypes = new List<TechType>();
+
+			var techMapping = (Dictionary<TechType, string>)CraftData_techMapping.GetValue(null);
+			foreach (var entry in techMapping)
+			{
+				var techType = entry.Key;
+				var prefab = CraftData.GetPrefabForTechType(techType);
+				if (prefab != null)
+				{
+					if (prefab.GetComponent<Pickupable>() != null)
+					{
+						Console.WriteLine("" + techType);
+						pickupableTypes.Add(techType);
+					}
+				}
+			}
+			
+			return pickupableTypes;
 		}
 	}
 }

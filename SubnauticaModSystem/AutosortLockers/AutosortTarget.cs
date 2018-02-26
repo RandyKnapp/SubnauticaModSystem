@@ -3,6 +3,7 @@ using Common.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,9 @@ namespace AutosortLockers
 	public class AutosortTarget : MonoBehaviour
 	{
 		public const int MaxTypes = 7;
+		public const float MaxDistance = 3;
+
+		private static readonly FieldInfo ItemContainer_allowedTech = typeof(ItemsContainer).GetField("allowedTech", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		private bool initialized;
 		private Constructable constructable;
@@ -31,7 +35,7 @@ namespace AutosortLockers
 		[SerializeField]
 		private Text text;
 		[SerializeField]
-		private HashSet<TechType> allowedTypes;
+		private HashSet<TechType> allowedTypes = new HashSet<TechType>();
 
 		private void Awake()
 		{
@@ -56,7 +60,7 @@ namespace AutosortLockers
 			{
 				if (allowedTypes.Count == 0)
 				{
-					text.text = "Any";
+					text.text = "[Any]";
 				}
 				else
 				{
@@ -64,6 +68,11 @@ namespace AutosortLockers
 					text.text = typesText;
 				}
 			}
+		}
+
+		public List<TechType> GetAllAvailableTypes()
+		{
+			return new List<TechType>();
 		}
 
 		internal void AddItem(Pickupable item)
@@ -92,7 +101,13 @@ namespace AutosortLockers
 			if (Player.main != null)
 			{
 				float distSq = (Player.main.transform.position - transform.position).sqrMagnitude;
-				configureButton.enabled = distSq <= 3 * 3;
+				bool playerInRange = distSq <= (MaxDistance * MaxDistance);
+				configureButton.enabled = playerInRange;
+
+				if (picker.isActiveAndEnabled && !playerInRange)
+				{
+					picker.gameObject.SetActive(false);
+				}
 			}
 
 			container.enabled = ShouldEnableContainer();
@@ -123,19 +138,11 @@ namespace AutosortLockers
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
 			configureButtonImage.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Configure.png"));
 
+			UpdateText();
+
 			picker = AutosortTypePicker.Create(transform, textPrefab);
 			picker.Initialize(this);
 			picker.gameObject.SetActive(false);
-
-			SetTechTypes(new HashSet<TechType>() {
-				TechType.Titanium,
-				TechType.Glass,
-				TechType.Gold,
-				TechType.AcidMushroom,
-				TechType.ComputerChip,
-				TechType.JeweledDiskPiece,
-				TechType.AluminumOxide
-			});
 
 			initialized = true;
 		}
@@ -203,7 +210,7 @@ namespace AutosortLockers
 			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
 			autosortTarget.background = LockerPrefabShared.CreateBackground(canvas.transform);
 			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, autosortTarget.textPrefab.color, 80);
-			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, -20, 12, "Any");
+			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, -10, 12, "Any");
 			autosortTarget.configureButton = CreateConfigureButton(autosortTarget.background.transform, autosortTarget.textPrefab.color, autosortTarget);
 			autosortTarget.configureButtonImage = autosortTarget.configureButton.GetComponent<Image>();
 

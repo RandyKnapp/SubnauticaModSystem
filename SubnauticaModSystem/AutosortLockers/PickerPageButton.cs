@@ -7,16 +7,17 @@ using UnityEngine.EventSystems;
 
 namespace AutosortLockers
 {
-	public class ConfigureButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+	public class PickerPageButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 	{
 		public bool pointerOver;
-		public AutosortTarget target;
+		public AutosortTypePicker target;
+		public int pageOffset;
 		
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			if (target != null && enabled)
+			if (enabled)
 			{
-				target.ShowConfigureMenu();
+				target.ChangePage(pageOffset);
 			}
 		}
 

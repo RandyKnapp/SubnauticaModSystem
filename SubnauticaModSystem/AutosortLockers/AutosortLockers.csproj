@@ -80,10 +80,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutosorterCategories.cs" />
     <Compile Include="AutosortTarget.cs" />
     <Compile Include="AutosortLocker.cs" />
     <Compile Include="AutosortTypePicker.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="PickerPageButton.cs" />
     <Compile Include="PickerCloseButton.cs" />
     <Compile Include="ConfigureButton.cs" />
     <Compile Include="LockerPrefabShared.cs" />
