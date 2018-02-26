@@ -24,14 +24,17 @@ namespace AutosortLockers
 		[SerializeField]
 		private Text text;
 
-		public TechType TechType {
-			get => techType;
-			set {
-				techType = value;
-				text.text = Language.main.Get(techType);
+		public TechType GetTechType()
+		{
+			return techType;
+		}
 
-				gameObject.SetActive(techType != TechType.None);
-			}
+		public void SetTechType(TechType value)
+		{
+			techType = value;
+			text.text = Language.main.Get(techType);
+
+			gameObject.SetActive(techType != TechType.None);
 		}
 
 		public void Update()
@@ -41,7 +44,7 @@ namespace AutosortLockers
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			onClick.Invoke(TechType);
+			onClick.Invoke(GetTechType());
 		}
 
 		public void OnPointerEnter(PointerEventData eventData)
@@ -82,7 +85,7 @@ namespace AutosortLockers
 			button.text.fontSize = 10;
 			button.text.alignment = TextAnchor.MiddleCenter;
 
-			button.TechType = techType;
+			button.SetTechType(techType);
 			button.onClick += action;
 
 			return button;

@@ -39,6 +39,7 @@ namespace AutosortLockers
 			this.locker = locker;
 			closeButton.target = locker;
 			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(20, 20, 20, 20));
+			background.color = new Color(1, 1, 1);
 
 			SetCurrentTypes(locker.GetTechTypes());
 			UpdateAvailableTypes();
@@ -49,12 +50,12 @@ namespace AutosortLockers
 			int i = 0;
 			foreach (TechType tech in types)
 			{
-				currentList[i].TechType = tech;
+				currentList[i].SetTechType(tech);
 				i++;
 			}
 			while (i < AutosortTarget.MaxTypes)
 			{
-				currentList[i].TechType = TechType.None;
+				currentList[i].SetTechType(TechType.None);
 				i++;
 			}
 		}
@@ -88,11 +89,11 @@ namespace AutosortLockers
 			for (int i = 0; i < AutosortTarget.MaxTypes; ++i)
 			{
 				var techType = (start + i) >= availableTypes.Count ? TechType.None : availableTypes[start + i];
-				availableList[i].TechType = techType;
+				availableList[i].SetTechType(techType);
 			}
 			pageText.text = string.Format("{0}/{1}", currentPage + 1, GetCurrentPageCount());
-			prevPageButton.enabled = (currentPage > 0);
-			nextPageButton.enabled = (currentPage + 1) < GetCurrentPageCount();
+			prevPageButton.canChangePage = (currentPage > 0);
+			nextPageButton.canChangePage = (currentPage + 1) < GetCurrentPageCount();
 		}
 
 		public void OnCurrentListItemClick(TechType techType)
@@ -156,6 +157,7 @@ namespace AutosortLockers
 			t.localPosition = new Vector3(0, 0, 0.4f);
 
 			picker.background = LockerPrefabShared.CreateBackground(picker.transform);
+			picker.background.type = Image.Type.Simple;
 			RectTransformExtensions.SetSize(picker.background.rectTransform, 240, 220);
 			picker.background.color = new Color(1, 1, 1);
 
@@ -169,7 +171,7 @@ namespace AutosortLockers
 			var currentText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 12, "Current");
 			currentText.rectTransform.anchoredPosition = new Vector2(-x, 90);
 
-			var availableText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 12, "Available");
+			var availableText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 12, "Items / Categories");
 			availableText.rectTransform.anchoredPosition = new Vector2(x, 90);
 
 			picker.pageText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 10, "1/X");

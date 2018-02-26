@@ -415,6 +415,23 @@ namespace AutosortLockers
 	{
 		public AutoSorterCategory Category;
 		public List<TechType> Types;
+
+		public bool IsCategory()
+		{
+			return Category != AutoSorterCategory.None;
+		}
+
+		public string GetString()
+		{
+			if (IsCategory())
+			{
+				return System.Text.RegularExpressions.Regex.Replace(Category.ToString(), "[A-Z]", " $0").Trim();
+			}
+			else
+			{
+				return Language.main.Get(Types[0]);
+			}
+		}
 	}
 
 	public class AutosorterList

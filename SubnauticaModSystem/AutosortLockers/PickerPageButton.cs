@@ -4,18 +4,30 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace AutosortLockers
 {
 	public class PickerPageButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 	{
+		private static readonly Color DisabledColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
+		private static readonly Color NormalColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+		private static readonly Color HoverColor = Color.white;
+
+		public bool canChangePage;
 		public bool pointerOver;
 		public AutosortTypePicker target;
 		public int pageOffset;
+		public Image image;
+
+		public void Awake()
+		{
+			image = GetComponent<Image>();
+		}
 		
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			if (enabled)
+			if (canChangePage)
 			{
 				target.ChangePage(pageOffset);
 			}
@@ -23,8 +35,7 @@ namespace AutosortLockers
 
 		public void Update()
 		{
-			var hover = enabled && pointerOver;
-			transform.localScale = new Vector3(hover ? 1.3f : 1, hover ? 1.3f : 1, 1);
+			image.color = canChangePage ? (pointerOver ? HoverColor : NormalColor) : DisabledColor;
 		}
 
 		public void OnPointerEnter(PointerEventData eventData)
