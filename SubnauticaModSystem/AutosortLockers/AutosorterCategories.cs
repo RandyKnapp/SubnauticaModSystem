@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
+using UnityEngine;
 
 namespace AutosortLockers
 {
@@ -18,13 +18,13 @@ namespace AutosortLockers
 		Batteries,
 		NaturalMaterials,
 		SyntheticMaterials,
-		CrystalineMaterials,
+		CrystalMaterials,
 		Fish,
 		Eggs,
 		Tools,
 		Equipment,
-		PrecursorKeys,
-		ScannerRoomUpgrads,
+		MysteriousTablets,
+		ScannerRoomUpgrades,
 		GeneralUpgrades,
 		SeamothUpgrades,
 		PrawnSuitUpgrades,
@@ -71,7 +71,7 @@ namespace AutosortLockers
 			TechType.PosterKitty,
 		};
 
-		public static readonly List<TechType> PrecursorKeys = new List<TechType> {
+		public static readonly List<TechType> MysteriousTablets = new List<TechType> {
 			TechType.PrecursorKey_Blue,
 			TechType.PrecursorKey_Orange,
 			TechType.PrecursorKey_Purple,
@@ -137,6 +137,10 @@ namespace AutosortLockers
 			TechType.Snack1,
 			TechType.Snack2,
 			TechType.Snack3,
+			TechType.BulboTreePiece,
+			TechType.HangingFruit,
+			TechType.Melon,
+			TechType.PurpleVegetable,
 		};
 
 		public static readonly List<TechType> Water = new List<TechType> {
@@ -341,7 +345,7 @@ namespace AutosortLockers
 			TechType.Silicone,
 		};
 
-		public static readonly List<TechType> CrystalineMaterials = new List<TechType> {
+		public static readonly List<TechType> CrystalMaterials = new List<TechType> {
 			TechType.AluminumOxide,
 			TechType.Diamond,
 			TechType.Kyanite,
@@ -473,14 +477,14 @@ namespace AutosortLockers
 					case AutoSorterCategory.NaturalMaterials:	AddEntry(value, AutosorterCategoryData.NaturalMaterials); break;
 					case AutoSorterCategory.SyntheticMaterials: AddEntry(value, AutosorterCategoryData.SyntheticMaterials); break;
 					case AutoSorterCategory.Electronics:		AddEntry(value, AutosorterCategoryData.Electronics); break;
-					case AutoSorterCategory.CrystalineMaterials: AddEntry(value, AutosorterCategoryData.CrystalineMaterials); break;
+					case AutoSorterCategory.CrystalMaterials:	AddEntry(value, AutosorterCategoryData.CrystalMaterials); break;
 					case AutoSorterCategory.Batteries:			AddEntry(value, AutosorterCategoryData.Batteries); break;
 					case AutoSorterCategory.Fish:				AddEntry(value, AutosorterCategoryData.Fish); break;
 					case AutoSorterCategory.Eggs:				AddEntry(value, AutosorterCategoryData.CreatureEggs); break;
 					case AutoSorterCategory.Tools:				AddEntry(value, AutosorterCategoryData.Tools); break;
 					case AutoSorterCategory.Equipment:			AddEntry(value, AutosorterCategoryData.Equipment); break;
-					case AutoSorterCategory.PrecursorKeys:		AddEntry(value, AutosorterCategoryData.PrecursorKeys); break;
-					case AutoSorterCategory.ScannerRoomUpgrads: AddEntry(value, AutosorterCategoryData.ScannerRoomUpgrades); break;
+					case AutoSorterCategory.MysteriousTablets:	AddEntry(value, AutosorterCategoryData.MysteriousTablets); break;
+					case AutoSorterCategory.ScannerRoomUpgrades: AddEntry(value, AutosorterCategoryData.ScannerRoomUpgrades); break;
 					case AutoSorterCategory.GeneralUpgrades:	AddEntry(value, AutosorterCategoryData.GeneralUpgrades); break;
 					case AutoSorterCategory.SeamothUpgrades:	AddEntry(value, AutosorterCategoryData.SeamothUpgrades); break;
 					case AutoSorterCategory.PrawnSuitUpgrades:	AddEntry(value, AutosorterCategoryData.PrawnSuitUpgrades); break;

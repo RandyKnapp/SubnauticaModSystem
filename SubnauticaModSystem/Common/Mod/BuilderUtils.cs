@@ -149,7 +149,6 @@ namespace Common.Mod
 				if (prefabIdentifier != null)
 				{
 					prefabIdentifier.ClassId = info.assetPath;
-					prefabIdentifier.Id = info.assetPath;
 				}
 
 				AddPrefab(info.techType, info.assetPath, prefab);

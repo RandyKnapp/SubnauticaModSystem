@@ -96,7 +96,6 @@ namespace AutosortLockers
 			button.text.fontSize = 10;
 			button.text.alignment = TextAnchor.MiddleCenter;
 
-			button.SetFilter(null);
 			button.onClick += action;
 
 			return button;

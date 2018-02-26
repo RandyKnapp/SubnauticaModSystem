@@ -1,13 +1,11 @@
 ﻿using Common.Mod;
 using Common.Utility;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using Oculus.Newtonsoft.Json;
 
 namespace AutosortLockers
 {
@@ -15,8 +13,6 @@ namespace AutosortLockers
 	{
 		public const int MaxTypes = 7;
 		public const float MaxDistance = 3;
-
-		private static readonly FieldInfo ItemContainer_allowedTech = typeof(ItemsContainer).GetField("allowedTech", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		private bool initialized;
 		private Constructable constructable;
@@ -54,9 +50,24 @@ namespace AutosortLockers
 			return currentFilters;
 		}
 
-		public void SetFilters(List<AutosorterFilter> filters)
+		public void AddFilter(AutosorterFilter filter)
 		{
-			currentFilters = filters;
+			if (currentFilters.Count >= AutosortTarget.MaxTypes)
+			{
+				return;
+			}
+			if (currentFilters.Contains(filter))
+			{
+				return;
+			}
+
+			currentFilters.Add(filter);
+			UpdateText();
+		}
+
+		public void RemoveFilter(AutosorterFilter filter)
+		{
+			currentFilters.Remove(filter);
 			UpdateText();
 		}
 
@@ -64,7 +75,7 @@ namespace AutosortLockers
 		{
 			if (text != null)
 			{
-				if (currentFilters.Count == 0)
+				if (currentFilters == null || currentFilters.Count == 0)
 				{
 					text.text = "[Any]";
 				}
@@ -83,12 +94,16 @@ namespace AutosortLockers
 
 		internal bool CanAddItem(Pickupable item)
 		{
-			bool allowed = currentFilters.Count == 0 || IsTypeAllowed(item.GetTechType());
+			bool allowed = currentFilters == null || currentFilters.Count == 0 || IsTypeAllowed(item.GetTechType());
 			return allowed && container.container.HasRoomFor(item);
 		}
 
 		private bool IsTypeAllowed(TechType techType)
 		{
+			if (currentFilters == null || currentFilters.Count == 0)
+			{
+				return true;
+			}
 			foreach (var filter in currentFilters)
 			{
 				if (filter.IsTechTypeAllowed(techType))
@@ -118,18 +133,27 @@ namespace AutosortLockers
 				bool playerInRange = distSq <= (MaxDistance * MaxDistance);
 				configureButton.enabled = playerInRange;
 
-				if (picker.isActiveAndEnabled && !playerInRange)
+				if (picker != null && picker.isActiveAndEnabled && !playerInRange)
 				{
 					picker.gameObject.SetActive(false);
 				}
 			}
 
 			container.enabled = ShouldEnableContainer();
+
+			if (SaveLoadManager.main != null && SaveLoadManager.main.isSaving && !Mod.IsSaving() && !Mod.NeedsSaving())
+			{
+				Mod.SetNeedsSaving();
+			}
+			if (SaveLoadManager.main != null && !SaveLoadManager.main.isSaving && !Mod.IsSaving() && Mod.NeedsSaving())
+			{
+				Mod.Save();
+			}
 		}
 
 		private bool ShouldEnableContainer()
 		{
-			return !picker.isActiveAndEnabled && (!configureButton.pointerOver || !configureButton.enabled);
+			return (picker == null || !picker.isActiveAndEnabled) && (!configureButton.pointerOver || !configureButton.enabled);
 		}
 
 		internal void ShowConfigureMenu()
@@ -152,6 +176,8 @@ namespace AutosortLockers
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
 			configureButtonImage.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Configure.png"));
 
+			InitializeFilters();
+
 			UpdateText();
 
 			StartCoroutine(CreatePicker());
@@ -159,11 +185,38 @@ namespace AutosortLockers
 			initialized = true;
 		}
 
+		private void InitializeFilters()
+		{
+			var prefabIdentifier = GetComponent<PrefabIdentifier>();
+			var id = prefabIdentifier.Id;
+
+			var saveData = Mod.GetSaveData();
+			foreach (var entry in saveData.Entries)
+			{
+				if (entry.Id == id && entry.FilterData != null)
+				{
+					currentFilters = entry.FilterData.ShallowCopy();
+					return;
+				}
+			}
+
+			currentFilters = new List<AutosorterFilter>();
+		}
+
 		private IEnumerator CreatePicker()
 		{
 			yield return AutosortTypePicker.Create(transform, textPrefab, this);
 			picker.Initialize(this);
 			picker.gameObject.SetActive(false);
+		}
+
+		public void SaveFilters(SaveData saveData)
+		{
+			var prefabIdentifier = GetComponent<PrefabIdentifier>();
+			var id = prefabIdentifier.Id;
+
+			var entry = new SaveDataEntry() { Id = id, FilterData = currentFilters };
+			saveData.Entries.Add(entry);
 		}
 
 

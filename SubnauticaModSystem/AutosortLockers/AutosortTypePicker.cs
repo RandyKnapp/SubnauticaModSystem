@@ -40,12 +40,13 @@ namespace AutosortLockers
 			closeButton.target = locker;
 			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("MainMenuStandardSprite.png"), new RectOffset(20, 20, 20, 20));
 
-			SetCurrentFilters(locker.GetCurrentFilters());
+			RefreshCurrentFilters();
 			UpdateAvailableTypes();
 		}
 
-		private void SetCurrentFilters(List<AutosorterFilter> filters)
+		private void RefreshCurrentFilters()
 		{
+			List<AutosorterFilter> filters = locker.GetCurrentFilters();
 			int i = 0;
 			foreach (var filter in filters)
 			{
@@ -85,11 +86,8 @@ namespace AutosortLockers
 				return;
 			}
 
-			var currentFilters = locker.GetCurrentFilters();
-			currentFilters.Remove(filter);
-			locker.SetFilters(currentFilters);
-
-			SetCurrentFilters(currentFilters);
+			locker.RemoveFilter(filter);
+			RefreshCurrentFilters();
 		}
 
 		public void OnAvailableListItemClick(AutosorterFilter filter)
@@ -99,20 +97,8 @@ namespace AutosortLockers
 				return;
 			}
 
-			var currentFilters = locker.GetCurrentFilters();
-			if (currentFilters.Count >= AutosortTarget.MaxTypes)
-			{
-				return;
-			}
-			if (currentFilters.Contains(filter))
-			{
-				return;
-			}
-
-			currentFilters.Add(filter);
-			locker.SetFilters(currentFilters);
-
-			SetCurrentFilters(currentFilters);
+			locker.AddFilter(filter);
+			RefreshCurrentFilters();
 		}
 
 		internal void ChangePage(int pageOffset)

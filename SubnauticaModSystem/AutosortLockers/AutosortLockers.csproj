@@ -51,6 +51,10 @@
     <Reference Include="Assembly-UnityScript-firstpass">
       <HintPath>D:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Assembly-UnityScript-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -85,6 +89,7 @@
     <Compile Include="AutosortLocker.cs" />
     <Compile Include="AutosortTypePicker.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ModSaver.cs" />
     <Compile Include="PickerPageButton.cs" />
     <Compile Include="PickerCloseButton.cs" />
     <Compile Include="ConfigureButton.cs" />
@@ -107,6 +112,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SaveData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />
