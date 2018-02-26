@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
 namespace AutosortLockers
 {
+	[Serializable]
 	public enum AutoSorterCategory
 	{
 		None,
@@ -236,6 +238,7 @@ namespace AutosortLockers
 			TechType.SmallStorage,
 			TechType.StasisRifle,
 			TechType.Welder,
+			TechType.LuggageBag,
 		};
 
 		public static readonly List<TechType> Torpedoes = new List<TechType> {
@@ -360,7 +363,6 @@ namespace AutosortLockers
 			TechType.WhiteMushroom,
 			TechType.AcidMushroom,
 			TechType.JeweledDiskPiece,
-			TechType.LuggageBag,
 			TechType.AdvancedWiringKit,
 			TechType.Aerogel,
 			TechType.AluminumOxide,
@@ -411,7 +413,8 @@ namespace AutosortLockers
 		};
 	}
 
-	public class AutosorterCategoryEntry
+	[Serializable]
+	public class AutosorterFilter
 	{
 		public AutoSorterCategory Category;
 		public List<TechType> Types;
@@ -429,16 +432,22 @@ namespace AutosortLockers
 			}
 			else
 			{
-				return Language.main.Get(Types[0]);
+				var textInfo = (new CultureInfo("en-US", false)).TextInfo;
+				return textInfo.ToTitleCase(Language.main.Get(Types[0]));
 			}
+		}
+
+		public bool IsTechTypeAllowed(TechType techType)
+		{
+			return Types.Contains(techType);
 		}
 	}
 
-	public class AutosorterList
+	public static class AutosorterList
 	{
-		private List<AutosorterCategoryEntry> entries;
+		private static List<AutosorterFilter> entries;
 
-		public List<AutosorterCategoryEntry> GetEntries()
+		public static List<AutosorterFilter> GetEntries()
 		{
 			if (entries == null)
 			{
@@ -447,20 +456,15 @@ namespace AutosortLockers
 			return entries;
 		}
 
-		private void InitializeEntries()
+		private static void InitializeEntries()
 		{
-			entries = new List<AutosorterCategoryEntry>();
+			entries = new List<AutosorterFilter>();
 
 			foreach (AutoSorterCategory value in Enum.GetValues(typeof(AutoSorterCategory)))
 			{
 				switch (value)
 				{
-					case AutoSorterCategory.None:
-						foreach (TechType type in AutosorterCategoryData.IndividualItems)
-						{
-							AddEntry(AutoSorterCategory.None, type);
-						}
-						break;
+					case AutoSorterCategory.None: break;
 
 					case AutoSorterCategory.Food:				AddEntry(value, AutosorterCategoryData.Food); break;
 					case AutoSorterCategory.Water:				AddEntry(value, AutosorterCategoryData.Water); break;
@@ -485,19 +489,24 @@ namespace AutosortLockers
 					case AutoSorterCategory.AlterraStuff:		AddEntry(value, AutosorterCategoryData.AlterraArtifacts); break;
 				}
 			}
+
+			foreach (TechType type in AutosorterCategoryData.IndividualItems)
+			{
+				AddEntry(AutoSorterCategory.None, type);
+			}
 		}
 
-		private void AddEntry(AutoSorterCategory category, List<TechType> types)
+		private static void AddEntry(AutoSorterCategory category, List<TechType> types)
 		{
-			entries.Add(new AutosorterCategoryEntry {
+			entries.Add(new AutosorterFilter {
 				Category = category,
 				Types = types
 			});
 		}
 
-		private void AddEntry(AutoSorterCategory category, TechType type)
+		private static void AddEntry(AutoSorterCategory category, TechType type)
 		{
-			entries.Add(new AutosorterCategoryEntry {
+			entries.Add(new AutosorterFilter {
 				Category = category,
 				Types = new List<TechType> { type }
 			});

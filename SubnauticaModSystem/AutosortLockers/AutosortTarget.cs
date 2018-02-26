@@ -1,6 +1,7 @@
 ﻿using Common.Mod;
 using Common.Utility;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -35,7 +36,7 @@ namespace AutosortLockers
 		[SerializeField]
 		private Text text;
 		[SerializeField]
-		private HashSet<TechType> allowedTypes = new HashSet<TechType>();
+		private List<AutosorterFilter> currentFilters = new List<AutosorterFilter>();
 
 		private void Awake()
 		{
@@ -43,14 +44,19 @@ namespace AutosortLockers
 			container = gameObject.GetComponent<StorageContainer>();
 		}
 
-		public HashSet<TechType> GetTechTypes()
+		public void SetPicker(AutosortTypePicker picker)
 		{
-			return allowedTypes;
+			this.picker = picker;
 		}
 
-		public void SetTechTypes(HashSet<TechType> types)
+		public List<AutosorterFilter> GetCurrentFilters()
 		{
-			allowedTypes = types;
+			return currentFilters;
+		}
+
+		public void SetFilters(List<AutosorterFilter> filters)
+		{
+			currentFilters = filters;
 			UpdateText();
 		}
 
@@ -58,21 +64,16 @@ namespace AutosortLockers
 		{
 			if (text != null)
 			{
-				if (allowedTypes.Count == 0)
+				if (currentFilters.Count == 0)
 				{
 					text.text = "[Any]";
 				}
 				else
 				{
-					string typesText = string.Join("\n", allowedTypes.Select((t) => Language.main.Get(t)).ToArray());
-					text.text = typesText;
+					string filtersText = string.Join("\n", currentFilters.Select((f) => f.IsCategory() ? "[" + f.GetString() + "]" : f.GetString()).ToArray());
+					text.text = filtersText;
 				}
 			}
-		}
-
-		public List<TechType> GetAllAvailableTypes()
-		{
-			return new List<TechType>();
 		}
 
 		internal void AddItem(Pickupable item)
@@ -82,8 +83,21 @@ namespace AutosortLockers
 
 		internal bool CanAddItem(Pickupable item)
 		{
-			bool allowed = allowedTypes.Count == 0 || allowedTypes.Contains(item.GetTechType());
+			bool allowed = currentFilters.Count == 0 || IsTypeAllowed(item.GetTechType());
 			return allowed && container.container.HasRoomFor(item);
+		}
+
+		private bool IsTypeAllowed(TechType techType)
+		{
+			foreach (var filter in currentFilters)
+			{
+				if (filter.IsTechTypeAllowed(techType))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private void Update()
@@ -140,11 +154,16 @@ namespace AutosortLockers
 
 			UpdateText();
 
-			picker = AutosortTypePicker.Create(transform, textPrefab);
-			picker.Initialize(this);
-			picker.gameObject.SetActive(false);
+			StartCoroutine(CreatePicker());
 
 			initialized = true;
+		}
+
+		private IEnumerator CreatePicker()
+		{
+			yield return AutosortTypePicker.Create(transform, textPrefab, this);
+			picker.Initialize(this);
+			picker.gameObject.SetActive(false);
 		}
 
 

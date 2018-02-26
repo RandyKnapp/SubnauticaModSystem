@@ -11,26 +11,42 @@ namespace Common.Utility
 	public static class ImageUtils
 	{
 		private static Dictionary<string, Texture2D> textureCache = new Dictionary<string, Texture2D>();
+		private static Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
 
 		public static Sprite LoadSprite(string path, TextureFormat format = TextureFormat.DXT5, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight)
 		{
+			if (spriteCache.TryGetValue(path, out Sprite foundSprite))
+			{
+				return foundSprite;
+			}
+
 			Texture2D texture2D = ImageUtils.LoadTexture(path, format);
 			if (!texture2D)
 			{
 				return null;
 			}
-			return TextureToSprite(texture2D, pixelsPerUnit, spriteType);
+			var sprite = TextureToSprite(texture2D, pixelsPerUnit, spriteType);
+			spriteCache.Add(path, sprite);
+			return sprite;
 		}
 
 		public static Sprite Load9SliceSprite(string path, RectOffset slices, TextureFormat format = TextureFormat.DXT5, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight)
 		{
+			string spriteKey = path + slices;
+			if (spriteCache.TryGetValue(spriteKey, out Sprite foundSprite))
+			{
+				return foundSprite;
+			}
+
 			Texture2D texture2D = ImageUtils.LoadTexture(path, format);
 			if (!texture2D)
 			{
 				return null;
 			}
 			Vector4 border = new Vector4(slices.left, slices.right, slices.top, slices.bottom);
-			return TextureToSprite(texture2D, pixelsPerUnit, spriteType, border);
+			var sprite = TextureToSprite(texture2D, pixelsPerUnit, spriteType, border);
+			spriteCache.Add(spriteKey, sprite);
+			return sprite;
 		}
 
 		public static Texture2D LoadTexture(string path, TextureFormat format = TextureFormat.DXT5)

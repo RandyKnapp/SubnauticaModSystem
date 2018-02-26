@@ -11,40 +11,52 @@ namespace AutosortLockers
 {
 	public class PickerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 	{
-		private static readonly Color upColor = new Color(0.9f, 0.9f, 0.9f, 0.5f);
+		private static readonly Color upColor = new Color(0.9f, 0.9f, 0.9f, 1f);
 		private static readonly Color hoverColor = new Color(1, 1, 1);
+		private const int Slice = 70;
 
 		private bool hover;
-		private TechType techType;
+		private AutosorterFilter filter;
 
-		public Action<TechType> onClick = delegate { };
+		public Action<AutosorterFilter> onClick = delegate { };
 
 		[SerializeField]
 		private Image background;
 		[SerializeField]
 		private Text text;
 
-		public TechType GetTechType()
+		public AutosorterFilter GetTechType()
 		{
-			return techType;
+			return filter;
 		}
 
-		public void SetTechType(TechType value)
+		public void SetFilter(AutosorterFilter value)
 		{
-			techType = value;
-			text.text = Language.main.Get(techType);
+			filter = value;
+			if (filter != null)
+			{
+				text.text = filter.GetString();
+				if (background != null)
+				{
+					var spriteName = filter.IsCategory() ? "MainMenuPressedSprite.png" : "MainMenuStandardSprite.png";
+					background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath(spriteName), new RectOffset(Slice, Slice, Slice, Slice));
+				}
+			}
 
-			gameObject.SetActive(techType != TechType.None);
+			gameObject.SetActive(filter != null);
 		}
 
 		public void Update()
 		{
-			background.color = hover ? hoverColor : upColor;
+			if (background != null)
+			{
+				background.color = hover ? hoverColor : upColor;
+			}
 		}
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			onClick.Invoke(GetTechType());
+			onClick.Invoke(filter);
 		}
 
 		public void OnPointerEnter(PointerEventData eventData)
@@ -59,7 +71,7 @@ namespace AutosortLockers
 
 
 
-		public static PickerButton Create(Transform parent, TechType techType, Text textPrefab, Action<TechType> action)
+		public static PickerButton Create(Transform parent, Text textPrefab, Action<AutosorterFilter> action)
 		{
 			var button = new GameObject("PickerButton", typeof(RectTransform)).AddComponent<PickerButton>();
 			button.transform.SetParent(parent, false);
@@ -70,22 +82,21 @@ namespace AutosortLockers
 
 			button.background = new GameObject("Background", typeof(RectTransform)).AddComponent<Image>();
 			RectTransformExtensions.SetParams(button.background.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), button.transform);
-			RectTransformExtensions.SetSize(button.background.rectTransform, width * 5, height * 5);
-			button.background.rectTransform.localScale = new Vector3(0.2f, 0.2f, 1);
-			button.background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(slice, slice, slice, slice));
+			RectTransformExtensions.SetSize(button.background.rectTransform, width * 10, height * 10);
+			button.background.rectTransform.localScale = new Vector3(0.1f, 0.1f, 1);
+			button.background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("MainMenuStandardSprite.png"), new RectOffset(slice, slice, slice, slice));
 			button.background.color = upColor;
 			button.background.type = Image.Type.Sliced;
 
 			button.text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
 			RectTransformExtensions.SetParams(button.text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), button.transform);
 			RectTransformExtensions.SetSize(button.text.rectTransform, width, height);
-			button.text.text = Language.main.Get(techType);
 			button.text.color = new Color(1, 1, 1);
 			button.text.font = textPrefab.font;
 			button.text.fontSize = 10;
 			button.text.alignment = TextAnchor.MiddleCenter;
 
-			button.SetTechType(techType);
+			button.SetFilter(null);
 			button.onClick += action;
 
 			return button;
