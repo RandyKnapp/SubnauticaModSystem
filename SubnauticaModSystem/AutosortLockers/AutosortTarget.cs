@@ -56,7 +56,7 @@ namespace AutosortLockers
 			{
 				return;
 			}
-			if (currentFilters.Contains(filter))
+			if (ContainsFilter(filter))
 			{
 				return;
 			}
@@ -65,9 +65,29 @@ namespace AutosortLockers
 			UpdateText();
 		}
 
+		private bool ContainsFilter(AutosorterFilter filter)
+		{
+			foreach (var f in currentFilters)
+			{
+				if (f.IsSame(filter))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		public void RemoveFilter(AutosorterFilter filter)
 		{
-			currentFilters.Remove(filter);
+			foreach (var f in currentFilters)
+			{
+				if (f.IsSame(filter))
+				{
+					currentFilters.Remove(f);
+					break;
+				}
+			}
 			UpdateText();
 		}
 
@@ -158,6 +178,10 @@ namespace AutosortLockers
 
 		internal void ShowConfigureMenu()
 		{
+			foreach (var otherPicker in GameObject.FindObjectsOfType<AutosortTypePicker>())
+			{
+				otherPicker.gameObject.SetActive(false);
+			}
 			picker.gameObject.SetActive(true);
 		}
 

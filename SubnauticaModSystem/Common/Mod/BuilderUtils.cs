@@ -86,7 +86,7 @@ namespace Common.Mod
 				var info = entry.Value;
 				if (info.knownAtStart)
 				{
-					KnownTech.Add(info.techType);
+					KnownTech.Add(info.techType, false);
 				}
 			}
 

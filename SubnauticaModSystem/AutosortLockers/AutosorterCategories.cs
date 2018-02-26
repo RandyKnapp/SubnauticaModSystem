@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using UnityEngine;
 
 namespace AutosortLockers
@@ -421,7 +422,7 @@ namespace AutosortLockers
 	public class AutosorterFilter
 	{
 		public AutoSorterCategory Category;
-		public List<TechType> Types;
+		public List<TechType> Types = new List<TechType>();
 
 		public bool IsCategory()
 		{
@@ -444,6 +445,11 @@ namespace AutosortLockers
 		public bool IsTechTypeAllowed(TechType techType)
 		{
 			return Types.Contains(techType);
+		}
+
+		public bool IsSame(AutosorterFilter other)
+		{
+			return Category == other.Category && Types.Count > 0 && Types.Count == other.Types.Count && Types[0] == other.Types[0];
 		}
 	}
 

@@ -38,7 +38,7 @@ namespace AutosortLockers
 		{
 			this.locker = locker;
 			closeButton.target = locker;
-			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("MainMenuStandardSprite.png"), new RectOffset(20, 20, 20, 20));
+			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
 
 			RefreshCurrentFilters();
 			UpdateAvailableTypes();
@@ -126,6 +126,7 @@ namespace AutosortLockers
 			t.localPosition = new Vector3(0, 0, 0.4f);
 
 			picker.background = LockerPrefabShared.CreateBackground(picker.transform);
+			picker.background.color = new Color(0, 0, 0, 1);
 			picker.background.type = Image.Type.Simple;
 			RectTransformExtensions.SetSize(picker.background.rectTransform, 240, 220);
 
