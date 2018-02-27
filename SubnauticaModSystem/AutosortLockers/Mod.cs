@@ -32,8 +32,6 @@ namespace AutosortLockers
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
 			LoadConfig();
 
-			DevConsole.disableConsole = false;
-
 			AddBuildables();
 
 			HarmonyInstance harmony = HarmonyInstance.Create("com.AutosortLockers.mod");
