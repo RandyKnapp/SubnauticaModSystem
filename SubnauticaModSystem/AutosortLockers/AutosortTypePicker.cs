@@ -47,6 +47,7 @@ namespace AutosortLockers
 			this.locker = locker;
 			closeButton.target = locker;
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
+			background.color = new Color(1, 1, 1);
 
 			RefreshCurrentFilters();
 			UpdateAvailableTypes();

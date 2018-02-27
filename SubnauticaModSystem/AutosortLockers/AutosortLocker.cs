@@ -48,7 +48,28 @@ namespace AutosortLockers
 				return;
 			}
 
-			sortingText.gameObject.SetActive(isSorting);
+			UpdateText();
+		}
+
+		private void UpdateText()
+		{
+			string output = "";
+			int itemsToSort = GetSortableItemCount();
+			int unsortableItems = GetUnsortableItemCount();
+			if (isSorting)
+			{
+				output += "Sorting (" + (itemsToSort + 1) + ")";
+			}
+			if (unsortableItems > 0)
+			{
+				output += (isSorting ? "\n" : "") + "Unsorted Items: " + unsortableItems;
+			}
+			if (!isSorting && unsortableItems == 0 && itemsToSort == 0)
+			{
+				output = "Ready to Sort";
+			}
+
+			sortingText.text = output;
 		}
 
 		private void Initialize()
@@ -56,6 +77,7 @@ namespace AutosortLockers
 			background.gameObject.SetActive(true);
 			icon.gameObject.SetActive(true);
 			text.gameObject.SetActive(true);
+			sortingText.gameObject.SetActive(true);
 
 			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(20, 20, 20, 20));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Sorter.png"));
@@ -112,6 +134,27 @@ namespace AutosortLockers
 			}
 
 			return false;
+		}
+
+		private int GetSortableItemCount()
+		{
+			int count = 0;
+			foreach (InventoryItem item in container.container)
+			{
+				Pickupable pickup = item.item;
+				AutosortTarget target = FindTarget(pickup);
+				if (target != null)
+				{
+					count++;
+				}
+			}
+
+			return count;
+		}
+
+		private int GetUnsortableItemCount()
+		{
+			return container.container.count - GetSortableItemCount();
 		}
 
 		private AutosortTarget FindTarget(Pickupable item)
@@ -191,7 +234,9 @@ namespace AutosortLockers
 			autoSorter.background = LockerPrefabShared.CreateBackground(canvas.transform);
 			autoSorter.icon = LockerPrefabShared.CreateIcon(autoSorter.background.transform, color, 40);
 			autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, color, 0, 14, "Autosorter");
-			autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, color, -20, 12, "Sorting...");
+
+			autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, color, -120, 12, "Sorting...");
+			autoSorter.sortingText.alignment = TextAnchor.UpperCenter;
 
 			autoSorter.background.gameObject.SetActive(false);
 			autoSorter.icon.gameObject.SetActive(false);

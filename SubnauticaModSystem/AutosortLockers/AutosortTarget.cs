@@ -18,6 +18,7 @@ namespace AutosortLockers
 		private Constructable constructable;
 		private StorageContainer container;
 		private AutosortTypePicker picker;
+		private Coroutine plusCoroutine;
 
 		[SerializeField]
 		private Text textPrefab;
@@ -31,6 +32,10 @@ namespace AutosortLockers
 		private Image configureButtonImage;
 		[SerializeField]
 		private Text text;
+		[SerializeField]
+		private Text plus;
+		[SerializeField]
+		private Text quantityText;
 		[SerializeField]
 		private List<AutosorterFilter> currentFilters = new List<AutosorterFilter>();
 
@@ -110,6 +115,12 @@ namespace AutosortLockers
 		internal void AddItem(Pickupable item)
 		{
 			container.container.AddItem(item);
+
+			if (plusCoroutine != null)
+			{
+				StopCoroutine(plusCoroutine);
+			}
+			plusCoroutine = StartCoroutine(ShowPlus());
 		}
 
 		internal bool CanAddItem(Pickupable item)
@@ -169,6 +180,8 @@ namespace AutosortLockers
 			{
 				Mod.Save();
 			}
+
+			UpdateQuantityText();
 		}
 
 		private bool ShouldEnableContainer()
@@ -243,6 +256,26 @@ namespace AutosortLockers
 			saveData.Entries.Add(entry);
 		}
 
+		public IEnumerator ShowPlus()
+		{
+			plus.color = new Color(plus.color.r, plus.color.g, plus.color.b, 1);
+			float t = 0;
+			float rate = 0.5f;
+			while (t < 1.0)
+			{
+				t += Time.deltaTime * rate;
+				plus.color = new Color(plus.color.r, plus.color.g, plus.color.b, Mathf.Lerp(1, 0, t));
+				yield return null;
+			}
+		}
+		
+		private void UpdateQuantityText()
+		{
+			var count = container.container.count;
+			quantityText.text = count == 0 ? "empty" : count.ToString();
+		}
+
+
 
 
 		///////////////////////////////////////////////////////////////////////////////////////////
@@ -309,6 +342,13 @@ namespace AutosortLockers
 			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, -10, 12, "Any");
 			autosortTarget.configureButton = CreateConfigureButton(autosortTarget.background.transform, autosortTarget.textPrefab.color, autosortTarget);
 			autosortTarget.configureButtonImage = autosortTarget.configureButton.GetComponent<Image>();
+
+			autosortTarget.plus = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, 0, 30, "+");
+			autosortTarget.plus.color = new Color(autosortTarget.textPrefab.color.r, autosortTarget.textPrefab.color.g, autosortTarget.textPrefab.color.g, 0);
+			autosortTarget.plus.rectTransform.anchoredPosition += new Vector2(30, 80);
+
+			autosortTarget.quantityText = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, 0, 10, "XX");
+			autosortTarget.quantityText.rectTransform.anchoredPosition += new Vector2(-35, -104);
 
 			autosortTarget.background.gameObject.SetActive(false);
 			autosortTarget.icon.gameObject.SetActive(false);
