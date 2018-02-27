@@ -12,7 +12,11 @@ namespace AutosortLockers
 {
 	public class AutosortTypePicker : MonoBehaviour
 	{
-		private int currentPage = 0;
+		private enum Mode { Categories, Items }
+
+		private Mode currentMode = Mode.Categories;
+		private int currentPageCategories = 0;
+		private int currentPageItems = 0;
 		private List<AutosorterFilter> availableTypes;
 
 		[SerializeField]
@@ -33,6 +37,10 @@ namespace AutosortLockers
 		private PickerPageButton prevPageButton;
 		[SerializeField]
 		private PickerPageButton nextPageButton;
+		[SerializeField]
+		private PickerButton categoriesTabButton;
+		[SerializeField]
+		private PickerButton itemsTabButton;
 
 		public void Initialize(AutosortTarget locker)
 		{
@@ -62,21 +70,31 @@ namespace AutosortLockers
 
 		private List<AutosorterFilter> GetAvailableTypes()
 		{
-			return AutosorterList.GetEntries();
+			if (currentMode == Mode.Categories)
+			{
+				return AutosorterList.GetEntries().Where((e) => e.IsCategory()).ToList();
+			}
+			else
+			{
+				return AutosorterList.GetEntries().Where((e) => !e.IsCategory()).ToList();
+			}
 		}
 
 		private void UpdateAvailableTypes()
 		{
 			availableTypes = GetAvailableTypes();
-			int start = currentPage * AutosortTarget.MaxTypes;
+			int start = GetCurrentPage() * AutosortTarget.MaxTypes;
 			for (int i = 0; i < AutosortTarget.MaxTypes; ++i)
 			{
 				var filter = (start + i) >= availableTypes.Count ? null : availableTypes[start + i];
 				availableList[i].SetFilter(filter);
 			}
-			pageText.text = string.Format("{0}/{1}", currentPage + 1, GetCurrentPageCount());
-			prevPageButton.canChangePage = (currentPage > 0);
-			nextPageButton.canChangePage = (currentPage + 1) < GetCurrentPageCount();
+			pageText.text = string.Format("{0}/{1}", GetCurrentPage() + 1, GetCurrentPageCount());
+			prevPageButton.canChangePage = (GetCurrentPage() > 0);
+			nextPageButton.canChangePage = (GetCurrentPage() + 1) < GetCurrentPageCount();
+
+			categoriesTabButton.SetTabActive(currentMode == Mode.Categories);
+			itemsTabButton.SetTabActive(currentMode == Mode.Items);
 		}
 
 		public void OnCurrentListItemClick(AutosorterFilter filter)
@@ -104,13 +122,48 @@ namespace AutosortLockers
 		internal void ChangePage(int pageOffset)
 		{
 			var pageCount = GetCurrentPageCount();
-			currentPage = Mathf.Clamp(currentPage + pageOffset, 0, pageCount - 1);
+			SetCurrentPage(Mathf.Clamp(GetCurrentPage() + pageOffset, 0, pageCount - 1));
 			UpdateAvailableTypes();
 		}
 
 		private int GetCurrentPageCount()
 		{
 			return (int)Mathf.Ceil((float)availableTypes.Count / AutosortTarget.MaxTypes);
+		}
+
+		private void OnCategoriesButtonClick(AutosorterFilter obj)
+		{
+			if (currentMode != Mode.Categories)
+			{
+				currentMode = Mode.Categories;
+				UpdateAvailableTypes();
+			}
+		}
+
+		private void OnItemsButtonClick(AutosorterFilter obj)
+		{
+			if (currentMode != Mode.Items)
+			{
+				currentMode = Mode.Items;
+				UpdateAvailableTypes();
+			}
+		}
+
+		private int GetCurrentPage()
+		{
+			return currentMode == Mode.Categories ? currentPageCategories : currentPageItems;
+		}
+
+		private void SetCurrentPage(int page)
+		{
+			if (currentMode == Mode.Categories)
+			{
+				currentPageCategories = page;
+			}
+			else
+			{
+				currentPageItems = page;
+			}
 		}
 
 
@@ -143,8 +196,12 @@ namespace AutosortLockers
 			var currentText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 12, "Current");
 			currentText.rectTransform.anchoredPosition = new Vector2(-x, 90);
 
-			var availableText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 12, "Items / Categories");
-			availableText.rectTransform.anchoredPosition = new Vector2(x, 90);
+			picker.categoriesTabButton = CreatePickerButton(picker.background.transform, x - 23 + 2, 90, textPrefab, picker.OnCategoriesButtonClick, 60);
+			picker.categoriesTabButton.Override("Categories", true);
+
+			picker.itemsTabButton = CreatePickerButton(picker.background.transform, x + 30 + 2, 90, textPrefab, picker.OnItemsButtonClick, 38);
+			picker.itemsTabButton.Override("Items", false);
+
 			yield return null;
 
 			picker.pageText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 10, "1/X");
@@ -205,9 +262,9 @@ namespace AutosortLockers
 			return closeButton;
 		}
 
-		public static PickerButton CreatePickerButton(Transform parent, int x, int y, Text textPrefab, Action<AutosorterFilter> action)
+		public static PickerButton CreatePickerButton(Transform parent, int x, int y, Text textPrefab, Action<AutosorterFilter> action, int width = 100)
 		{
-			var button = PickerButton.Create(parent, textPrefab, action);
+			var button = PickerButton.Create(parent, textPrefab, action, width);
 
 			var rt = button.transform as RectTransform;
 			rt.anchoredPosition = new Vector2(x, y);

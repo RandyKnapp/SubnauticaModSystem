@@ -504,6 +504,14 @@ namespace AutosortLockers
 			{
 				AddEntry(AutoSorterCategory.None, type);
 			}
+
+			entries.Sort((AutosorterFilter a, AutosorterFilter b) => {
+				if (a.Category == b.Category)
+				{
+					return string.Compare(a.GetString(), b.GetString());
+				}
+				return a.Category.CompareTo(b.Category);
+			});
 		}
 
 		private static void AddEntry(AutoSorterCategory category, List<TechType> types)
