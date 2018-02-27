@@ -68,7 +68,7 @@ namespace AutosortLockers
 			var text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
 			var rt = text.rectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			RectTransformExtensions.SetSize(rt, 114, 200);
+			RectTransformExtensions.SetSize(rt, 120, 200);
 			rt.anchoredPosition = new Vector2(0, y);
 
 			text.font = prefab.font;

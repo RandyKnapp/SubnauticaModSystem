@@ -209,7 +209,7 @@ namespace AutosortLockers
 			icon.gameObject.SetActive(true);
 			text.gameObject.SetActive(true);
 
-			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(20, 20, 20, 20));
+			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("LockerScreen.png"));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
 			configureButtonImage.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Configure.png"));
 

@@ -11,6 +11,9 @@ namespace AutosortLockers
 {
 	public class AutosortLocker : MonoBehaviour
 	{
+		private static readonly Color MainColor = new Color(1, 0.2f, 0.2f);
+		private static readonly Color PulseColor = Color.white;
+
 		private bool initialized;
 		private Constructable constructable;
 		private StorageContainer container;
@@ -79,7 +82,7 @@ namespace AutosortLockers
 			text.gameObject.SetActive(true);
 			sortingText.gameObject.SetActive(true);
 
-			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("BindingBackground.png"), new RectOffset(20, 20, 20, 20));
+			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("LockerScreen.png"));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Sorter.png"));
 
 			initialized = true;
@@ -99,13 +102,13 @@ namespace AutosortLockers
 		{
 			targets.Clear();
 
-			BaseRoot baseRoot = gameObject.GetComponentInParent<BaseRoot>();
-			if (baseRoot == null)
+			SubRoot subRoot = gameObject.GetComponentInParent<SubRoot>();
+			if (subRoot == null)
 			{
 				return;
 			}
 
-			targets = baseRoot.GetComponentsInChildren<AutosortTarget>().ToList();
+			targets = subRoot.GetComponentsInChildren<AutosortTarget>().ToList();
 		}
 
 		private bool Sort()
@@ -129,11 +132,25 @@ namespace AutosortLockers
 				{
 					container.container.RemoveItem(pickup, true);
 					target.AddItem(pickup);
+
+					StartCoroutine(PulseIcon());
 					return true;
 				}
 			}
 
 			return false;
+		}
+
+		public IEnumerator PulseIcon()
+		{
+			float t = 0;
+			float rate = 0.5f;
+			while (t < 1.0)
+			{
+				t += Time.deltaTime * rate;
+				icon.color = Color.Lerp(PulseColor, MainColor, t);
+				yield return null;
+			}
 		}
 
 		private int GetSortableItemCount()
@@ -228,14 +245,13 @@ namespace AutosortLockers
 			DestroyImmediate(label);
 
 			var autoSorter = prefab.AddComponent<AutosortLocker>();
-			var color = new Color(1, 0.2f, 0.2f);
 
 			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
 			autoSorter.background = LockerPrefabShared.CreateBackground(canvas.transform);
-			autoSorter.icon = LockerPrefabShared.CreateIcon(autoSorter.background.transform, color, 40);
-			autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, color, 0, 14, "Autosorter");
+			autoSorter.icon = LockerPrefabShared.CreateIcon(autoSorter.background.transform, MainColor, 40);
+			autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, 0, 14, "Autosorter");
 
-			autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, color, -120, 12, "Sorting...");
+			autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, -120, 12, "Sorting...");
 			autoSorter.sortingText.alignment = TextAnchor.UpperCenter;
 
 			autoSorter.background.gameObject.SetActive(false);
