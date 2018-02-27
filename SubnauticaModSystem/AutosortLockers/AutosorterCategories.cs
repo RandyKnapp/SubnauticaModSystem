@@ -466,43 +466,69 @@ namespace AutosortLockers
 			return entries;
 		}
 
+		private static List<TechType> GetListForCategory(AutoSorterCategory category)
+		{
+			switch (category)
+			{
+				default:
+				case AutoSorterCategory.None: return AutosorterCategoryData.IndividualItems;
+
+				case AutoSorterCategory.Food: return AutosorterCategoryData.Food;
+				case AutoSorterCategory.Water: return AutosorterCategoryData.Water;
+				case AutoSorterCategory.PlantsAndSeeds: return AutosorterCategoryData.PlantsAndSeeds;
+				case AutoSorterCategory.Metals: return AutosorterCategoryData.Metals;
+				case AutoSorterCategory.NaturalMaterials: return AutosorterCategoryData.NaturalMaterials;
+				case AutoSorterCategory.SyntheticMaterials: return AutosorterCategoryData.SyntheticMaterials;
+				case AutoSorterCategory.Electronics: return AutosorterCategoryData.Electronics;
+				case AutoSorterCategory.CrystalMaterials: return AutosorterCategoryData.CrystalMaterials;
+				case AutoSorterCategory.Batteries: return AutosorterCategoryData.Batteries;
+				case AutoSorterCategory.Fish: return AutosorterCategoryData.Fish;
+				case AutoSorterCategory.Eggs: return AutosorterCategoryData.CreatureEggs;
+				case AutoSorterCategory.Tools: return AutosorterCategoryData.Tools;
+				case AutoSorterCategory.Equipment: return AutosorterCategoryData.Equipment;
+				case AutoSorterCategory.MysteriousTablets: return AutosorterCategoryData.MysteriousTablets;
+				case AutoSorterCategory.ScannerRoomUpgrades: return AutosorterCategoryData.ScannerRoomUpgrades;
+				case AutoSorterCategory.GeneralUpgrades: return AutosorterCategoryData.GeneralUpgrades;
+				case AutoSorterCategory.SeamothUpgrades: return AutosorterCategoryData.SeamothUpgrades;
+				case AutoSorterCategory.PrawnSuitUpgrades: return AutosorterCategoryData.PrawnSuitUpgrades;
+				case AutoSorterCategory.CyclopsUpgrades: return AutosorterCategoryData.CyclopsUpgrades;
+				case AutoSorterCategory.Torpedoes: return AutosorterCategoryData.Torpedoes;
+				case AutoSorterCategory.AlterraStuff: return AutosorterCategoryData.AlterraArtifacts;
+			}
+		}
+
 		private static void InitializeEntries()
 		{
 			entries = new List<AutosorterFilter>();
+			var distinctEntires = new HashSet<TechType>();
 
 			foreach (AutoSorterCategory value in Enum.GetValues(typeof(AutoSorterCategory)))
 			{
-				switch (value)
+				if (value == AutoSorterCategory.None)
 				{
-					case AutoSorterCategory.None: break;
-
-					case AutoSorterCategory.Food:				AddEntry(value, AutosorterCategoryData.Food); break;
-					case AutoSorterCategory.Water:				AddEntry(value, AutosorterCategoryData.Water); break;
-					case AutoSorterCategory.PlantsAndSeeds:		AddEntry(value, AutosorterCategoryData.PlantsAndSeeds); break;
-					case AutoSorterCategory.Metals:				AddEntry(value, AutosorterCategoryData.Metals); break;
-					case AutoSorterCategory.NaturalMaterials:	AddEntry(value, AutosorterCategoryData.NaturalMaterials); break;
-					case AutoSorterCategory.SyntheticMaterials: AddEntry(value, AutosorterCategoryData.SyntheticMaterials); break;
-					case AutoSorterCategory.Electronics:		AddEntry(value, AutosorterCategoryData.Electronics); break;
-					case AutoSorterCategory.CrystalMaterials:	AddEntry(value, AutosorterCategoryData.CrystalMaterials); break;
-					case AutoSorterCategory.Batteries:			AddEntry(value, AutosorterCategoryData.Batteries); break;
-					case AutoSorterCategory.Fish:				AddEntry(value, AutosorterCategoryData.Fish); break;
-					case AutoSorterCategory.Eggs:				AddEntry(value, AutosorterCategoryData.CreatureEggs); break;
-					case AutoSorterCategory.Tools:				AddEntry(value, AutosorterCategoryData.Tools); break;
-					case AutoSorterCategory.Equipment:			AddEntry(value, AutosorterCategoryData.Equipment); break;
-					case AutoSorterCategory.MysteriousTablets:	AddEntry(value, AutosorterCategoryData.MysteriousTablets); break;
-					case AutoSorterCategory.ScannerRoomUpgrades: AddEntry(value, AutosorterCategoryData.ScannerRoomUpgrades); break;
-					case AutoSorterCategory.GeneralUpgrades:	AddEntry(value, AutosorterCategoryData.GeneralUpgrades); break;
-					case AutoSorterCategory.SeamothUpgrades:	AddEntry(value, AutosorterCategoryData.SeamothUpgrades); break;
-					case AutoSorterCategory.PrawnSuitUpgrades:	AddEntry(value, AutosorterCategoryData.PrawnSuitUpgrades); break;
-					case AutoSorterCategory.CyclopsUpgrades:	AddEntry(value, AutosorterCategoryData.CyclopsUpgrades); break;
-					case AutoSorterCategory.Torpedoes:			AddEntry(value, AutosorterCategoryData.Torpedoes); break;
-					case AutoSorterCategory.AlterraStuff:		AddEntry(value, AutosorterCategoryData.AlterraArtifacts); break;
+					foreach (TechType type in AutosorterCategoryData.IndividualItems)
+					{
+						distinctEntires.Add(type);
+						AddEntry(AutoSorterCategory.None, type);
+					}
 				}
-			}
+				else
+				{
+					var items = GetListForCategory(value);
+					AddEntry(value, items);
 
-			foreach (TechType type in AutosorterCategoryData.IndividualItems)
-			{
-				AddEntry(AutoSorterCategory.None, type);
+					if (Mod.config.ShowAllItems)
+					{
+						foreach (TechType type in items)
+						{
+							if (!distinctEntires.Contains(type))
+							{
+								distinctEntires.Add(type);
+								AddEntry(AutoSorterCategory.None, type);
+							}
+						}
+					}
+				}
 			}
 
 			entries.Sort((AutosorterFilter a, AutosorterFilter b) => {

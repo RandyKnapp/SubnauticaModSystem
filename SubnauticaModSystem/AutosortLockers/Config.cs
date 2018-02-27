@@ -7,5 +7,6 @@ namespace AutosortLockers
 	{
 		public bool EasyBuild = false;
 		public float SortInterval = 1.0f;
+		public bool ShowAllItems = false;
 	}
 }

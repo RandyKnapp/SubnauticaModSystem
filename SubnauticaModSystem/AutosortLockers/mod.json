@@ -9,6 +9,7 @@
   "EntryMethod": "AutosortLockers.QPatch.Patch",
   "Config": {
     "EasyBuild": false,
-    "SortInterval": 1.0
+    "SortInterval": 1.0,
+    "ShowAllItems": false
   }
 }
