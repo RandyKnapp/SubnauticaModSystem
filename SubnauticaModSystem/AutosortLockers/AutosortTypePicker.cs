@@ -168,7 +168,7 @@ namespace AutosortLockers
 
 
 
-		public static IEnumerator Create(Transform parent, Text textPrefab, AutosortTarget target)
+		public static AutosortTypePicker Create(Transform parent, Text textPrefab)
 		{
 			var picker = LockerPrefabShared.CreateCanvas(parent).gameObject.AddComponent<AutosortTypePicker>();
 			picker.GetComponent<Canvas>().sortingLayerID = 0;
@@ -183,15 +183,12 @@ namespace AutosortLockers
 			picker.background.type = Image.Type.Simple;
 			RectTransformExtensions.SetSize(picker.background.rectTransform, 240, 220);
 
-			yield return null;
-
 			int spacing = 20;
 			int startY = 60;
 			int x = 55;
 
 			picker.underlines[0] = CreateUnderline(picker.background.transform, x);
 			picker.underlines[1] = CreateUnderline(picker.background.transform, -x);
-			yield return null;
 
 			var currentText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 12, "Current");
 			currentText.rectTransform.anchoredPosition = new Vector2(-x, 90);
@@ -202,8 +199,6 @@ namespace AutosortLockers
 			picker.itemsTabButton = CreatePickerButton(picker.background.transform, x + 30 + 2, 90, textPrefab, picker.OnItemsButtonClick, 38);
 			picker.itemsTabButton.Override("Items", false);
 
-			yield return null;
-
 			picker.pageText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 10, "1/X");
 			picker.pageText.rectTransform.anchoredPosition = new Vector2(x, -80);
 
@@ -211,17 +206,14 @@ namespace AutosortLockers
 			picker.nextPageButton = AddPageButton(picker.background.transform, picker, +1, x + 20, -80);
 
 			picker.closeButton = AddCloseButton(picker.background.transform);
-			yield return null;
 
 			for (int i = 0; i < AutosortTarget.MaxTypes; ++i)
 			{
 				picker.currentList[i] = CreatePickerButton(picker.background.transform, -x, startY - (i * spacing), textPrefab, picker.OnCurrentListItemClick);
-				yield return null;
 				picker.availableList[i] = CreatePickerButton(picker.background.transform, x, startY - (i * spacing), textPrefab, picker.OnAvailableListItemClick);
-				yield return null;
 			}
 
-			target.SetPicker(picker);
+			return picker;
 		}
 
 		private static PickerPageButton AddPageButton(Transform parent, AutosortTypePicker target, int pageOffset, int x, int y)

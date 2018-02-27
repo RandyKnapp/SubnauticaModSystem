@@ -204,7 +204,7 @@ namespace AutosortLockers
 
 			UpdateText();
 
-			StartCoroutine(CreatePicker());
+			CreatePicker();
 
 			initialized = true;
 		}
@@ -227,9 +227,9 @@ namespace AutosortLockers
 			currentFilters = new List<AutosorterFilter>();
 		}
 
-		private IEnumerator CreatePicker()
+		private void CreatePicker()
 		{
-			yield return AutosortTypePicker.Create(transform, textPrefab, this);
+			SetPicker(AutosortTypePicker.Create(transform, textPrefab));
 			picker.Initialize(this);
 			picker.gameObject.SetActive(false);
 		}
