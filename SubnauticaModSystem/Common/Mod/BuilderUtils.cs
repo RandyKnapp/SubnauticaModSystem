@@ -132,6 +132,7 @@ namespace Common.Mod
 				}
 
 				prefab.SetActive(false);
+				prefab.transform.position = new Vector3(5000, 5000, 5000);
 
 				var constructable = prefab.GetComponent<Constructable>();
 				if (constructable != null)

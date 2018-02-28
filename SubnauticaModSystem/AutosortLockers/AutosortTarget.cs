@@ -124,6 +124,18 @@ namespace AutosortLockers
 			plusCoroutine = StartCoroutine(ShowPlus());
 		}
 
+		internal bool CanAddItemByItemFilter(Pickupable item)
+		{
+			bool allowed = IsTypeAllowedByItemFilter(item.GetTechType());
+			return allowed && container.container.HasRoomFor(item);
+		}
+
+		internal bool CanAddItemByCategoryFilter(Pickupable item)
+		{
+			bool allowed = IsTypeAllowedByCategoryFilter(item.GetTechType());
+			return allowed && container.container.HasRoomFor(item);
+		}
+
 		internal bool CanAddItem(Pickupable item)
 		{
 			bool allowed = CanTakeAnyItem() || IsTypeAllowed(item.GetTechType());
@@ -140,12 +152,58 @@ namespace AutosortLockers
 			return constructable.constructed;
 		}
 
+		internal bool HasCategoryFilters()
+		{
+			foreach (var filter in currentFilters)
+			{
+				if (filter.IsCategory())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		internal bool HasItemFilters()
+		{
+			foreach (var filter in currentFilters)
+			{
+				if (!filter.IsCategory())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private bool IsTypeAllowedByCategoryFilter(TechType techType)
+		{
+			foreach (var filter in currentFilters)
+			{
+				if (filter.IsCategory() && filter.IsTechTypeAllowed(techType))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool IsTypeAllowedByItemFilter(TechType techType)
+		{
+			foreach (var filter in currentFilters)
+			{
+				if (!filter.IsCategory() && filter.IsTechTypeAllowed(techType))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		private bool IsTypeAllowed(TechType techType)
 		{
-			if (CanTakeAnyItem())
-			{
-				return true;
-			}
 			foreach (var filter in currentFilters)
 			{
 				if (filter.IsTechTypeAllowed(techType))

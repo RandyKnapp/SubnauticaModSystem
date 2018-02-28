@@ -17,7 +17,8 @@ namespace AutosortLockers
 		private bool initialized;
 		private Constructable constructable;
 		private StorageContainer container;
-		private List<AutosortTarget> targets = new List<AutosortTarget>();
+		private List<AutosortTarget> singleItemTargets = new List<AutosortTarget>();
+		private List<AutosortTarget> categoryTargets = new List<AutosortTarget>();
 		private List<AutosortTarget> anyTargets = new List<AutosortTarget>();
 
 		[SerializeField]
@@ -37,7 +38,6 @@ namespace AutosortLockers
 			container = GetComponent<StorageContainer>();
 			container.hoverText = "Open autosorter";
 			container.storageLabel = "Autosorter";
-			targets.Clear();
 		}
 
 		private void Update()
@@ -101,7 +101,8 @@ namespace AutosortLockers
 
 		private void AccumulateTargets()
 		{
-			targets.Clear();
+			singleItemTargets.Clear();
+			categoryTargets.Clear();
 			anyTargets.Clear();
 
 			SubRoot subRoot = gameObject.GetComponentInParent<SubRoot>();
@@ -121,7 +122,14 @@ namespace AutosortLockers
 					}
 					else
 					{
-						targets.Add(target);
+						if (target.HasItemFilters())
+						{
+							singleItemTargets.Add(target);
+						}
+						if (target.HasCategoryFilters())
+						{
+							categoryTargets.Add(target);
+						}
 					}
 				}
 			}
@@ -135,7 +143,7 @@ namespace AutosortLockers
 			}
 
 			AccumulateTargets();
-			if (targets.Count <= 0 && anyTargets.Count <= 0)
+			if (singleItemTargets.Count <= 0 && categoryTargets.Count <= 0 && anyTargets.Count <= 0)
 			{
 				return false;
 			}
@@ -192,9 +200,16 @@ namespace AutosortLockers
 
 		private AutosortTarget FindTarget(Pickupable item)
 		{
-			foreach (AutosortTarget target in targets)
+			foreach (AutosortTarget target in singleItemTargets)
 			{
-				if (target.CanAddItem(item))
+				if (target.CanAddItemByItemFilter(item))
+				{
+					return target;
+				}
+			}
+			foreach (AutosortTarget target in categoryTargets)
+			{
+				if (target.CanAddItemByCategoryFilter(item))
 				{
 					return target;
 				}
