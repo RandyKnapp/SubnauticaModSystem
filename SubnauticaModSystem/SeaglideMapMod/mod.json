@@ -1,0 +1,13 @@
+{
+  "Id": "SeaglideMapMod",
+  "DisplayName": "SeaglideMapMod",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "SeaglideMapMod.dll",
+  "EntryMethod": "SeaglideMapMod.QPatch.Patch",
+  "Config": {
+    "FixeScannerToolTextBug": true
+  }
+}

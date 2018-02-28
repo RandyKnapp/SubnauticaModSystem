@@ -21,12 +21,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutosortLockers", "Autosort
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterScannerBlips", "BetterScannerBlips\BetterScannerBlips.csproj", "{B7752C03-C7BB-494F-BA52-9CD5EC649AA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaglideMapMod", "SeaglideMapMod\SeaglideMapMod.csproj", "{829B1A80-D3B3-431A-A4B8-284C6B9DE226}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{0d86304e-0a53-422a-99e6-0c687d9dbbc6}*SharedItemsImports = 4
 		Common\Common.projitems*{2b390daa-56b9-42d9-bad4-8a47736c0563}*SharedItemsImports = 4
 		Common\Common.projitems*{6c883b28-31e6-4c26-b32b-bf5be0d70190}*SharedItemsImports = 4
 		Common\Common.projitems*{7b7cdbe9-9fac-4e28-a42c-80a21066d7ab}*SharedItemsImports = 4
+		Common\Common.projitems*{829b1a80-d3b3-431a-a4b8-284c6b9de226}*SharedItemsImports = 4
 		Common\Common.projitems*{b7752c03-c7bb-494f-ba52-9cd5ec649aa7}*SharedItemsImports = 4
 		Common\Common.projitems*{cf7e5ea0-ee32-4330-af9c-e720e9a64681}*SharedItemsImports = 4
 		Common\Common.projitems*{dd1d2dc7-3bdc-4dc1-99c8-2d0ccbf2b171}*SharedItemsImports = 13
@@ -68,6 +71,10 @@ Global
 		{B7752C03-C7BB-494F-BA52-9CD5EC649AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7752C03-C7BB-494F-BA52-9CD5EC649AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7752C03-C7BB-494F-BA52-9CD5EC649AA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{829B1A80-D3B3-431A-A4B8-284C6B9DE226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{829B1A80-D3B3-431A-A4B8-284C6B9DE226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{829B1A80-D3B3-431A-A4B8-284C6B9DE226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{829B1A80-D3B3-431A-A4B8-284C6B9DE226}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
