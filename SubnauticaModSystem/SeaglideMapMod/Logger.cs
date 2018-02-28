@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace SeaglideMapMod
+namespace SeaglideMapControls
 {
 	public static class Logger
 	{
 		public static void Log(string message)
 		{
-			Console.WriteLine("[SeaglideMapMod] " + message);
+			Console.WriteLine("[SeaglideMapControls] " + message);
 		}
 
 		public static void Log(string format, params object[] args)
@@ -16,7 +16,7 @@ namespace SeaglideMapMod
 
 		public static void Error(string message)
 		{
-			Console.WriteLine("[SeaglideMapMod:ERROR] " + message);
+			Console.WriteLine("[SeaglideMapControls:ERROR] " + message);
 		}
 
 		public static void Error(string format, params object[] args)

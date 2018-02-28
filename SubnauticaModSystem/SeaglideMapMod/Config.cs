@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SeaglideMapMod
+namespace SeaglideMapControls
 {
 	[Serializable]
 	class Config

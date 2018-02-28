@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 
-namespace SeaglideMapMod.Patches
+namespace SeaglideMapControls.Patches
 {
 	[HarmonyPatch(typeof(ScannerTool))]
 	[HarmonyPatch("Update")]

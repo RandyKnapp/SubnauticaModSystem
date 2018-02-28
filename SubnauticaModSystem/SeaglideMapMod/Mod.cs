@@ -3,7 +3,7 @@ using Harmony;
 using System;
 using System.Reflection;
 
-namespace SeaglideMapMod
+namespace SeaglideMapControls
 {
 	static class Mod
 	{
@@ -16,7 +16,7 @@ namespace SeaglideMapMod
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
 			LoadConfig();
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.SeaglideMapMod.mod");
+			HarmonyInstance harmony = HarmonyInstance.Create("com.SeaglideMapControls.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");

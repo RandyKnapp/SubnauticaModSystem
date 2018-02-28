@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SeaglideMapMod.Properties {
+namespace SeaglideMapControls.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SeaglideMapMod.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SeaglideMapMod.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SeaglideMapControls.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -70,7 +70,7 @@ namespace SeaglideMapMod.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SeaglideMapMod.
+        ///   Looks up a localized string similar to SeaglideMapControls.
         /// </summary>
         internal static string title {
             get {
@@ -79,7 +79,7 @@ namespace SeaglideMapMod.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1.0.0.
+        ///   Looks up a localized string similar to 1.0.1.
         /// </summary>
         internal static string ver {
             get {

@@ -7,8 +7,8 @@
     <ProjectGuid>{829B1A80-D3B3-431A-A4B8-284C6B9DE226}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SeaglideMapMod</RootNamespace>
-    <AssemblyName>SeaglideMapMod</AssemblyName>
+    <RootNamespace>SeaglideMapControls</RootNamespace>
+    <AssemblyName>SeaglideMapControls</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -111,8 +111,8 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\Subnautica\QMods\SeaglideMapMod\ /q /y
-xcopy $(ProjectDir)mod.json D:\SteamLibrary\steamapps\common\Subnautica\QMods\SeaglideMapMod\ /q /y
-xcopy $(ProjectDir)Assets D:\SteamLibrary\steamapps\common\Subnautica\QMods\SeaglideMapMod\Assets\ /q /y /i</PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\Subnautica\QMods\SeaglideMapControls\ /q /y
+xcopy $(ProjectDir)mod.json D:\SteamLibrary\steamapps\common\Subnautica\QMods\SeaglideMapControls\ /q /y
+xcopy $(ProjectDir)Assets D:\SteamLibrary\steamapps\common\Subnautica\QMods\SeaglideMapControls\Assets\ /q /y /i</PostBuildEvent>
   </PropertyGroup>
 </Project>

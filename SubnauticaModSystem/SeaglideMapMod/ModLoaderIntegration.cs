@@ -1,11 +1,11 @@
-﻿namespace SeaglideMapMod
+﻿namespace SeaglideMapControls
 {
 	// QMods by qwiso https://github.com/Qwiso/QModManager
 	public static class QPatch
 	{
 		public static void Patch()
 		{
-			Mod.Patch("QMods\\SeaglideMapMod");
+			Mod.Patch("QMods\\SeaglideMapControls");
 		}
 	}
 }

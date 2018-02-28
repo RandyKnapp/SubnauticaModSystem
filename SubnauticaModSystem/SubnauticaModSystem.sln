@@ -21,7 +21,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutosortLockers", "Autosort
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterScannerBlips", "BetterScannerBlips\BetterScannerBlips.csproj", "{B7752C03-C7BB-494F-BA52-9CD5EC649AA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaglideMapMod", "SeaglideMapMod\SeaglideMapMod.csproj", "{829B1A80-D3B3-431A-A4B8-284C6B9DE226}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaglideMapControls", "SeaglideMapMod\SeaglideMapControls.csproj", "{829B1A80-D3B3-431A-A4B8-284C6B9DE226}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomizedStorage", "CustomizedStorage\CustomizedStorage.csproj", "{D9A802D6-AD51-4543-9903-0B90B1FA65AC}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -32,6 +34,7 @@ Global
 		Common\Common.projitems*{829b1a80-d3b3-431a-a4b8-284c6b9de226}*SharedItemsImports = 4
 		Common\Common.projitems*{b7752c03-c7bb-494f-ba52-9cd5ec649aa7}*SharedItemsImports = 4
 		Common\Common.projitems*{cf7e5ea0-ee32-4330-af9c-e720e9a64681}*SharedItemsImports = 4
+		Common\Common.projitems*{d9a802d6-ad51-4543-9903-0b90b1fa65ac}*SharedItemsImports = 4
 		Common\Common.projitems*{dd1d2dc7-3bdc-4dc1-99c8-2d0ccbf2b171}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +78,10 @@ Global
 		{829B1A80-D3B3-431A-A4B8-284C6B9DE226}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{829B1A80-D3B3-431A-A4B8-284C6B9DE226}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{829B1A80-D3B3-431A-A4B8-284C6B9DE226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9A802D6-AD51-4543-9903-0B90B1FA65AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9A802D6-AD51-4543-9903-0B90B1FA65AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9A802D6-AD51-4543-9903-0B90B1FA65AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9A802D6-AD51-4543-9903-0B90B1FA65AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

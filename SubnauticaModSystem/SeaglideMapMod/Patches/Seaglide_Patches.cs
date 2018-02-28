@@ -7,7 +7,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SeaglideMapMod.Patches
+namespace SeaglideMapControls.Patches
 {
 	[HarmonyPatch(typeof(PlayerTool))]
 	[HarmonyPatch("GetCustomUseText")]
