@@ -1,0 +1,14 @@
+{
+  "Id": "CustomizedStorage",
+  "DisplayName": "CustomizedStorage",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "CustomizedStorage.dll",
+  "EntryMethod": "CustomizedStorage.QPatch.Patch",
+  "Config": {
+    "SeaglideMapStartOn": false,
+    "FixScannerToolTextBug": true
+  }
+}
