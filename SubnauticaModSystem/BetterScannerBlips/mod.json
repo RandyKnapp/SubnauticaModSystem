@@ -1,0 +1,28 @@
+{
+  "Id": "BetterScannerBlips",
+  "DisplayName": "BetterScannerBlips",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "BetterScannerBlips.dll",
+  "EntryMethod": "BetterScannerBlips.QPatch.Patch",
+  "Config": {
+    "MaxRange": 200.0,
+    "MaxRangeScale": 0.2,
+    "CloseRange": 12.0,
+    "CloseRangeScale": 1.0,
+    "MinRange": 0,
+    "MinRangeScale": 6.0,
+    "TextRange": 100.0,
+    "AlphaOutRange": 150.0,
+    "MaxAlpha": 1,
+    "MinAlpha": 0.4,
+    "CustomColors": false,
+    "CircleColor": "#00FF00FF",
+    "TextColor": "#00FF00FF",
+    "ShowDistance": true,
+    "NoText": false,
+    "ToggleKey": "l"
+  }
+}
