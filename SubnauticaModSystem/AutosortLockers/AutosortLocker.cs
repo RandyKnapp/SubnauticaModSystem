@@ -18,6 +18,7 @@ namespace AutosortLockers
 		private Constructable constructable;
 		private StorageContainer container;
 		private List<AutosortTarget> targets = new List<AutosortTarget>();
+		private List<AutosortTarget> anyTargets = new List<AutosortTarget>();
 
 		[SerializeField]
 		private Image background;
@@ -101,6 +102,7 @@ namespace AutosortLockers
 		private void AccumulateTargets()
 		{
 			targets.Clear();
+			anyTargets.Clear();
 
 			SubRoot subRoot = gameObject.GetComponentInParent<SubRoot>();
 			if (subRoot == null)
@@ -108,7 +110,21 @@ namespace AutosortLockers
 				return;
 			}
 
-			targets = subRoot.GetComponentsInChildren<AutosortTarget>().ToList();
+			var allTargets = subRoot.GetComponentsInChildren<AutosortTarget>().ToList();
+			foreach (var target in allTargets)
+			{
+				if (target.isActiveAndEnabled && target.CanAddItems())
+				{
+					if (target.CanTakeAnyItem())
+					{
+						anyTargets.Add(target);
+					}
+					else
+					{
+						targets.Add(target);
+					}
+				}
+			}
 		}
 
 		private bool Sort()
@@ -119,7 +135,7 @@ namespace AutosortLockers
 			}
 
 			AccumulateTargets();
-			if (targets.Count <= 0)
+			if (targets.Count <= 0 && anyTargets.Count <= 0)
 			{
 				return false;
 			}
@@ -177,6 +193,13 @@ namespace AutosortLockers
 		private AutosortTarget FindTarget(Pickupable item)
 		{
 			foreach (AutosortTarget target in targets)
+			{
+				if (target.CanAddItem(item))
+				{
+					return target;
+				}
+			}
+			foreach (AutosortTarget target in anyTargets)
 			{
 				if (target.CanAddItem(item))
 				{

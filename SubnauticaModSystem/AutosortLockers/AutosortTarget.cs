@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Oculus.Newtonsoft.Json;
+using System;
 
 namespace AutosortLockers
 {
@@ -125,13 +126,23 @@ namespace AutosortLockers
 
 		internal bool CanAddItem(Pickupable item)
 		{
-			bool allowed = currentFilters == null || currentFilters.Count == 0 || IsTypeAllowed(item.GetTechType());
+			bool allowed = CanTakeAnyItem() || IsTypeAllowed(item.GetTechType());
 			return allowed && container.container.HasRoomFor(item);
+		}
+
+		internal bool CanTakeAnyItem()
+		{
+			return currentFilters == null || currentFilters.Count == 0;
+		}
+
+		internal bool CanAddItems()
+		{
+			return constructable.constructed;
 		}
 
 		private bool IsTypeAllowed(TechType techType)
 		{
-			if (currentFilters == null || currentFilters.Count == 0)
+			if (CanTakeAnyItem())
 			{
 				return true;
 			}
@@ -323,6 +334,14 @@ namespace AutosortLockers
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
 			prefab.name = "AutosortReceptacle";
+
+			if (Mod.config.LargeLockers)
+			{
+				var container = prefab.GetComponent<StorageContainer>();
+				container.width = 6;
+				container.height = 8;
+				container.container.Resize(6, 8);
+			}
 
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
 			foreach (var meshRenderer in meshRenderers)

@@ -10,6 +10,7 @@
   "Config": {
     "EasyBuild": false,
     "SortInterval": 1.0,
-    "ShowAllItems": false
+    "ShowAllItems": false,
+    "LargeLockers": true
   }
 }
