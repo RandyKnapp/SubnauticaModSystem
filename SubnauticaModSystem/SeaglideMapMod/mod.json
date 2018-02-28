@@ -8,6 +8,7 @@
   "AssemblyName": "SeaglideMapMod.dll",
   "EntryMethod": "SeaglideMapMod.QPatch.Patch",
   "Config": {
-    "FixeScannerToolTextBug": true
+    "SeaglideMapStartOn": false,
+    "FixScannerToolTextBug": true
   }
 }

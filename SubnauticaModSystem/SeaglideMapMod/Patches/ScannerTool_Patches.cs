@@ -17,7 +17,7 @@ namespace SeaglideMapMod.Patches
 
 		private static bool Prefix(ScannerTool __instance)
 		{
-			if (!Mod.config.FixeScannerToolTextBug)
+			if (!Mod.config.FixScannerToolTextBug)
 			{
 				return true;
 			}
