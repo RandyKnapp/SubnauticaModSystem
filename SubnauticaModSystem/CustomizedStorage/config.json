@@ -1,7 +1,7 @@
 {
   "Inventory": {
-    "width": 8,
-    "height": 10
+    "width": 6,
+    "height": 8
   },
   "SmallLocker": {
     "width": 5,
@@ -12,16 +12,16 @@
     "height": 8
   },
   "EscapePodLocker": {
-    "width": 3,
+    "width": 4,
     "height": 8
   },
   "CyclopsLocker": {
     "width": 3,
-    "height": 7
+    "height": 6
   },
   "WaterproofLocker": {
     "width": 4,
-    "height": 5
+    "height": 4
   },
   "CarryAll": {
     "width": 3,
@@ -29,15 +29,15 @@
   },
   "Exosuit": {
     "width": 6,
-    "baseHeight": 2,
-    "heightPerStorageModule": 2
+    "baseHeight": 4,
+    "heightPerStorageModule": 1
   },
   "SeamothStorage": {
-    "width": 8,
-    "height": 10
+    "width": 4,
+    "height": 4
   },
   "BioReactor": {
-    "width": 6,
-    "height": 6
+    "width": 4,
+    "height": 4
   }
 }
