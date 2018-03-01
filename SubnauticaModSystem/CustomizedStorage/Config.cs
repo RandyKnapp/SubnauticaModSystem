@@ -38,23 +38,23 @@ namespace CustomizedStorage
 	[Serializable]
 	class ExosuitConfig
 	{
-		public int width = 8;
-		public int baseHeight = 10;
-		public int heightPerStorageModule = 0;
+		public int width = 6;
+		public int baseHeight = 4;
+		public int heightPerStorageModule = 1;
 	}
 
 	[Serializable]
 	class Config
 	{
-		public Size Inventory = new Size(8, 10);
-		public Size SmallLocker = new Size(8, 10);
-		public Size Locker = new Size(8, 10);
-		public Size EscapePodLocker = new Size(8, 10);
-		public Size CyclopsLocker = new Size(8, 10);
-		public Size WaterproofLocker = new Size(8, 10);
-		public Size CarryAll = new Size(8, 10);
+		public Size Inventory = new Size(6, 8);
+		public Size SmallLocker = new Size(5, 6);
+		public Size Locker = new Size(6, 8);
+		public Size EscapePodLocker = new Size(4, 8);
+		public Size CyclopsLocker = new Size(3, 6);
+		public Size WaterproofLocker = new Size(4, 4);
+		public Size CarryAll = new Size(3, 3);
 		public ExosuitConfig Exosuit = new ExosuitConfig();
-		public Size SeamothStorage = new Size(8, 10);
-		public Size BioReactor = new Size(6, 6);
+		public Size SeamothStorage = new Size(4, 4);
+		public Size BioReactor = new Size(4, 4);
 	}
 }
