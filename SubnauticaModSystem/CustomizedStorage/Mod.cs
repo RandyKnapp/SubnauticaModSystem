@@ -1,6 +1,8 @@
 ﻿using Common.Mod;
 using Harmony;
+using Oculus.Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Reflection;
 
 namespace CustomizedStorage
@@ -34,14 +36,28 @@ namespace CustomizedStorage
 			return GetModPath() + @"\Assets\" + filename;
 		}
 
-		private static string GetModInfoPath()
+		private static string GetConfigPath()
 		{
-			return GetModPath() + "\\mod.json";
+			return GetModPath() + "\\config.json";
 		}
 
 		private static void LoadConfig()
 		{
-			config = ModUtils.LoadConfig<Config>(GetModInfoPath());
+			string filePath = GetConfigPath();
+			if (!File.Exists(filePath))
+			{
+				config = new Config();
+				File.WriteAllText(filePath, JsonConvert.SerializeObject(config, Formatting.Indented));
+				return;
+			}
+
+			string configJson = File.ReadAllText(filePath);
+			config = JsonConvert.DeserializeObject<Config>(configJson);
+			if (config == null)
+			{
+				config = new Config();
+			}
+
 			ValidateConfig();
 		}
 
@@ -52,6 +68,30 @@ namespace CustomizedStorage
 			{
 				config = defaultConfig;
 				return;
+			}
+			var min = new Size(1, 1);
+			var max = new Size(8, 10);
+
+			ModUtils.ValidateConfigValue("Inventory", min, max, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("SmallLocker", min, max, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("Locker", min, max, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("EscapePodLocker", min, max, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("CyclopsLocker", min, max, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("WaterproofLocker", min, max, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("CarryAll", min, max, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("SeamothStorage", min, max, ref config, ref defaultConfig);
+
+			ModUtils.ValidateConfigValue("width", min.width, max.width, ref config.Exosuit, ref defaultConfig.Exosuit);
+			ModUtils.ValidateConfigValue("baseHeight", min.height, max.height, ref config.Exosuit, ref defaultConfig.Exosuit);
+
+			int exoMaxHeight = config.Exosuit.baseHeight + (config.Exosuit.heightPerStorageModule * 4);
+			if (exoMaxHeight > max.height)
+			{
+				Console.WriteLine("Config values for 'Exosuit' were not valid. Max height is {0} but the exosuit might exceed that. ({1})",
+					max.height,
+					"MaxHeight = baseHeight + (heightPerStorageModule * 4)"
+				);
+				config.Exosuit = defaultConfig.Exosuit;
 			}
 		}
 	}

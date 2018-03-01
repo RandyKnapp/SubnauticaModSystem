@@ -33,7 +33,7 @@ namespace Common.Mod
 			return config;
 		}
 
-		public static void ValidateConfigValue<T, ConfigT>(string field, T min, T max, ConfigT config, ConfigT defaultConfig) where T : IComparable
+		public static void ValidateConfigValue<T, ConfigT>(string field, T min, T max, ref ConfigT config, ref ConfigT defaultConfig) where T : IComparable
 		{
 			var fieldInfo = typeof(ConfigT).GetField(field, BindingFlags.Public | BindingFlags.Instance);
 			T value = (T)fieldInfo.GetValue(config);

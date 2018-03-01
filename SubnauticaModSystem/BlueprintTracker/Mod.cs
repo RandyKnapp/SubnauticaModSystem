@@ -68,7 +68,7 @@ namespace BlueprintTracker
 				return;
 			}
 
-			ModUtils.ValidateConfigValue("MaxPinnedBlueprints", MinPins, MaxPins, config, defaultConfig);
+			ModUtils.ValidateConfigValue("MaxPinnedBlueprints", MinPins, MaxPins, ref config, ref defaultConfig);
 
 			switch (config.Position)
 			{
@@ -83,9 +83,9 @@ namespace BlueprintTracker
 					break;
 			}
 
-			ModUtils.ValidateConfigValue("TrackerScale", 0.01f, 5.0f, config, defaultConfig);
-			ModUtils.ValidateConfigValue("FontSize", 10, 60, config, defaultConfig);
-			ModUtils.ValidateConfigValue("BackgroundAlpha", 0.0f, 1.0f, config, defaultConfig);
+			ModUtils.ValidateConfigValue("TrackerScale", 0.01f, 5.0f, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("FontSize", 10, 60, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("BackgroundAlpha", 0.0f, 1.0f, ref config, ref defaultConfig);
 		}
 
 		public static SaveData LoadSaveData()
