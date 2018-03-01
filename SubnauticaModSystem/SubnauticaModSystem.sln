@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomizedStorage", "Custom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrawnsuitLightswitch", "PrawnsuitLightswitch\PrawnsuitLightswitch.csproj", "{7E1DE3EC-3325-4F95-B306-616E1FA23B40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitatControlPanel", "HabitatControlPanel\HabitatControlPanel.csproj", "{F8A529A2-4CF8-4651-B0E8-B43B26C66753}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{0d86304e-0a53-422a-99e6-0c687d9dbbc6}*SharedItemsImports = 4
@@ -39,6 +41,7 @@ Global
 		Common\Common.projitems*{cf7e5ea0-ee32-4330-af9c-e720e9a64681}*SharedItemsImports = 4
 		Common\Common.projitems*{d9a802d6-ad51-4543-9903-0b90b1fa65ac}*SharedItemsImports = 4
 		Common\Common.projitems*{dd1d2dc7-3bdc-4dc1-99c8-2d0ccbf2b171}*SharedItemsImports = 13
+		Common\Common.projitems*{f8a529a2-4cf8-4651-b0e8-b43b26c66753}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +92,10 @@ Global
 		{7E1DE3EC-3325-4F95-B306-616E1FA23B40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E1DE3EC-3325-4F95-B306-616E1FA23B40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E1DE3EC-3325-4F95-B306-616E1FA23B40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8A529A2-4CF8-4651-B0E8-B43B26C66753}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8A529A2-4CF8-4651-B0E8-B43B26C66753}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8A529A2-4CF8-4651-B0E8-B43B26C66753}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8A529A2-4CF8-4651-B0E8-B43B26C66753}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -28,6 +28,8 @@ namespace Common.Mod
 		private static readonly Dictionary<string, GameObject> prefabsByClassID = new Dictionary<string, GameObject>();
 		private static bool techMappingInitialized;
 		private static bool knownTechInitialized;
+		private static bool languageStringsInitialized;
+		private static bool prefabDatabaseInitialized;
 
 		public static void AddBuildable(CustomTechInfo info)
 		{
@@ -61,6 +63,7 @@ namespace Common.Mod
 			{
 				return;
 			}
+			techMappingInitialized = true;
 
 			Console.WriteLine("[BuilderUtils] Initializing tech mapping");
 			var techMapping = (Dictionary<TechType, string>)CraftData_techMapping.GetValue(null);
@@ -69,8 +72,6 @@ namespace Common.Mod
 				var info = entry.Value;
 				techMapping.Add(info.techType, info.assetPath);
 			}
-
-			techMappingInitialized = true;
 		}
 
 		public static void OnKnownTechInitialized()
@@ -79,6 +80,7 @@ namespace Common.Mod
 			{
 				return;
 			}
+			knownTechInitialized = true;
 
 			Console.WriteLine("[BuilderUtils] Adding initially known blueprints to KnownTech");
 			foreach (var entry in techData)
@@ -89,12 +91,16 @@ namespace Common.Mod
 					KnownTech.Add(info.techType, false);
 				}
 			}
-
-			knownTechInitialized = true;
 		}
 
 		public static void OnLanguageStringsInitialized()
 		{
+			if (languageStringsInitialized)
+			{
+				return;
+			}
+			languageStringsInitialized = true;
+
 			Console.WriteLine("[BuilderUtils] Adding tooltip strings to language file");
 			Dictionary <string, string> strings = (Dictionary<string, string>)Language_strings.GetValue(Language.main);
 			foreach (var entry in techData)
@@ -110,6 +116,12 @@ namespace Common.Mod
 
 		public static void OnPrefabDatabaseInitialized()
 		{
+			if (prefabDatabaseInitialized)
+			{
+				return;
+			}
+			prefabDatabaseInitialized = true;
+
 			Console.WriteLine("[BuilderUtils] Initializing prefabs");
 			foreach (var entry in techData)
 			{

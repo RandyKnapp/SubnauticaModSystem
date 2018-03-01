@@ -1,0 +1,16 @@
+{
+  "Id": "HabitatControlPanel",
+  "DisplayName": "HabitatControlPanel",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "HabitatControlPanel.dll",
+  "EntryMethod": "HabitatControlPanel.QPatch.Patch",
+  "Config": {
+    "EasyBuild": false,
+    "SortInterval": 1.0,
+    "ShowAllItems": false,
+    "LargeLockers": true
+  }
+}
