@@ -119,6 +119,16 @@ namespace AutosortLockers.Patches
 		}
 	}
 
+	[HarmonyPatch(typeof(PrefabDatabase))]
+	[HarmonyPatch("LoadPrefabDatabase")]
+	class PrefabDatabase_LoadPrefabDatabase_Patch
+	{
+		private static void Postfix()
+		{
+			BuilderUtils.OnPrefabDatabaseInitialized();
+		}
+	}
+
 	[HarmonyPatch(typeof(SpriteManager))]
 	[HarmonyPatch("Get")]
 	[HarmonyPatch(new Type[] { typeof(TechType) })]

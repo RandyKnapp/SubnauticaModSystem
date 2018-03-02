@@ -241,11 +241,7 @@ namespace AutosortLockers
 
 			container.enabled = ShouldEnableContainer();
 
-			if (SaveLoadManager.main != null && SaveLoadManager.main.isSaving && !Mod.IsSaving() && !Mod.NeedsSaving())
-			{
-				Mod.SetNeedsSaving();
-			}
-			if (SaveLoadManager.main != null && !SaveLoadManager.main.isSaving && !Mod.IsSaving() && Mod.NeedsSaving())
+			if (SaveLoadManager.main != null && SaveLoadManager.main.isSaving && !Mod.IsSaving())
 			{
 				Mod.Save();
 			}

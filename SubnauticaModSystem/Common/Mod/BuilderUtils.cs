@@ -123,6 +123,9 @@ namespace Common.Mod
 			}
 			prefabDatabaseInitialized = true;
 
+			prefabsByTechType.Clear();
+			prefabsByClassID.Clear();
+
 			Console.WriteLine("[BuilderUtils] Initializing prefabs");
 			foreach (var entry in techData)
 			{
@@ -165,16 +168,36 @@ namespace Common.Mod
 					prefabIdentifier.ClassId = info.assetPath;
 				}
 
+				var onDestroy = prefab.AddComponent<CallbackOnDestroy>();
+				onDestroy.onDestroy = OnPrefabDestroyed;
+
 				AddPrefab(info.techType, info.assetPath, prefab);
 				PrefabDatabase.prefabFiles[info.assetPath] = info.assetPath;
 				PrefabDatabase.AddToCache(info.assetPath, prefab);
 			}
 		}
 
+		private static void OnPrefabDestroyed(GameObject prefab)
+		{
+			Console.WriteLine("OnPrefabDestroyed:" + prefab);
+			var entry1 = prefabsByTechType.FirstOrDefault((x) => x.Value == prefab);
+			prefabsByTechType.Remove(entry1.Key);
+
+			var entry2 = prefabsByClassID.FirstOrDefault((x) => x.Value == prefab);
+			prefabsByClassID.Remove(entry2.Key);
+
+			prefabDatabaseInitialized = false;
+		}
+
 		public static void AddPrefab(TechType techType, string classID, GameObject prefab)
 		{
 			prefabsByTechType[techType] = prefab;
 			prefabsByClassID[classID] = prefab;
+		}
+
+		public static void RemovePrefab(TechType techType)
+		{
+
 		}
 
 		public static GameObject GetPrefab(TechType techType)

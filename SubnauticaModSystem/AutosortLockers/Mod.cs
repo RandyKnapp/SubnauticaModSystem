@@ -24,8 +24,7 @@ namespace AutosortLockers
 		public static SaveData saveData;
 
 		private static string modDirectory;
-		private static GameObject modObject;
-		private static bool needsSave;
+		private static ModSaver saveObject;
 
 		public static void Patch(string modDirectory = null)
 		{
@@ -95,48 +94,40 @@ namespace AutosortLockers
 			return saveData;
 		}
 
-		public static void SetNeedsSaving()
-		{
-			needsSave = true;
-		}
-
-		public static bool NeedsSaving()
-		{
-			return needsSave;
-		}
-
 		public static void Save()
 		{
 			if (!IsSaving())
 			{
-				modObject = new GameObject("AutosortLockersSaveObject");
-				var x = modObject.AddComponent<ModSaver>();
-				x.StartCoroutine(SaveCoroutine());
+				Logger.Log("Saving");
+				SaveData newSaveData = new SaveData();
+				var targets = GameObject.FindObjectsOfType<AutosortTarget>();
+				foreach (var target in targets)
+				{
+					target.SaveFilters(newSaveData);
+				}
+				WriteSaveData(newSaveData);
+				saveData = newSaveData;
+				Logger.Log("Done Writing File");
+
+				saveObject = new GameObject("AutosortLockersSaveObject").AddComponent<ModSaver>();
+				saveObject.StartCoroutine(SaveCoroutine());
 			}
 		}
 
 		public static bool IsSaving()
 		{
-			return modObject != null;
+			return saveObject != null;
 		}
 
 		private static IEnumerator SaveCoroutine()
 		{
-			yield return null;
-
-			SaveData newSaveData = new SaveData();
-			var targets = GameObject.FindObjectsOfType<AutosortTarget>();
-			foreach (var target in targets)
+			while (SaveLoadManager.main != null && SaveLoadManager.main.isSaving)
 			{
-				target.SaveFilters(newSaveData);
+				yield return null;
 			}
-			WriteSaveData(newSaveData);
-			saveData = newSaveData;
-
-			yield return null;
-			GameObject.Destroy(modObject);
-			modObject = null;
-			needsSave = false;
+			GameObject.Destroy(saveObject.gameObject);
+			saveObject = null;
+			Logger.Log("Save Process Complete");
 		}
 
 		private static SaveData LoadSaveData()
