@@ -20,7 +20,7 @@ namespace BlueprintTracker
 		private VerticalLayoutGroup layout;
 		private List<TechType> tracked = new List<TechType>();
 		private List<TechType> initialTech;
-		private bool needsSave;
+		private bool saving;
 
 		public static BlueprintTracker Create(Transform parent)
 		{
@@ -133,15 +133,14 @@ namespace BlueprintTracker
 
 			if (SaveLoadManager.main != null)
 			{
-				if (SaveLoadManager.main.isSaving && !needsSave)
-				{
-					needsSave = true;
-				}
-
-				if (!SaveLoadManager.main.isSaving && needsSave)
+				if (SaveLoadManager.main.isSaving && !saving)
 				{
 					Save();
-					needsSave = false;
+					saving = true;
+				}
+				if (!SaveLoadManager.main.isSaving && saving)
+				{
+					saving = false;
 				}
 			}
 

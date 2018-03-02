@@ -98,7 +98,6 @@ namespace AutosortLockers
 		{
 			if (!IsSaving())
 			{
-				Logger.Log("Saving");
 				SaveData newSaveData = new SaveData();
 				var targets = GameObject.FindObjectsOfType<AutosortTarget>();
 				foreach (var target in targets)
@@ -107,7 +106,6 @@ namespace AutosortLockers
 				}
 				WriteSaveData(newSaveData);
 				saveData = newSaveData;
-				Logger.Log("Done Writing File");
 
 				saveObject = new GameObject("AutosortLockersSaveObject").AddComponent<ModSaver>();
 				saveObject.StartCoroutine(SaveCoroutine());
@@ -127,7 +125,6 @@ namespace AutosortLockers
 			}
 			GameObject.Destroy(saveObject.gameObject);
 			saveObject = null;
-			Logger.Log("Save Process Complete");
 		}
 
 		private static SaveData LoadSaveData()
