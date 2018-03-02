@@ -1,0 +1,11 @@
+{
+  "Id": "zzzEnableConsole",
+  "DisplayName": "zzzEnableConsole",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [],
+  "Enable": true,
+  "AssemblyName": "zzzEnableConsole.dll",
+  "EntryMethod": "zzzEnableConsole.QPatch.Patch",
+  "Config": {}
+}

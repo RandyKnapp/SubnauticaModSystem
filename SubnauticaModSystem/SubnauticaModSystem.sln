@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrawnsuitLightswitch", "Pra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitatControlPanel", "HabitatControlPanel\HabitatControlPanel.csproj", "{F8A529A2-4CF8-4651-B0E8-B43B26C66753}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zzzEnableConsole", "zzzEnableConsole\zzzEnableConsole.csproj", "{1CC2A3A8-342F-4C3F-83C7-249882920D71}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{0d86304e-0a53-422a-99e6-0c687d9dbbc6}*SharedItemsImports = 4
@@ -96,6 +98,10 @@ Global
 		{F8A529A2-4CF8-4651-B0E8-B43B26C66753}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8A529A2-4CF8-4651-B0E8-B43B26C66753}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8A529A2-4CF8-4651-B0E8-B43B26C66753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
