@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
@@ -179,6 +180,11 @@ namespace Common.Mod
 		public static GameObject GetPrefab(TechType techType)
 		{
 			prefabsByTechType.TryGetValue(techType, out GameObject result);
+			if (result == null && techData.ContainsKey(techType))
+			{
+				OnPrefabDatabaseInitialized();
+				prefabsByTechType.TryGetValue(techType, out result);
+			}
 			if (result != null)
 			{
 				result.SetActive(true);
@@ -189,6 +195,11 @@ namespace Common.Mod
 		public static GameObject GetPrefab(string classID)
 		{
 			prefabsByClassID.TryGetValue(classID, out GameObject result);
+			if (result == null && techData.Count((KeyValuePair<TechType, CustomTechInfo> x) => x.Value.assetPath == classID) > 0)
+			{
+				OnPrefabDatabaseInitialized();
+				prefabsByClassID.TryGetValue(classID, out result);
+			}
 			if (result != null)
 			{
 				result.SetActive(true);

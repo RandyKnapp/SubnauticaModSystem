@@ -78,6 +78,11 @@ namespace Common.Mod
 
 		public static void PrintObject(GameObject obj, string indent = "")
 		{
+			if (obj == null)
+			{
+				Console.WriteLine(indent + "null");
+				return;
+			}
 			Console.WriteLine(indent + "[[" + obj.name + "]]:");
 			Console.WriteLine(indent + "{");
 			Console.WriteLine(indent + "  Components:");
@@ -96,6 +101,27 @@ namespace Common.Mod
 			}
 			Console.WriteLine(indent + "  }");
 			Console.WriteLine(indent + "}");
+		}
+
+		public static void PrintObjectFields(object obj, string indent = "")
+		{
+			if (obj == null)
+			{
+				Console.WriteLine(indent + "  null");
+				return;
+			}
+
+			Type type = obj.GetType();
+			FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			foreach (FieldInfo field in fields)
+			{
+				Console.WriteLine(indent + "  " + field.Name + " : " + field.GetValue(obj));
+			}
+			PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
+			foreach (PropertyInfo property in properties)
+			{
+				Console.WriteLine(indent + "  " + property.Name + " : " + property.GetValue(obj, new object[] { }));
+			}
 		}
 
 		public static Text GetTextPrefab()

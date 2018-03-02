@@ -91,12 +91,19 @@ namespace HabitatControlPanel
 
 		public static GameObject GetPrefab()
 		{
+			Logger.Log("GetPrefab for HabitatControlPanel");
 			GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.BaseReinforcement, false);
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
 			prefab.name = "HabitatControlPanel";
 			ModUtils.PrintObject(prefab);
-			
+
+			var baseGhost = prefab.GetComponentInChildren<BaseAddFaceGhost>();
+			Logger.Log("BaseAddFaceGhost=" + baseGhost);
+			ModUtils.PrintObjectFields(baseGhost);
+
+			baseGhost.faceType = (Base.FaceType)CustomFaceType.HabitatControlPanel;
+
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
 			foreach (var meshRenderer in meshRenderers)
 			{

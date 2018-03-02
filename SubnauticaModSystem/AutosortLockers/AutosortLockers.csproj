@@ -90,6 +90,7 @@
     <Compile Include="AutosortTypePicker.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ModSaver.cs" />
+    <Compile Include="Patches\BuilderUtils_Patches.cs" />
     <Compile Include="PickerPageButton.cs" />
     <Compile Include="PickerCloseButton.cs" />
     <Compile Include="ConfigureButton.cs" />
@@ -97,14 +98,6 @@
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
     <Compile Include="Mod.cs" />
-    <Compile Include="Patches\CraftData_GetPrefabForTechType_Patch.cs" />
-    <Compile Include="Patches\CraftData_Get_Patch.cs" />
-    <Compile Include="Patches\CraftData_PreparePrefabIDCache_Patch.cs" />
-    <Compile Include="Patches\KnownTech_Initialize_Patch.cs" />
-    <Compile Include="Patches\Language_LoadLanguageFile_Patch.cs" />
-    <Compile Include="Patches\PrefabDatabase_Patches.cs" />
-    <Compile Include="Patches\SpriteManager_Get_Patch.cs" />
-    <Compile Include="Patches\TechTypeExtensions_Patches.cs" />
     <Compile Include="PickerButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
