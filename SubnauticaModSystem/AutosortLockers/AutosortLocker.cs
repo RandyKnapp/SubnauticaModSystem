@@ -21,6 +21,9 @@ namespace AutosortLockers
 		private List<AutosortTarget> categoryTargets = new List<AutosortTarget>();
 		private List<AutosortTarget> anyTargets = new List<AutosortTarget>();
 
+		private int sortableItems = 0;
+		private int unsortableItems = 0;
+
 		[SerializeField]
 		private Image background;
 		[SerializeField]
@@ -58,17 +61,15 @@ namespace AutosortLockers
 		private void UpdateText()
 		{
 			string output = "";
-			int itemsToSort = GetSortableItemCount();
-			int unsortableItems = GetUnsortableItemCount();
 			if (isSorting)
 			{
-				output += "Sorting (" + (itemsToSort + 1) + ")";
+				output = "Sorting...";
 			}
-			if (unsortableItems > 0)
+			else if (unsortableItems > 0)
 			{
-				output += (isSorting ? "\n" : "") + "Unsorted Items: " + unsortableItems;
+				output = "Unsorted Items: " + unsortableItems;
 			}
-			if (!isSorting && unsortableItems == 0 && itemsToSort == 0)
+			else
 			{
 				output = "Ready to Sort";
 			}
@@ -93,9 +94,9 @@ namespace AutosortLockers
 		{
 			while (true)
 			{
-				yield return new WaitForSeconds(Mod.config.SortInterval);
+				yield return new WaitForSeconds(Mathf.Max(0, Mod.config.SortInterval - (unsortableItems / 60.0f)));
 				
-				isSorting = Sort();
+				yield return Sort();
 			}
 		}
 
@@ -135,34 +136,105 @@ namespace AutosortLockers
 			}
 		}
 
-		private bool Sort()
+		private IEnumerator Sort()
 		{
+			isSorting = false;
+			sortableItems = 0;
+			unsortableItems = container.container.count;
+
 			if (!initialized || container.IsEmpty())
 			{
-				return false;
+				yield break;
 			}
 
 			AccumulateTargets();
-			if (singleItemTargets.Count <= 0 && categoryTargets.Count <= 0 && anyTargets.Count <= 0)
+			if (NoTargets())
 			{
-				return false;
+				yield break;
 			}
 
-			foreach (InventoryItem item in container.container)
+			if (SortFilteredTargets(false))
 			{
-				Pickupable pickup = item.item;
-				AutosortTarget target = FindTarget(pickup);
-				if (target != null)
+				isSorting = true;
+			}
+			else if (SortFilteredTargets(true))
+			{
+				isSorting = true;
+			}
+			else
+			{
+				foreach (AutosortTarget target in anyTargets)
 				{
-					container.container.RemoveItem(pickup, true);
-					target.AddItem(pickup);
-
-					StartCoroutine(PulseIcon());
-					return true;
+					foreach (var item in container.container.ToList())
+					{
+						if (target.CanAddItem(item.item))
+						{
+							SortItem(item.item, target);
+							sortableItems++;
+							unsortableItems--;
+							isSorting = true;
+							yield break;
+						}
+						yield return null;
+					}
 				}
 			}
 
+			yield break;
+		}
+
+		private bool NoTargets()
+		{
+			return singleItemTargets.Count <= 0 && categoryTargets.Count <= 0 && anyTargets.Count <= 0;
+		}
+
+		private bool SortFilteredTargets(bool byCategory)
+		{
+			foreach (AutosortTarget target in byCategory ? categoryTargets : singleItemTargets)
+			{
+				foreach (AutosorterFilter filter in target.GetCurrentFilters())
+				{
+					if (filter.IsCategory() == byCategory)
+					{
+						var items = container.container.GetItems(filter.Types[0]);
+						if (items != null && items.Count > 0 && target.CanAddItem(items[0].item))
+						{
+							sortableItems += items.Count;
+							unsortableItems -= items.Count;
+							SortItem(items[0].item, target);
+							return true;
+						}
+					}
+				}
+			}
 			return false;
+		}
+
+		private bool SortAnyTargets()
+		{
+			foreach (AutosortTarget target in anyTargets)
+			{
+				foreach (var item in container.container)
+				{
+					if (target.CanAddItem(item.item))
+					{
+						SortItem(item.item, target);
+						sortableItems++;
+						unsortableItems--;
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		private void SortItem(Pickupable pickup, AutosortTarget target)
+		{
+			container.container.RemoveItem(pickup, true);
+			target.AddItem(pickup);
+			sortableItems++;
+
+			StartCoroutine(PulseIcon());
 		}
 
 		public IEnumerator PulseIcon()
@@ -175,27 +247,6 @@ namespace AutosortLockers
 				icon.color = Color.Lerp(PulseColor, MainColor, t);
 				yield return null;
 			}
-		}
-
-		private int GetSortableItemCount()
-		{
-			int count = 0;
-			foreach (InventoryItem item in container.container)
-			{
-				Pickupable pickup = item.item;
-				AutosortTarget target = FindTarget(pickup);
-				if (target != null)
-				{
-					count++;
-				}
-			}
-
-			return count;
-		}
-
-		private int GetUnsortableItemCount()
-		{
-			return container.container.count - GetSortableItemCount();
 		}
 
 		private AutosortTarget FindTarget(Pickupable item)
