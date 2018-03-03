@@ -68,6 +68,10 @@ namespace AutosortLockers
 			else if (unsortableItems > 0)
 			{
 				output = "Unsorted Items: " + unsortableItems;
+				foreach (var item in container.container)
+				{
+					output += "\n" + item.item.GetTechType();
+				}
 			}
 			else
 			{
@@ -175,8 +179,8 @@ namespace AutosortLockers
 							isSorting = true;
 							yield break;
 						}
-						yield return null;
 					}
+					yield return null;
 				}
 			}
 
@@ -196,13 +200,16 @@ namespace AutosortLockers
 				{
 					if (filter.IsCategory() == byCategory)
 					{
-						var items = container.container.GetItems(filter.Types[0]);
-						if (items != null && items.Count > 0 && target.CanAddItem(items[0].item))
+						foreach (var techType in filter.Types)
 						{
-							sortableItems += items.Count;
-							unsortableItems -= items.Count;
-							SortItem(items[0].item, target);
-							return true;
+							var items = container.container.GetItems(techType);
+							if (items != null && items.Count > 0 && target.CanAddItem(items[0].item))
+							{
+								sortableItems += items.Count;
+								unsortableItems -= items.Count;
+								SortItem(items[0].item, target);
+								return true;
+							}
 						}
 					}
 				}
