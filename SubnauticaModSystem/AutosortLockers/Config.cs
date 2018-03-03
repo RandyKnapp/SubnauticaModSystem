@@ -8,6 +8,9 @@ namespace AutosortLockers
 		public bool EasyBuild = false;
 		public float SortInterval = 1.0f;
 		public bool ShowAllItems = false;
-		public bool LargeLockers = true;
+		public int AutosorterWidth = 5;
+		public int AutosorterHeight = 6;
+		public int ReceptacleWidth = 6;
+		public int ReceptacleHeight = 8;
 	}
 }

@@ -389,13 +389,10 @@ namespace AutosortLockers
 
 			prefab.name = "AutosortReceptacle";
 
-			if (Mod.config.LargeLockers)
-			{
-				var container = prefab.GetComponent<StorageContainer>();
-				container.width = 6;
-				container.height = 8;
-				container.container.Resize(6, 8);
-			}
+			var container = prefab.GetComponent<StorageContainer>();
+			container.width = Mod.config.ReceptacleWidth;
+			container.height = Mod.config.ReceptacleHeight;
+			container.container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
 
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
 			foreach (var meshRenderer in meshRenderers)

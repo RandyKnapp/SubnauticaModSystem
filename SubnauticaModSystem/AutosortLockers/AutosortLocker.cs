@@ -329,7 +329,12 @@ namespace AutosortLockers
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
 			prefab.name = "Autosorter";
-			
+
+			var container = prefab.GetComponent<StorageContainer>();
+			container.width = Mod.config.AutosorterWidth;
+			container.height = Mod.config.AutosorterHeight;
+			container.container.Resize(Mod.config.AutosorterWidth, Mod.config.AutosorterHeight);
+
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
 			foreach (var meshRenderer in meshRenderers)
 			{

@@ -11,6 +11,9 @@
     "EasyBuild": false,
     "SortInterval": 1.0,
     "ShowAllItems": false,
-    "LargeLockers": true
+    "AutosorterWidth": 5,
+    "AutosorterHeight": 6,
+    "ReceptacleWidth": 6,
+    "ReceptacleHeight": 8
   }
 }
