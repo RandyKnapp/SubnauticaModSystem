@@ -13,7 +13,7 @@ namespace Common.Utility
 		private static Dictionary<string, Texture2D> textureCache = new Dictionary<string, Texture2D>();
 		private static Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
 
-		public static Sprite LoadSprite(string path, TextureFormat format = TextureFormat.DXT5, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight)
+		public static Sprite LoadSprite(string path, TextureFormat format = TextureFormat.BC7, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight)
 		{
 			if (spriteCache.TryGetValue(path, out Sprite foundSprite))
 			{
@@ -30,7 +30,7 @@ namespace Common.Utility
 			return sprite;
 		}
 
-		public static Sprite Load9SliceSprite(string path, RectOffset slices, TextureFormat format = TextureFormat.DXT5, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight)
+		public static Sprite Load9SliceSprite(string path, RectOffset slices, TextureFormat format = TextureFormat.BC7, float pixelsPerUnit = 100f, SpriteMeshType spriteType = SpriteMeshType.Tight)
 		{
 			string spriteKey = path + slices;
 			if (spriteCache.TryGetValue(spriteKey, out Sprite foundSprite))
@@ -49,7 +49,7 @@ namespace Common.Utility
 			return sprite;
 		}
 
-		public static Texture2D LoadTexture(string path, TextureFormat format = TextureFormat.DXT5)
+		public static Texture2D LoadTexture(string path, TextureFormat format = TextureFormat.BC7)
 		{
 			if (textureCache.TryGetValue(path, out Texture2D tex))
 			{
