@@ -49,7 +49,7 @@ namespace Common.Utility
 			return sprite;
 		}
 
-		public static Texture2D LoadTexture(string path, TextureFormat format = TextureFormat.DXT5)
+		public static Texture2D LoadTexture(string path, TextureFormat format = TextureFormat.DXT5, int width = 2, int height = 2)
 		{
 			if (textureCache.TryGetValue(path, out Texture2D tex))
 			{
@@ -58,7 +58,7 @@ namespace Common.Utility
 			else if (File.Exists(path))
 			{
 				byte[] data = File.ReadAllBytes(path);
-				Texture2D texture2D = new Texture2D(2, 2, format, false);
+				Texture2D texture2D = new Texture2D(width, height, format, false);
 				if (texture2D.LoadImage(data))
 				{
 					textureCache.Add(path, texture2D);
