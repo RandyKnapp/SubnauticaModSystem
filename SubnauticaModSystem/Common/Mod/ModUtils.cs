@@ -76,7 +76,7 @@ namespace Common.Mod
 			}
 		}
 
-		public static void PrintObject(GameObject obj, string indent = "")
+		public static void PrintObject(GameObject obj, string indent = "", bool includeMaterials = false)
 		{
 			if (obj == null)
 			{
@@ -91,6 +91,25 @@ namespace Common.Mod
 			foreach (var c in obj.GetComponents<Component>())
 			{
 				Console.WriteLine(indent + "    (" + c.GetType().ToString() + ")");
+				if (includeMaterials)
+				{
+					if (c.GetType().IsAssignableFrom(typeof(SkinnedMeshRenderer)) || c.GetType().IsAssignableFrom(typeof(MeshRenderer)))
+					{
+						var renderer = c as Renderer;
+						Console.WriteLine(indent + "    {");
+						foreach (var material in renderer.materials)
+						{
+							Console.WriteLine(indent + $"      {material}");
+						}
+						Console.WriteLine(indent + "    }");
+						Console.WriteLine(indent + "    {");
+						foreach (var material in renderer.sharedMaterials)
+						{
+							Console.WriteLine(indent + $"      {material}");
+						}
+						Console.WriteLine(indent + "    }");
+					}
+				}
 			}
 			Console.WriteLine(indent + "  }");
 			Console.WriteLine(indent + "  Children:");
