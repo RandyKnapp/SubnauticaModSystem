@@ -52,6 +52,9 @@ namespace HabitatControlPanel
 		private void Initialize()
 		{
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
+
+			Destroy(transform.Find("mesh").gameObject);
+
 			initialized = true;
 		}
 
@@ -188,6 +191,12 @@ namespace HabitatControlPanel
 				c.localPosition += new Vector3(0, 0, 0.01f);
 				Logger.Log("Screen depth=" + c.localPosition.z);
 			}
+
+			if (Input.GetKeyDown(KeyCode.X))
+			{
+				var active = background.gameObject.activeSelf;
+				background.gameObject.SetActive(!active);
+			}
 		}
 		
 		private void PrintScreenSize()
@@ -245,6 +254,7 @@ namespace HabitatControlPanel
 			GameObject.Destroy(prefab.GetComponent<PictureFrame>());
 			var screen = prefab.transform.Find("Screen").gameObject;
 			screen.transform.localEulerAngles = new Vector3(0, 0, 90);
+			screen.SetActive(false);
 			var mesh = prefab.transform.Find("mesh").gameObject;
 			mesh.transform.localEulerAngles = new Vector3(0, 0, 90);
 			var trigger = prefab.transform.Find("Trigger").gameObject;
@@ -256,7 +266,7 @@ namespace HabitatControlPanel
 			GameObject powerCellSlotPrefab = GetPowerCellSlotModel();
 			GameObject powerCellSlot = GameObject.Instantiate(powerCellSlotPrefab);
 			powerCellSlot.transform.SetParent(prefab.transform, false);
-			powerCellSlot.transform.localPosition = new Vector3(0.44f, -0.71f, -0.09f);
+			powerCellSlot.transform.localPosition = new Vector3(0.44f, -0.7f, -0.13f);
 			powerCellSlot.transform.localEulerAngles = new Vector3(61, 180, 0);
 
 			//GameObject beaconPrefab = Resources.Load<GameObject>("WorldEntities/Tools/Beacon");
