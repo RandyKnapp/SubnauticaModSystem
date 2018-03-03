@@ -16,11 +16,6 @@ namespace HabitatControlPanel
 		HabitatControlPanel = 11120
 	}
 
-	public enum CustomFaceType
-	{
-		HabitatControlPanel = 80
-	}
-
 	static class Mod
 	{
 		public const string SaveDataFilename = "HabitatControlPanelSaveData.json";

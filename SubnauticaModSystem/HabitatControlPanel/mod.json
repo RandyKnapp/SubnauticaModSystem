@@ -8,9 +8,5 @@
   "AssemblyName": "HabitatControlPanel.dll",
   "EntryMethod": "HabitatControlPanel.QPatch.Patch",
   "Config": {
-    "EasyBuild": false,
-    "SortInterval": 1.0,
-    "ShowAllItems": false,
-    "LargeLockers": true
   }
 }

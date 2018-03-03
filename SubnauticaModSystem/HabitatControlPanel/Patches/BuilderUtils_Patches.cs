@@ -1,9 +1,6 @@
 ﻿using Common.Mod;
 using Harmony;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UWE;
 
@@ -119,6 +116,16 @@ namespace HabitatControlPanel.Patches
 				return false;
 			}
 			return true;
+		}
+	}
+
+	[HarmonyPatch(typeof(PrefabDatabase))]
+	[HarmonyPatch("LoadPrefabDatabase")]
+	class PrefabDatabase_LoadPrefabDatabase_Patch
+	{
+		private static void Postfix()
+		{
+			BuilderUtils.OnPrefabDatabaseInitialized();
 		}
 	}
 
