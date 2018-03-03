@@ -8,7 +8,11 @@ namespace BlueprintTracker.Patches
 	{
 		private static void Postfix(uGUI_BlueprintEntry __instance, TechType techType)
 		{
-			__instance.gameObject.AddComponent<BlueprintTrackerPdaEntry>().techType = techType;
+			var techData = CraftData.Get(techType);
+			if (techData != null && techData.ingredientCount > 0)
+			{
+				__instance.gameObject.AddComponent<BlueprintTrackerPdaEntry>().techType = techType;
+			}
 		}
 	}
 }
