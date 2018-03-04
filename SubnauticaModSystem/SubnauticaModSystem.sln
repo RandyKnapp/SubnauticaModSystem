@@ -31,10 +31,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitatControlPanel", "Habi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zzzEnableConsole", "zzzEnableConsole\zzzEnableConsole.csproj", "{1CC2A3A8-342F-4C3F-83C7-249882920D71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockedVehicleStorageAccess", "DockedVehicleStorageAccess\DockedVehicleStorageAccess.csproj", "{683A1124-D419-49F6-B602-60A803658315}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{0d86304e-0a53-422a-99e6-0c687d9dbbc6}*SharedItemsImports = 4
 		Common\Common.projitems*{2b390daa-56b9-42d9-bad4-8a47736c0563}*SharedItemsImports = 4
+		Common\Common.projitems*{683a1124-d419-49f6-b602-60a803658315}*SharedItemsImports = 4
 		Common\Common.projitems*{6c883b28-31e6-4c26-b32b-bf5be0d70190}*SharedItemsImports = 4
 		Common\Common.projitems*{7b7cdbe9-9fac-4e28-a42c-80a21066d7ab}*SharedItemsImports = 4
 		Common\Common.projitems*{7e1de3ec-3325-4f95-b306-616e1fa23b40}*SharedItemsImports = 4
@@ -102,6 +105,10 @@ Global
 		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{683A1124-D419-49F6-B602-60A803658315}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{683A1124-D419-49F6-B602-60A803658315}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{683A1124-D419-49F6-B602-60A803658315}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{683A1124-D419-49F6-B602-60A803658315}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

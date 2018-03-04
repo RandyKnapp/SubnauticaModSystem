@@ -1,0 +1,12 @@
+{
+  "Id": "DockedVehicleStorageAccess",
+  "DisplayName": "DockedVehicleStorageAccess",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "DockedVehicleStorageAccess.dll",
+  "EntryMethod": "DockedVehicleStorageAccess.QPatch.Patch",
+  "Config": {
+  }
+}
