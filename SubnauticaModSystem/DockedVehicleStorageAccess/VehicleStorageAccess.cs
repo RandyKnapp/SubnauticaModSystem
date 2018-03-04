@@ -15,6 +15,9 @@ namespace DockedVehicleStorageAccess
 		private bool initialized;
 		private Constructable constructable;
 		private StorageContainer container;
+		private SubRoot subRoot;
+		private List<VehicleDockingBay> dockingBays = new List<VehicleDockingBay>();
+		private List<Vehicle> vehicles = new List<Vehicle>();
 
 		[SerializeField]
 		private Text textPrefab;
@@ -37,11 +40,60 @@ namespace DockedVehicleStorageAccess
 		{
 			constructable = GetComponent<Constructable>();
 			container = gameObject.GetComponent<StorageContainer>();
+			subRoot = gameObject.GetComponentInParent<SubRoot>();
 		}
-		
+
+		private IEnumerator Start()
+		{
+			while(true)
+			{
+				if (initialized)
+				{
+					GetDockingBays();
+				}
+				yield return new WaitForSeconds(0.5f);
+			}
+		}
+
+		private void GetDockingBays()
+		{
+			foreach (var dockingBay in dockingBays)
+			{
+				dockingBay.onDockedChanged -= UpdateDockedVehicles;
+			}
+			dockingBays = subRoot.GetComponentsInChildren<VehicleDockingBay>().ToList();
+			foreach (var dockingBay in dockingBays)
+			{
+				dockingBay.onDockedChanged += UpdateDockedVehicles;
+			}
+		}
+
+		private void UpdateDockedVehicles()
+		{
+			vehicles.Clear();
+			foreach (var dockingBay in dockingBays)
+			{
+				var vehicle = dockingBay.GetDockedVehicle();
+				if (vehicle != null)
+				{
+					vehicles.Add(vehicle);
+				}
+			}
+		}
+
 		private void UpdateText()
 		{
-
+			var dockingBayCount = dockingBays.Count;
+			text.text = dockingBayCount > 0 ? ("Docking Bays: " + dockingBayCount) : "No Docking Bays";
+			text.text += "\nVehicles:";
+			foreach (var vehicle in vehicles)
+			{
+				text.text += "\n-" + vehicle.GetName();
+			}
+			if (vehicles.Count == 0)
+			{
+				text.text += "(None)";
+			}
 		}
 
 		private void Update()
@@ -80,6 +132,7 @@ namespace DockedVehicleStorageAccess
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
 			configureButtonImage.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Configure.png"));
 
+			UpdateDockedVehicles();
 			UpdateText();
 
 			initialized = true;
@@ -122,9 +175,9 @@ namespace DockedVehicleStorageAccess
 			prefab.name = "VehicleStorageAccess";
 
 			var container = prefab.GetComponent<StorageContainer>();
-			container.width = Mod.config.ReceptacleWidth;
-			container.height = Mod.config.ReceptacleHeight;
-			container.container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
+			container.width = Mod.config.LockerWidth;
+			container.height = Mod.config.LockerHeight;
+			container.container.Resize(Mod.config.LockerWidth, Mod.config.LockerHeight);
 
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
 			foreach (var meshRenderer in meshRenderers)

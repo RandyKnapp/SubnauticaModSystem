@@ -84,7 +84,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutosortTarget.cs" />
+    <Compile Include="VehicleStorageAccess.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ModSaver.cs" />
     <Compile Include="Patches\BuilderUtils_Patches.cs" />

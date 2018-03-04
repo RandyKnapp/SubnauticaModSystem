@@ -29,7 +29,6 @@ namespace Common.Mod
 		private static readonly Dictionary<string, GameObject> prefabsByClassID = new Dictionary<string, GameObject>();
 		private static bool techMappingInitialized;
 		private static bool knownTechInitialized;
-		private static bool languageStringsInitialized;
 		private static bool prefabDatabaseInitialized;
 
 		public static void AddBuildable(CustomTechInfo info)
@@ -96,12 +95,6 @@ namespace Common.Mod
 
 		public static void OnLanguageStringsInitialized()
 		{
-			if (languageStringsInitialized)
-			{
-				return;
-			}
-			languageStringsInitialized = true;
-
 			Console.WriteLine("[BuilderUtils] Adding tooltip strings to language file");
 			Dictionary <string, string> strings = (Dictionary<string, string>)Language_strings.GetValue(Language.main);
 			foreach (var entry in techData)

@@ -8,5 +8,7 @@
   "AssemblyName": "DockedVehicleStorageAccess.dll",
   "EntryMethod": "DockedVehicleStorageAccess.QPatch.Patch",
   "Config": {
+    "LockerWidth": 6,
+		"LockerHeight": 8
   }
 }
