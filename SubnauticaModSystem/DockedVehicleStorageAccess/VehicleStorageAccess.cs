@@ -40,15 +40,12 @@ namespace DockedVehicleStorageAccess
 		[SerializeField]
 		private Image icon;
 		[SerializeField]
-		private ConfigureButton configureButton;
-		[SerializeField]
-		private Image configureButtonImage;
-		[SerializeField]
 		private Text text;
+
+#if USE_AUTOSORT
 		[SerializeField]
-		private Text plus;
-		[SerializeField]
-		private Text quantityText;
+		private CheckboxButton autosortCheckbox;
+#endif
 
 		private void Awake()
 		{
@@ -242,7 +239,11 @@ namespace DockedVehicleStorageAccess
 
 		private bool ShouldEnableContainer()
 		{
+#if USE_AUTOSORT
+			return !autosortCheckbox.pointerOver;
+#else
 			return true;
+#endif
 		}
 
 		private void Initialize()
@@ -253,7 +254,11 @@ namespace DockedVehicleStorageAccess
 
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("LockerScreen.png"));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
-			configureButtonImage.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Configure.png"));
+
+#if USE_AUTOSORT
+			autosortCheckbox.toggled = true;
+			autosortCheckbox.Initialize();
+#endif
 
 			UpdateDockedVehicles();
 			UpdateText();
@@ -319,16 +324,11 @@ namespace DockedVehicleStorageAccess
 			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
 			autosortTarget.background = LockerPrefabShared.CreateBackground(canvas.transform);
 			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, color, 80);
-			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, color, -10, 12, "Any");
-			autosortTarget.configureButton = CreateConfigureButton(autosortTarget.background.transform, color, autosortTarget);
-			autosortTarget.configureButtonImage = autosortTarget.configureButton.GetComponent<Image>();
+			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, color, -10, 12, "");
 
-			autosortTarget.plus = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, color, 0, 30, "+");
-			autosortTarget.plus.color = new Color(autosortTarget.textPrefab.color.r, autosortTarget.textPrefab.color.g, autosortTarget.textPrefab.color.g, 0);
-			autosortTarget.plus.rectTransform.anchoredPosition += new Vector2(30, 80);
-
-			autosortTarget.quantityText = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, color, 0, 10, "XX");
-			autosortTarget.quantityText.rectTransform.anchoredPosition += new Vector2(-35, -104);
+#if USE_AUTOSORT
+			autosortTarget.autosortCheckbox = CreateAutosortCheckbox(autosortTarget.background.transform, color, autosortTarget.textPrefab, autosortTarget);
+#endif
 
 			autosortTarget.background.gameObject.SetActive(false);
 			autosortTarget.icon.gameObject.SetActive(false);
@@ -337,17 +337,36 @@ namespace DockedVehicleStorageAccess
 			return prefab;
 		}
 
-		private static ConfigureButton CreateConfigureButton(Transform parent, Color color, VehicleStorageAccess target)
+#if USE_AUTOSORT
+		private static CheckboxButton CreateAutosortCheckbox(Transform parent, Color color, Text textPrefab, VehicleStorageAccess target)
 		{
-			var config = LockerPrefabShared.CreateIcon(parent, color, 0);
-			RectTransformExtensions.SetSize(config.rectTransform, 20, 20);
-			config.rectTransform.anchoredPosition = new Vector2(40, -104);
+			var w = 100;
+			var checkboxButton = new GameObject("AutosortCheckbox", typeof(RectTransform));
+			var rt = checkboxButton.transform as RectTransform;
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			RectTransformExtensions.SetSize(rt, w, 20);
+			rt.anchoredPosition = new Vector2(0, -104);
 
-			config.gameObject.AddComponent<BoxCollider2D>();
-			var button = config.gameObject.AddComponent<ConfigureButton>();
+			var iconWidth = 20;
+			var checkbox = LockerPrefabShared.CreateIcon(rt, color, 0);
+			RectTransformExtensions.SetSize(checkbox.rectTransform, iconWidth, iconWidth);
+			checkbox.rectTransform.anchoredPosition = new Vector2(-w / 2 + iconWidth / 2, 0);
+
+			var spacing = 5;
+			var text = LockerPrefabShared.CreateText(rt, textPrefab, color, 0, 10, "Autosort");
+			RectTransformExtensions.SetSize(text.rectTransform, w - iconWidth - spacing, iconWidth);
+			text.rectTransform.anchoredPosition = new Vector2(iconWidth / 2 + spacing, 0);
+			text.alignment = TextAnchor.MiddleLeft;
+
+			checkboxButton.AddComponent<BoxCollider2D>();
+
+			var button = checkboxButton.AddComponent<CheckboxButton>();
 			button.target = target;
+			button.image = checkbox;
+			button.text = text;
 
 			return button;
 		}
+#endif
 	}
 }
