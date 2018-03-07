@@ -18,6 +18,8 @@ namespace HabitatControlPanel
 		private Image background;
 		[SerializeField]
 		private GameObject powerCellSlot;
+		[SerializeField]
+		private BoxCollider powerCellTrigger;
 
 		private void Awake()
 		{
@@ -45,17 +47,36 @@ namespace HabitatControlPanel
 				Mod.Save();
 			}
 
-			PositionPowerCell();
-			PositionScreen();
+			PositionTrigger();
+			DrawBoxCollider();
 		}
 		
 		private void Initialize()
 		{
+			background.gameObject.SetActive(true);
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
 
 			Destroy(transform.Find("mesh").gameObject);
 
+			var handTarget = powerCellTrigger.gameObject.AddComponent<GenericHandTarget>();
+			handTarget.onHandHover = new HandTargetEvent();
+			handTarget.onHandClick = new HandTargetEvent();
+			handTarget.onHandHover.AddListener(OnPowerCellHandHover);
+			handTarget.onHandClick.AddListener(OnPowerCellHandClick);
+
 			initialized = true;
+		}
+
+		private void OnPowerCellHandHover(HandTargetEventData eventData)
+		{
+			HandReticle main = HandReticle.main;
+			main.SetIcon(HandReticle.IconType.Hand);
+			main.SetInteractTextRaw("SDOIJOSDIJF", "adij");
+		}
+
+		private void OnPowerCellHandClick(HandTargetEventData eventData)
+		{
+			Logger.Log("Power Cell Click");
 		}
 
 		public void Save(SaveData saveData)
@@ -67,146 +88,104 @@ namespace HabitatControlPanel
 			saveData.Entries.Add(entry);
 		}
 
-		public void PositionPowerCell()
+		public void PositionTrigger()
 		{
-			var t = powerCellSlot.transform;
+			var t = powerCellTrigger.transform;
+			var bc = powerCellTrigger;
 			var amount = 0.01f;
 
 			if (Input.GetKeyDown(KeyCode.Keypad8))
 			{
 				t.localPosition += new Vector3(0, amount, 0);
-				PrintPowerCellPosition();
+				PrintBoxCollider();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad5))
 			{
 				t.localPosition += new Vector3(0, -amount, 0);
-				PrintPowerCellPosition();
+				PrintBoxCollider();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad6))
 			{
 				t.localPosition += new Vector3(amount, 0, 0);
-				PrintPowerCellPosition();
+				PrintBoxCollider();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad4))
 			{
 				t.localPosition += new Vector3(-amount, 0, 0);
-				PrintPowerCellPosition();
+				PrintBoxCollider();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad1))
 			{
 				t.localPosition += new Vector3(0, 0, amount);
-				PrintPowerCellPosition();
+				PrintBoxCollider();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad7))
 			{
 				t.localPosition += new Vector3(0, 0, -amount);
-				PrintPowerCellPosition();
+				PrintBoxCollider();
 			}
 
-			var rotAmount = 1.0f;
-			if (Input.GetKeyDown(KeyCode.Keypad9))
-			{
-				t.localEulerAngles += new Vector3(-rotAmount, 0, 0);
-				PrintPowerCellRotation();
-			}
-			else if (Input.GetKeyDown(KeyCode.Keypad3))
-			{
-				t.localEulerAngles += new Vector3(rotAmount, 0, 0);
-				PrintPowerCellRotation();
-			}
-
-			var scaleAmount = 0.1f;
+			var scaleAmount = 0.01f;
 			if (Input.GetKeyDown(KeyCode.KeypadPlus))
 			{
-				t.localScale += new Vector3(scaleAmount, scaleAmount, scaleAmount);
-				PrintPowerCellScale();
+				bc.size += new Vector3(scaleAmount, scaleAmount, scaleAmount);
+				PrintBoxCollider();
 			}
 			else if (Input.GetKeyDown(KeyCode.KeypadMinus))
 			{
-				t.localScale += new Vector3(-scaleAmount, -scaleAmount, -scaleAmount);
-				PrintPowerCellScale();
+				bc.size -= new Vector3(scaleAmount, scaleAmount, scaleAmount);
+				PrintBoxCollider();
 			}
 		}
 
-		private void PrintPowerCellPosition()
+		private void PrintBoxCollider()
 		{
-			var t = powerCellSlot.transform;
-			var p = t.localPosition;
-			var x = Math.Round(p.x, 2);
-			var y = Math.Round(p.y, 2);
-			var z = Math.Round(p.z, 2);
-			Logger.Log("PowerCell pos=(" + x + "," + y + "," + z + ")");
+			var bc = powerCellTrigger;
+			var t = powerCellTrigger.transform;
+			Logger.Log("Trigger p=" + t.localPosition + " s=" + bc.bounds.size);
 		}
 
-		private void PrintPowerCellRotation()
+		private void DrawBoxCollider()
 		{
-			var t = powerCellSlot.transform;
-			var r = t.localEulerAngles;
-			Logger.Log("PowerCell rot=(" + r.x + "," + r.y + "," + r.z + ")");
+			var bc = powerCellTrigger;
+			var t = bc.transform;
+			var verts = new Vector3[8];
+			var worldTransform = bc.transform.localToWorldMatrix;
+			var storedRotation = bc.transform.rotation;
+			bc.transform.rotation = Quaternion.identity;
+
+			var extents = bc.bounds.extents;
+			verts[0] = worldTransform.MultiplyPoint3x4(extents);
+			verts[1] = worldTransform.MultiplyPoint3x4(new Vector3(-extents.x, extents.y, extents.z));
+			verts[2] = worldTransform.MultiplyPoint3x4(new Vector3(extents.x, extents.y, -extents.z));
+			verts[3] = worldTransform.MultiplyPoint3x4(new Vector3(-extents.x, extents.y, -extents.z));
+			verts[4] = worldTransform.MultiplyPoint3x4(new Vector3(extents.x, -extents.y, extents.z));
+			verts[5] = worldTransform.MultiplyPoint3x4(new Vector3(-extents.x, -extents.y, extents.z));
+			verts[6] = worldTransform.MultiplyPoint3x4(new Vector3(extents.x, -extents.y, -extents.z));
+			verts[7] = worldTransform.MultiplyPoint3x4(-extents);
+
+			bc.transform.rotation = storedRotation;
+
+			DrawLine(verts, 0, 1);
+			DrawLine(verts, 1, 2);
+			DrawLine(verts, 2, 3);
+			DrawLine(verts, 3, 0);
+
+			DrawLine(verts, 0, 4);
+			DrawLine(verts, 1, 5);
+			DrawLine(verts, 2, 6);
+			DrawLine(verts, 3, 7);
+
+			DrawLine(verts, 4, 5);
+			DrawLine(verts, 5, 6);
+			DrawLine(verts, 6, 7);
+			DrawLine(verts, 7, 4);
 		}
 
-		private void PrintPowerCellScale()
+		private void DrawLine(Vector3[] verts, int a, int b)
 		{
-			var t = powerCellSlot.transform;
-			var s = t.localScale;
-			Logger.Log("PowerCell scale=(" + s.x + "," + s.y + "," + s.z + ")");
+			Debug.DrawLine(verts[a], verts[b], Color.green, 0);
 		}
-
-		private void PositionScreen()
-		{
-			var t = background.transform as RectTransform;
-			var amount = 1f;
-			var w = t.rect.width;
-			var h = t.rect.height;
-
-			if (Input.GetKeyDown(KeyCode.L))
-			{
-				RectTransformExtensions.SetSize(t, w + amount, h);
-				PrintScreenSize();
-			}
-			else if (Input.GetKeyDown(KeyCode.J))
-			{
-				RectTransformExtensions.SetSize(t, w - amount, h);
-				PrintScreenSize();
-			}
-			else if (Input.GetKeyDown(KeyCode.I))
-			{
-				RectTransformExtensions.SetSize(t, w, h + amount);
-				PrintScreenSize();
-			}
-			else if (Input.GetKeyDown(KeyCode.K))
-			{
-				RectTransformExtensions.SetSize(t, w, h - amount);
-				PrintScreenSize();
-			}
-
-			var c = background.canvas.transform;
-			if (Input.GetKeyDown(KeyCode.U))
-			{
-				c.localPosition += new Vector3(0, 0, -0.01f);
-				Logger.Log("Screen depth=" + c.localPosition.z);
-			}
-			else if (Input.GetKeyDown(KeyCode.M))
-			{
-				c.localPosition += new Vector3(0, 0, 0.01f);
-				Logger.Log("Screen depth=" + c.localPosition.z);
-			}
-
-			if (Input.GetKeyDown(KeyCode.X))
-			{
-				var active = background.gameObject.activeSelf;
-				background.gameObject.SetActive(!active);
-			}
-		}
-		
-		private void PrintScreenSize()
-		{
-			var t = background.transform as RectTransform;
-			var w = t.rect.width;
-			var h = t.rect.height;
-			Logger.Log("Screen size=(" + w + "," + h + ")");
-		}
-
 
 
 
@@ -249,7 +228,6 @@ namespace HabitatControlPanel
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
 			prefab.name = "HabitatControlPanel";
-			ModUtils.PrintObject(prefab);
 
 			GameObject.Destroy(prefab.GetComponent<PictureFrame>());
 			var screen = prefab.transform.Find("Screen").gameObject;
@@ -259,15 +237,21 @@ namespace HabitatControlPanel
 			mesh.transform.localEulerAngles = new Vector3(0, 0, 90);
 			var trigger = prefab.transform.Find("Trigger").gameObject;
 			trigger.transform.localEulerAngles = new Vector3(0, 0, 90);
-
-			GameObject seamothPrefab = Resources.Load<GameObject>("WorldEntities/Tools/SeaMoth");
-			ModUtils.PrintObject(seamothPrefab);
+			GameObject.Destroy(trigger.GetComponent<GenericHandTarget>());
 
 			GameObject powerCellSlotPrefab = GetPowerCellSlotModel();
 			GameObject powerCellSlot = GameObject.Instantiate(powerCellSlotPrefab);
+			Destroy(powerCellSlotPrefab);
 			powerCellSlot.transform.SetParent(prefab.transform, false);
-			powerCellSlot.transform.localPosition = new Vector3(0.44f, -0.7f, -0.13f);
+			powerCellSlot.transform.localPosition = new Vector3(0.44f, -0.7f, -0.12f);
 			powerCellSlot.transform.localEulerAngles = new Vector3(61, 180, 0);
+
+			powerCellSlot.SetActive(false);
+			var sky = powerCellSlot.AddComponent<SkyApplier>();
+			sky.dynamic = true;
+			sky.renderers = sky.GetAllComponentsInChildren<MeshRenderer>();
+			sky.anchorSky = Skies.BaseInterior;
+			powerCellSlot.SetActive(true);
 
 			//GameObject beaconPrefab = Resources.Load<GameObject>("WorldEntities/Tools/Beacon");
 			//ModUtils.PrintObject(beaconPrefab);
@@ -275,6 +259,12 @@ namespace HabitatControlPanel
 			var controlPanel = prefab.AddComponent<HabitatControlPanel>();
 			controlPanel.powerCellSlot = powerCellSlot;
 			controlPanel.background = CreateScreen(prefab.transform);
+
+			var slotGeo = powerCellSlot.transform.GetChild(0).gameObject;
+			var collider = slotGeo.AddComponent<BoxCollider>();
+			controlPanel.powerCellTrigger = collider;
+
+			ModUtils.PrintObject(prefab);
 
 			return prefab;
 		}
@@ -292,7 +282,7 @@ namespace HabitatControlPanel
 
 			background.type = Image.Type.Simple;
 			background.color = new Color(1, 1, 1);
-			//background.gameObject.SetActive(false);
+			background.gameObject.SetActive(false);
 
 			return background;
 		}
@@ -304,13 +294,13 @@ namespace HabitatControlPanel
 			GameObject powerCellSlot = new GameObject("PowerCellSlot");
 			var offset = new Vector3(0, 0, 1.72f);
 
-			GameObject batteryInput = GameObject.Instantiate(seamothPrefab.transform.Find("BatteryInput").gameObject);
+			/*GameObject batteryInput = GameObject.Instantiate(seamothPrefab.transform.Find("BatteryInput").gameObject);
 			batteryInput.transform.localPosition += offset;
-			batteryInput.transform.SetParent(powerCellSlot.transform);
+			batteryInput.transform.SetParent(powerCellSlot.transform, false);*/
 
-			GameObject batterySlot = GameObject.Instantiate(seamothPrefab.transform.Find("BatterySlot").gameObject);
+			/*GameObject batterySlot = GameObject.Instantiate(seamothPrefab.transform.Find("BatterySlot").gameObject);
 			batterySlot.transform.localPosition += offset;
-			batterySlot.transform.SetParent(powerCellSlot.transform);
+			batterySlot.transform.SetParent(powerCellSlot.transform, false);*/
 
 			var model = seamothPrefab.transform.Find("Model");
 			var Submersible_SeaMoth = model.Find("Submersible_SeaMoth");
@@ -321,17 +311,18 @@ namespace HabitatControlPanel
 
 			GameObject slotGeo = GameObject.Instantiate(seamoth_power_cell_slot_geo.gameObject);
 			slotGeo.transform.localPosition += offset;
-			slotGeo.transform.SetParent(powerCellSlot.transform);
+			slotGeo.transform.SetParent(powerCellSlot.transform, false);
 			slotGeo.name = "SlotGeo";
 
 			GameObject powerCell = GameObject.Instantiate(engine_power_cell_01.gameObject);
 			powerCell.transform.localPosition += offset;
-			powerCell.transform.SetParent(powerCellSlot.transform);
+			powerCell.transform.SetParent(powerCellSlot.transform, false);
 			powerCell.name = "PowerCellGeo";
+			powerCell.SetActive(false);
 
 			GameObject ionPowerCell = GameObject.Instantiate(engine_power_cell_ion.gameObject);
 			ionPowerCell.transform.localPosition += offset;
-			ionPowerCell.transform.SetParent(powerCellSlot.transform);
+			ionPowerCell.transform.SetParent(powerCellSlot.transform, false);
 			ionPowerCell.name = "IonPowerCellGeo";
 			ionPowerCell.SetActive(false);
 
