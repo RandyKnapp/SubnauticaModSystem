@@ -93,6 +93,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Patches\DockingBay_Patches.cs" />
     <Compile Include="VehicleStorageAccess.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ModSaver.cs" />

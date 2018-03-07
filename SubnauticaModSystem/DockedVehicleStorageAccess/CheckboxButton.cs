@@ -16,6 +16,7 @@ namespace DockedVehicleStorageAccess
 		public static readonly Color HoverColor = new Color(0.9f, 0.9f, 1);
 		public static readonly Color DownColor = new Color(0.9f, 0.9f, 1, 0.8f);
 
+		public bool isEnabled;
 		public bool toggled;
 		public bool pointerOver;
 		public bool pointerDown;
@@ -29,7 +30,7 @@ namespace DockedVehicleStorageAccess
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			if (enabled)
+			if (isEnabled)
 			{
 				toggled = !toggled;
 			}
@@ -49,7 +50,7 @@ namespace DockedVehicleStorageAccess
 
 		public void Update()
 		{
-			var color = !enabled ? DisabledColor : (pointerDown ? DownColor : (pointerOver ? HoverColor : UpColor));
+			var color = !isEnabled ? DisabledColor : (pointerDown ? DownColor : (pointerOver ? HoverColor : UpColor));
 
 			if (image != null && text != null)
 			{
@@ -59,7 +60,7 @@ namespace DockedVehicleStorageAccess
 
 			if (checkedSprite != null && uncheckedSprite != null)
 			{
-				image.sprite = !enabled ? uncheckedSprite : (toggled ? checkedSprite : uncheckedSprite);
+				image.sprite = !isEnabled ? uncheckedSprite : (toggled ? checkedSprite : uncheckedSprite);
 			}
 		}
 

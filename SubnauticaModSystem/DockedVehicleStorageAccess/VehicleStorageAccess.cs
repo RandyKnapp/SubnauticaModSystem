@@ -17,6 +17,8 @@ namespace DockedVehicleStorageAccess
 {
 	public class VehicleStorageAccess : MonoBehaviour
 	{
+		private static readonly Color PrimaryColor = new Color32(66, 134, 244, 255);
+		private static readonly Color HiddenColor = new Color32(66, 134, 244, 20);
 #if USE_AUTOSORT
 		private static readonly FieldInfo AutosortLocker_container = typeof(AutosortLocker).GetField("container", BindingFlags.NonPublic | BindingFlags.Instance);
 #endif
@@ -41,6 +43,14 @@ namespace DockedVehicleStorageAccess
 		private Image icon;
 		[SerializeField]
 		private Text text;
+		[SerializeField]
+		private Image seamothIcon;
+		[SerializeField]
+		private Text seamothCountText;
+		[SerializeField]
+		private Image exosuitIcon;
+		[SerializeField]
+		private Text exosuitCountText;
 
 #if USE_AUTOSORT
 		[SerializeField]
@@ -62,6 +72,9 @@ namespace DockedVehicleStorageAccess
 				{
 					GetDockingBays();
 					yield return TryExtractItems();
+#if USE_AUTOSORT
+					yield return TryMoveToAutosorter();
+#endif
 				}
 				yield return new WaitForSeconds(1.0f);
 			}
@@ -112,7 +125,6 @@ namespace DockedVehicleStorageAccess
 				yield break;
 			}
 
-			extractingItems = true;
 			bool extractedAnything = false;
 			Dictionary<string, int> extractionResults = new Dictionary<string, int>();
 
@@ -133,6 +145,7 @@ namespace DockedVehicleStorageAccess
 							vContainer.RemoveItem(item.item.GetTechType());
 							extractionResults[vName]++;
 							extractedAnything = true;
+							extractingItems = true;
 						}
 						yield return null;
 					}
@@ -185,27 +198,70 @@ namespace DockedVehicleStorageAccess
 			ErrorMessage.AddDebug(message);
 		}
 
+#if USE_AUTOSORT
+		private IEnumerator TryMoveToAutosorter()
+		{
+			if (autosorters.Count == 0)
+			{
+				yield break;
+			}
+			if (!autosortCheckbox.toggled)
+			{
+				yield break;
+			}
+
+			var items = container.container.ToList();
+			foreach (var item in items)
+			{
+				foreach (var autosorter in autosorters)
+				{
+					var aContainer = GetAutosorterContainer(autosorter);
+					if (aContainer.container.HasRoomFor(item.item))
+					{
+						aContainer.container.AddItem(item.item);
+						container.container.RemoveItem(item.item.GetTechType());
+					}
+					yield return null;
+				}
+			}
+		}
+#endif
+
 		private void UpdateText()
 		{
 			var dockingBayCount = dockingBays.Count;
-			text.text = dockingBayCount > 0 ? ("Docking Bays: " + dockingBayCount) : "No Docking Bays";
-			text.text += "\nVehicles:";
+			if (subRoot is BaseRoot)
+			{
+				text.text = dockingBayCount > 0 ? ("Moonpools: " + dockingBayCount) : "No Moonpools";
+			}
+			else
+			{
+				text.text = "Cyclops Docking Bay";
+			}
+
+#if USE_AUTOSORT
+			autosortCheckbox.isEnabled = autosorters.Count > 0;
+			text.text += autosorters.Count == 0 ? "\nNo Autosorters" : "";
+#endif
+
+			int seamothCount = 0;
+			int exosuitCount = 0;
 			foreach (var vehicle in vehicles)
 			{
-				text.text += "\n" + vehicle.GetName();
+				seamothCount += (vehicle is SeaMoth ? 1 : 0);
+				exosuitCount += (vehicle is Exosuit ? 1 : 0);
 			}
-			if (vehicles.Count == 0)
-			{
-				text.text += "\n(None)";
-			}
+
+			seamothCountText.text = seamothCount > 1 ? "x" + seamothCount : "";
+			exosuitCountText.text = exosuitCount > 1 ? "x" + exosuitCount : "";
+
+			seamothIcon.color = seamothCount > 0 ? PrimaryColor : HiddenColor;
+			exosuitIcon.color = exosuitCount > 0 ? PrimaryColor : HiddenColor;
+
 			if (extractingItems)
 			{
 				text.text += "\n\n<EXTRACTING...>";
 			}
-
-#if USE_AUTOSORT
-			text.text += "\nAutosorters: " + autosorters.Count;
-#endif
 		}
 
 #if USE_AUTOSORT
@@ -254,12 +310,17 @@ namespace DockedVehicleStorageAccess
 
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("LockerScreen.png"));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
+			seamothIcon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Seamoth.png"));
+			exosuitIcon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Exosuit.png"));
+
 
 #if USE_AUTOSORT
 			autosortCheckbox.toggled = true;
 			autosortCheckbox.Initialize();
 #endif
 
+			subRoot = gameObject.GetComponentInParent<SubRoot>();
+			GetDockingBays();
 			UpdateDockedVehicles();
 			UpdateText();
 
@@ -313,26 +374,31 @@ namespace DockedVehicleStorageAccess
 				meshRenderer.material.color = new Color(0, 0, 1);
 			}
 
-			var autosortTarget = prefab.AddComponent<VehicleStorageAccess>();
+			var storageAccess = prefab.AddComponent<VehicleStorageAccess>();
 
-			autosortTarget.textPrefab = GameObject.Instantiate(prefab.GetComponentInChildren<Text>());
+			storageAccess.textPrefab = GameObject.Instantiate(prefab.GetComponentInChildren<Text>());
 			var label = prefab.FindChild("Label");
 			DestroyImmediate(label);
 
-			var color = new Color32(66, 134, 244, 255);
-
 			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
-			autosortTarget.background = LockerPrefabShared.CreateBackground(canvas.transform);
-			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, color, 80);
-			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, color, -10, 12, "");
+			storageAccess.background = LockerPrefabShared.CreateBackground(canvas.transform);
+			storageAccess.icon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 15);
+			storageAccess.text = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, -40, 10, "");
+			storageAccess.seamothIcon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 80);
+			storageAccess.seamothCountText = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, 55, 10, "none");
+			storageAccess.exosuitIcon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 80);
+			storageAccess.exosuitCountText = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, 55, 10, "none");
+
+			storageAccess.seamothIcon.rectTransform.anchoredPosition += new Vector2(-23, 0);
+			storageAccess.seamothCountText.rectTransform.anchoredPosition += new Vector2(-23, 0);
+			storageAccess.exosuitIcon.rectTransform.anchoredPosition += new Vector2(23, 0);
+			storageAccess.exosuitCountText.rectTransform.anchoredPosition += new Vector2(23, 0);
 
 #if USE_AUTOSORT
-			autosortTarget.autosortCheckbox = CreateAutosortCheckbox(autosortTarget.background.transform, color, autosortTarget.textPrefab, autosortTarget);
+			storageAccess.autosortCheckbox = CreateAutosortCheckbox(storageAccess.background.transform, PrimaryColor, storageAccess.textPrefab, storageAccess);
 #endif
 
-			autosortTarget.background.gameObject.SetActive(false);
-			autosortTarget.icon.gameObject.SetActive(false);
-			autosortTarget.text.gameObject.SetActive(false);
+			storageAccess.background.gameObject.SetActive(false);
 
 			return prefab;
 		}

@@ -68,10 +68,6 @@ namespace AutosortLockers
 			else if (unsortableItems > 0)
 			{
 				output = "Unsorted Items: " + unsortableItems;
-				foreach (var item in container.container)
-				{
-					output += "\n" + item.item.GetTechType();
-				}
 			}
 			else
 			{
