@@ -79,7 +79,6 @@ namespace DockedVehicleStorageAccess.Patches
 			prefab.transform.position = new Vector3(5000, 5000, 5000);
 
 			requestingPrefab = false;
-			GameObject.Destroy(cyclops);
 		}
 
 		private static void OnPrefabDestroyed(GameObject x)
