@@ -1,16 +1,13 @@
 ﻿using Common.Mod;
 using Common.Utility;
-using System.Collections;
+using Oculus.Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using ProtoBuf;
 
 namespace HabitatControlPanel
 {
-	[ProtoContract]
 	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener
 	{
 		private static readonly HashSet<TechType> CompatibleTech = new HashSet<TechType>
@@ -23,14 +20,8 @@ namespace HabitatControlPanel
 		private bool initialized;
 		private Constructable constructable;
 		private Equipment equipment;
+		private Dictionary<string, string> serializedSlots;
 
-		[ProtoMember(1)]
-		[NonSerialized]
-		public int protoVersion = 1;
-
-		[ProtoMember(2, OverwriteList = true)]
-		[NonSerialized]
-		public Dictionary<string, string> serializedSlots;
 		public ChildObjectIdentifier equipmentRoot;
 
 		[SerializeField]
@@ -47,6 +38,12 @@ namespace HabitatControlPanel
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();
+			//AlternativeSerializer.RegisterCustomSerializer<HabitatControlPanel>((int)CustomTechType.HabitatControlPanel, this);
+		}
+
+		private void OnDestroy()
+		{
+
 		}
 
 		private void Update()
@@ -67,6 +64,8 @@ namespace HabitatControlPanel
 		
 		private void Initialize()
 		{
+			Logger.Log("Initialize");
+
 			background.gameObject.SetActive(true);
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
 
@@ -92,6 +91,7 @@ namespace HabitatControlPanel
 				serializedSlots = null;
 			}
 
+			UpdatePowerCellMesh();
 			initialized = true;
 		}
 
@@ -146,16 +146,58 @@ namespace HabitatControlPanel
 
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
-			if (!initialized)
-			{
-				Initialize();
-			}
+			var saveDataFile = GetSaveDataPath();
+			Logger.Log("OnProtoSerialize = " + saveDataFile);
 			serializedSlots = equipment.SaveEquipment();
+			if (!Directory.Exists(GetSaveDataDir()))
+			{
+				Directory.CreateDirectory(GetSaveDataDir());
+			}
+			string fileContents = JsonConvert.SerializeObject(serializedSlots, Formatting.Indented);
+			Logger.Log("File Contents=" + fileContents);
+			File.WriteAllText(saveDataFile, fileContents);
 		}
 
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
+			var saveDataFile = GetSaveDataPath();
+			Logger.Log("OnProtoDeserialize = " + saveDataFile);
+			if (File.Exists(saveDataFile))
+			{
+				string fileContents = File.ReadAllText(saveDataFile);
+				Logger.Log("File Contents=" + fileContents);
+				serializedSlots = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileContents);
+			}
+			else
+			{
+				serializedSlots = new Dictionary<string, string>();
+			}
 		}
+
+		private string GetSaveDataDir()
+		{
+			return Path.Combine(ModUtils.GetSaveDataDirectory(), "HabitatControlPanel");
+		}
+
+		public string GetSaveDataPath()
+		{
+			var prefabIdentifier = GetComponent<PrefabIdentifier>();
+			var id = prefabIdentifier.Id;
+
+			var saveFile = Path.Combine(GetSaveDataDir(), id + ".json");
+			return saveFile;
+		}
+
+		/*public object Deserialize(object obj, ProtoReader reader, ProtobufSerializerPrecompiled model)
+		{
+			Logger.Log("Deserialize(" + string.Join(",", new string[] { obj.ToString(), reader.ToString(), model.ToString() }));
+			return obj;
+		}
+
+		public void Serialize(object obj, ProtoWriter writer, ProtobufSerializerPrecompiled model)
+		{
+			Logger.Log("Serialize(" + string.Join(",", new string[] { obj.ToString(), writer.ToString(), model.ToString() }));
+		}*/
 
 		/*public void PositionTrigger()
 		{

@@ -32,6 +32,7 @@ namespace HabitatControlPanel
 
 			HarmonyInstance harmony = HarmonyInstance.Create("com.HabitatControlPanel.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
+			ProtobufSerializerPatcher.Patch(harmony);
 
 			Logger.Log("Patched");
 		}
