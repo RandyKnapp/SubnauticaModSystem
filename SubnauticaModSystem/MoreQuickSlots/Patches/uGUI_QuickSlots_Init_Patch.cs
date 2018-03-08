@@ -12,15 +12,18 @@ namespace MoreQuickSlots.Patches
 	{
 		private static void Postfix(uGUI_QuickSlots __instance)
 		{
+			Logger.Log("QuickSlots Init");
 			InstantiateGameController(__instance);
 		}
 
 		private static void InstantiateGameController(uGUI_QuickSlots instance)
 		{
-			if (instance.gameObject.GetComponent<GameController>() == null)
+			var controller = instance.gameObject.GetComponent<GameController>();
+			if (controller == null)
 			{
-				instance.gameObject.AddComponent<GameController>();
+				controller = instance.gameObject.AddComponent<GameController>();
 			}
+			controller.AddHotkeyLabels(instance);
 		}
 	}
 }
