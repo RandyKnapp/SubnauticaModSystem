@@ -16,7 +16,7 @@ namespace HabitatControlPanel
 		public float PowerCellCharge = 0;
 	}
 
-	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener
+	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener, IPowerInterface
 	{
 		private static readonly HashSet<TechType> CompatibleTech = new HashSet<TechType>
 		{
@@ -30,6 +30,8 @@ namespace HabitatControlPanel
 		private Constructable constructable;
 		private Equipment equipment;
 		private HabitatControlPanelSaveData saveData;
+		private IBattery battery;
+		private PowerRelay connectedRelay;
 
 		public ChildObjectIdentifier equipmentRoot;
 
@@ -103,8 +105,28 @@ namespace HabitatControlPanel
 				saveData = null;
 			}
 
+			base.InvokeRepeating("UpdateConnection", 0, 1);
+
 			UpdatePowerCell();
 			initialized = true;
+		}
+
+		private void UpdateConnection()
+		{
+			PowerRelay relay = PowerSource.FindRelay(transform);
+			if (relay != null && relay != connectedRelay)
+			{
+				if (connectedRelay != null)
+				{
+					connectedRelay.RemoveInboundPower(this);
+				}
+				connectedRelay = relay;
+				connectedRelay.AddInboundPower(this);
+			}
+			else
+			{
+				connectedRelay = null;
+			}
 		}
 
 		private void OnUnequip(string slot, InventoryItem item)
@@ -126,6 +148,8 @@ namespace HabitatControlPanel
 			ionPowerCellMesh.SetActive(equippedPowerCell != null && equippedPowerCell.item.GetTechType() == TechType.PrecursorIonPowerCell);
 
 			batteryIndicator.SetBattery(equippedPowerCell?.item);
+
+			battery = equippedPowerCell?.item.GetComponent<IBattery>();
 		}
 
 		private void OnPowerCellHandHover(HandTargetEventData eventData)
@@ -156,6 +180,57 @@ namespace HabitatControlPanel
 		private bool IsAllowedToAdd(Pickupable pickupable, bool verbose)
 		{
 			return pickupable != null && CompatibleTech.Contains(pickupable.GetTechType());
+		}
+
+		public float GetPower()
+		{
+			return battery == null ? 0 : battery.charge;
+		}
+
+		public float GetMaxPower()
+		{
+			return battery == null ? 0 : battery.capacity;
+		}
+
+		public bool ModifyPower(float amount, out float modified)
+		{
+			modified = 0f;
+			if (battery == null)
+			{
+				return false;
+			}
+
+			bool result;
+			if (amount >= 0f)
+			{
+				result = (amount <= battery.capacity - battery.charge);
+				modified = Mathf.Min(amount, battery.capacity - battery.charge);
+				battery.charge += modified;
+			}
+			else
+			{
+				result = (battery.charge >= -amount);
+				if (GameModeUtils.RequiresPower())
+				{
+					modified = -Mathf.Min(-amount, this.battery.charge);
+					this.battery.charge += modified;
+				}
+				else
+				{
+					modified = amount;
+				}
+			}
+			return result;
+		}
+
+		public bool HasInboundPower(IPowerInterface powerInterface)
+		{
+			return false;
+		}
+
+		public bool GetInboundHasSource(IPowerInterface powerInterface)
+		{
+			return false;
 		}
 
 		public void OnProtoSerialize(ProtobufSerializer serializer)
