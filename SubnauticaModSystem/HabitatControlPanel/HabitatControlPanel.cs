@@ -1,6 +1,7 @@
 ﻿using Common.Mod;
 using Common.Utility;
 using Oculus.Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -8,6 +9,13 @@ using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
+	[Serializable]
+	public class HabitatControlPanelSaveData
+	{
+		public TechType PowerCellType = TechType.None;
+		public float PowerCellCharge = 0;
+	}
+
 	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener
 	{
 		private static readonly HashSet<TechType> CompatibleTech = new HashSet<TechType>
@@ -20,7 +28,7 @@ namespace HabitatControlPanel
 		private bool initialized;
 		private Constructable constructable;
 		private Equipment equipment;
-		private Dictionary<string, string> serializedSlots;
+		private HabitatControlPanelSaveData saveData;
 
 		public ChildObjectIdentifier equipmentRoot;
 
@@ -38,12 +46,6 @@ namespace HabitatControlPanel
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();
-			//AlternativeSerializer.RegisterCustomSerializer<HabitatControlPanel>((int)CustomTechType.HabitatControlPanel, this);
-		}
-
-		private void OnDestroy()
-		{
-
 		}
 
 		private void Update()
@@ -84,11 +86,18 @@ namespace HabitatControlPanel
 			equipment.onUnequip += OnUnequip;
 			equipment.AddSlot(SlotName);
 
-			if (serializedSlots != null)
+			if (saveData != null)
 			{
-				Dictionary<string, InventoryItem> items = StorageHelper.ScanItems(equipmentRoot.transform);
-				equipment.RestoreEquipment(serializedSlots, items);
-				serializedSlots = null;
+				if (saveData.PowerCellType != TechType.None)
+				{
+					var powerCell = CraftData.InstantiateFromPrefab(saveData.PowerCellType, false);
+					var battery = powerCell.GetComponent<IBattery>();
+					battery.charge = saveData.PowerCellCharge;
+
+					equipment.AddItem(SlotName, new InventoryItem(powerCell.GetComponent<Pickupable>()));
+					powerCell.SetActive(false);
+				}
+				saveData = null;
 			}
 
 			UpdatePowerCellMesh();
@@ -148,14 +157,28 @@ namespace HabitatControlPanel
 		{
 			var saveDataFile = GetSaveDataPath();
 			Logger.Log("OnProtoSerialize = " + saveDataFile);
-			serializedSlots = equipment.SaveEquipment();
+			saveData = CreateSaveData();
 			if (!Directory.Exists(GetSaveDataDir()))
 			{
 				Directory.CreateDirectory(GetSaveDataDir());
 			}
-			string fileContents = JsonConvert.SerializeObject(serializedSlots, Formatting.Indented);
+			string fileContents = JsonConvert.SerializeObject(saveData, Formatting.Indented);
 			Logger.Log("File Contents=" + fileContents);
 			File.WriteAllText(saveDataFile, fileContents);
+		}
+
+		private HabitatControlPanelSaveData CreateSaveData()
+		{
+			HabitatControlPanelSaveData saveData = new HabitatControlPanelSaveData();
+
+			var item = equipment.GetItemInSlot(SlotName);
+			if (item != null)
+			{
+				saveData.PowerCellType = item.item.GetTechType();
+				saveData.PowerCellCharge = item.item.GetComponent<IBattery>().charge;
+			}
+
+			return saveData;
 		}
 
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
@@ -166,11 +189,11 @@ namespace HabitatControlPanel
 			{
 				string fileContents = File.ReadAllText(saveDataFile);
 				Logger.Log("File Contents=" + fileContents);
-				serializedSlots = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileContents);
+				saveData = JsonConvert.DeserializeObject<HabitatControlPanelSaveData>(fileContents);
 			}
 			else
 			{
-				serializedSlots = new Dictionary<string, string>();
+				saveData = new HabitatControlPanelSaveData();
 			}
 		}
 
@@ -379,6 +402,7 @@ namespace HabitatControlPanel
 			var equipmentRoot = new GameObject("EquipmentRoot");
 			equipmentRoot.transform.SetParent(prefab.transform, false);
 			controlPanel.equipmentRoot = equipmentRoot.AddComponent<ChildObjectIdentifier>();
+			equipmentRoot.SetActive(false);
 
 			ModUtils.PrintObject(prefab);
 
