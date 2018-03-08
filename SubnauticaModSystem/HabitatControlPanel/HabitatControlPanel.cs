@@ -24,6 +24,7 @@ namespace HabitatControlPanel
 			TechType.PrecursorIonPowerCell
 		};
 		private const string SlotName = "PowerCellCharger1";
+		private static readonly Color ScreenContentColor = new Color32(188, 254, 254, 255);
 
 		private bool initialized;
 		private Constructable constructable;
@@ -42,6 +43,8 @@ namespace HabitatControlPanel
 		private GameObject ionPowerCellMesh;
 		[SerializeField]
 		private BoxCollider powerCellTrigger;
+		[SerializeField]
+		private BatteryIndicator batteryIndicator;
 
 		private void Awake()
 		{
@@ -100,27 +103,29 @@ namespace HabitatControlPanel
 				saveData = null;
 			}
 
-			UpdatePowerCellMesh();
+			UpdatePowerCell();
 			initialized = true;
 		}
 
 		private void OnUnequip(string slot, InventoryItem item)
 		{
 			Logger.Log("Unequip " + slot + ":" + item.item.GetTechType());
-			UpdatePowerCellMesh();
+			UpdatePowerCell();
 		}
 
 		private void OnEquip(string slot, InventoryItem item)
 		{
 			Logger.Log("Equip " + slot + ":" + item.item.GetTechType());
-			UpdatePowerCellMesh();
+			UpdatePowerCell();
 		}
 
-		private void UpdatePowerCellMesh()
+		private void UpdatePowerCell()
 		{
 			var equippedPowerCell = equipment.GetItemInSlot(SlotName);
 			powerCellMesh.SetActive(equippedPowerCell != null && equippedPowerCell.item.GetTechType() == TechType.PowerCell);
 			ionPowerCellMesh.SetActive(equippedPowerCell != null && equippedPowerCell.item.GetTechType() == TechType.PrecursorIonPowerCell);
+
+			batteryIndicator.SetBattery(equippedPowerCell?.item);
 		}
 
 		private void OnPowerCellHandHover(HandTargetEventData eventData)
@@ -404,6 +409,8 @@ namespace HabitatControlPanel
 			controlPanel.equipmentRoot = equipmentRoot.AddComponent<ChildObjectIdentifier>();
 			equipmentRoot.SetActive(false);
 
+			CreateScreenElements(controlPanel, controlPanel.background.transform);
+
 			ModUtils.PrintObject(prefab);
 
 			return prefab;
@@ -434,14 +441,6 @@ namespace HabitatControlPanel
 			GameObject powerCellSlot = new GameObject("PowerCellSlot");
 			var offset = new Vector3(0, 0, 1.72f);
 
-			/*GameObject batteryInput = GameObject.Instantiate(seamothPrefab.transform.Find("BatteryInput").gameObject);
-			batteryInput.transform.localPosition += offset;
-			batteryInput.transform.SetParent(powerCellSlot.transform, false);*/
-
-			/*GameObject batterySlot = GameObject.Instantiate(seamothPrefab.transform.Find("BatterySlot").gameObject);
-			batterySlot.transform.localPosition += offset;
-			batterySlot.transform.SetParent(powerCellSlot.transform, false);*/
-
 			var model = seamothPrefab.transform.Find("Model");
 			var Submersible_SeaMoth = model.Find("Submersible_SeaMoth");
 			var Submersible_seaMoth_geo = Submersible_SeaMoth.Find("Submersible_seaMoth_geo");
@@ -467,6 +466,24 @@ namespace HabitatControlPanel
 			ionPowerCell.SetActive(false);
 
 			return powerCellSlot;
+		}
+
+		private static void CreateScreenElements(HabitatControlPanel controlPanel, Transform parent)
+		{
+			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+			var textPrefab = lockerPrefab.GetComponentInChildren<Text>();
+			textPrefab.fontSize = 10;
+			textPrefab.color = ScreenContentColor;
+
+			var batteryIndicator = new GameObject("BatteryIndicator", typeof(RectTransform)).AddComponent<BatteryIndicator>();
+			var rt = batteryIndicator.gameObject.transform as RectTransform;
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			RectTransformExtensions.SetSize(rt, 100, 100);
+			rt.anchoredPosition = new Vector2(0, 0);
+			batteryIndicator.Initialize(textPrefab);
+			controlPanel.batteryIndicator = batteryIndicator;
+
+			GameObject.Destroy(lockerPrefab);
 		}
 	}
 }
