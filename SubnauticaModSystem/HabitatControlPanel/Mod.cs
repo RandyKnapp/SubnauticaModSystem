@@ -20,11 +20,8 @@ namespace HabitatControlPanel
 	{
 		public const string SaveDataFilename = "HabitatControlPanelSaveData.json";
 		public static Config config;
-		public static SaveData saveData;
 
 		private static string modDirectory;
-		private static GameObject modObject;
-		private static bool needsSave;
 
 		public static void Patch(string modDirectory = null)
 		{
@@ -72,90 +69,6 @@ namespace HabitatControlPanel
 			{
 				config = defaultConfig;
 				return;
-			}
-		}
-
-		public static SaveData GetSaveData()
-		{
-			if (saveData == null)
-			{
-				saveData = LoadSaveData();
-				if (saveData == null)
-				{
-					saveData = new SaveData();
-				}
-			}
-			return saveData;
-		}
-
-		public static void SetNeedsSaving()
-		{
-			needsSave = true;
-		}
-
-		public static bool NeedsSaving()
-		{
-			return needsSave;
-		}
-
-		public static void Save()
-		{
-			if (!IsSaving())
-			{
-				modObject = new GameObject("HabitatControlPanelSaveObject");
-				var x = modObject.AddComponent<ModSaver>();
-				x.StartCoroutine(SaveCoroutine());
-			}
-		}
-
-		public static bool IsSaving()
-		{
-			return modObject != null;
-		}
-
-		private static IEnumerator SaveCoroutine()
-		{
-			yield return null;
-
-			SaveData newSaveData = new SaveData();
-			var targets = GameObject.FindObjectsOfType<HabitatControlPanel>();
-			foreach (var target in targets)
-			{
-				target.Save(newSaveData);
-			}
-			WriteSaveData(newSaveData);
-			saveData = newSaveData;
-
-			yield return null;
-			GameObject.Destroy(modObject);
-			modObject = null;
-			needsSave = false;
-		}
-
-		private static SaveData LoadSaveData()
-		{
-			var saveDir = ModUtils.GetSaveDataDirectory();
-			var saveFile = Path.Combine(saveDir, SaveDataFilename);
-			if (File.Exists(saveFile))
-			{
-				SaveData saveData = JsonConvert.DeserializeObject<SaveData>(File.ReadAllText(saveFile));
-				if (saveData != null)
-				{
-					return saveData;
-				}
-			}
-
-			return new SaveData();
-		}
-
-		private static void WriteSaveData(SaveData newSaveData)
-		{
-			if (newSaveData != null)
-			{
-				var saveDir = ModUtils.GetSaveDataDirectory();
-				var saveFile = Path.Combine(saveDir, SaveDataFilename);
-				string saveDataJson = JsonConvert.SerializeObject(newSaveData);
-				File.WriteAllText(saveFile, saveDataJson);
 			}
 		}
 	}

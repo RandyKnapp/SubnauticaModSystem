@@ -6,18 +6,41 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using ProtoBuf;
 
 namespace HabitatControlPanel
 {
-	public class HabitatControlPanel : MonoBehaviour
+	[ProtoContract]
+	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener
 	{
+		private static readonly HashSet<TechType> CompatibleTech = new HashSet<TechType>
+		{
+			TechType.PowerCell,
+			TechType.PrecursorIonPowerCell
+		};
+		private const string SlotName = "PowerCellCharger1";
+
 		private bool initialized;
 		private Constructable constructable;
+		private Equipment equipment;
+
+		[ProtoMember(1)]
+		[NonSerialized]
+		public int protoVersion = 1;
+
+		[ProtoMember(2, OverwriteList = true)]
+		[NonSerialized]
+		public Dictionary<string, string> serializedSlots;
+		public ChildObjectIdentifier equipmentRoot;
 
 		[SerializeField]
 		private Image background;
 		[SerializeField]
 		private GameObject powerCellSlot;
+		[SerializeField]
+		private GameObject powerCellMesh;
+		[SerializeField]
+		private GameObject ionPowerCellMesh;
 		[SerializeField]
 		private BoxCollider powerCellTrigger;
 
@@ -38,17 +61,8 @@ namespace HabitatControlPanel
 				return;
 			}
 
-			if (SaveLoadManager.main != null && SaveLoadManager.main.isSaving && !Mod.IsSaving() && !Mod.NeedsSaving())
-			{
-				Mod.SetNeedsSaving();
-			}
-			if (SaveLoadManager.main != null && !SaveLoadManager.main.isSaving && !Mod.IsSaving() && Mod.NeedsSaving())
-			{
-				Mod.Save();
-			}
-
-			PositionTrigger();
-			DrawBoxCollider();
+			//PositionTrigger();
+			//DrawBoxCollider();
 		}
 		
 		private void Initialize()
@@ -64,31 +78,86 @@ namespace HabitatControlPanel
 			handTarget.onHandHover.AddListener(OnPowerCellHandHover);
 			handTarget.onHandClick.AddListener(OnPowerCellHandClick);
 
+			equipment = new Equipment(gameObject, equipmentRoot.transform);
+			equipment.SetLabel("Habitat Power");
+			equipment.isAllowedToAdd = new IsAllowedToAdd(IsAllowedToAdd);
+			equipment.onEquip += OnEquip;
+			equipment.onUnequip += OnUnequip;
+			equipment.AddSlot(SlotName);
+
+			if (serializedSlots != null)
+			{
+				Dictionary<string, InventoryItem> items = StorageHelper.ScanItems(equipmentRoot.transform);
+				equipment.RestoreEquipment(serializedSlots, items);
+				serializedSlots = null;
+			}
+
 			initialized = true;
+		}
+
+		private void OnUnequip(string slot, InventoryItem item)
+		{
+			Logger.Log("Unequip " + slot + ":" + item.item.GetTechType());
+			UpdatePowerCellMesh();
+		}
+
+		private void OnEquip(string slot, InventoryItem item)
+		{
+			Logger.Log("Equip " + slot + ":" + item.item.GetTechType());
+			UpdatePowerCellMesh();
+		}
+
+		private void UpdatePowerCellMesh()
+		{
+			var equippedPowerCell = equipment.GetItemInSlot(SlotName);
+			powerCellMesh.SetActive(equippedPowerCell != null && equippedPowerCell.item.GetTechType() == TechType.PowerCell);
+			ionPowerCellMesh.SetActive(equippedPowerCell != null && equippedPowerCell.item.GetTechType() == TechType.PrecursorIonPowerCell);
 		}
 
 		private void OnPowerCellHandHover(HandTargetEventData eventData)
 		{
 			HandReticle main = HandReticle.main;
 			main.SetIcon(HandReticle.IconType.Hand);
-			main.SetInteractTextRaw("SDOIJOSDIJF", "adij");
+
+			var secondText = "No Power Cell";
+			var powerCell = equipment.GetItemInSlot(SlotName);
+			if (powerCell != null)
+			{
+				var battery = powerCell.item.GetComponent<IBattery>();
+				secondText = string.Format("Power {0}%", Mathf.RoundToInt((battery.charge / battery.capacity) * 100));
+			}
+			main.SetInteractTextRaw("Power Cell", secondText);
 		}
 
 		private void OnPowerCellHandClick(HandTargetEventData eventData)
 		{
-			Logger.Log("Power Cell Click");
+			PDA pda = Player.main.GetPDA();
+			if (!pda.isInUse)
+			{
+				Inventory.main.SetUsedStorage(equipment, false);
+				pda.Open(PDATab.Inventory, transform, null, 4f);
+			}
 		}
 
-		public void Save(SaveData saveData)
+		private bool IsAllowedToAdd(Pickupable pickupable, bool verbose)
 		{
-			var prefabIdentifier = GetComponent<PrefabIdentifier>();
-			var id = prefabIdentifier.Id;
-
-			var entry = new SaveDataEntry() { Id = id };
-			saveData.Entries.Add(entry);
+			return pickupable != null && CompatibleTech.Contains(pickupable.GetTechType());
 		}
 
-		public void PositionTrigger()
+		public void OnProtoSerialize(ProtobufSerializer serializer)
+		{
+			if (!initialized)
+			{
+				Initialize();
+			}
+			serializedSlots = equipment.SaveEquipment();
+		}
+
+		public void OnProtoDeserialize(ProtobufSerializer serializer)
+		{
+		}
+
+		/*public void PositionTrigger()
 		{
 			var t = powerCellTrigger.transform;
 			var bc = powerCellTrigger;
@@ -185,7 +254,7 @@ namespace HabitatControlPanel
 		private void DrawLine(Vector3[] verts, int a, int b)
 		{
 			Debug.DrawLine(verts[a], verts[b], Color.green, 0);
-		}
+		}*/
 
 
 
@@ -236,8 +305,7 @@ namespace HabitatControlPanel
 			var mesh = prefab.transform.Find("mesh").gameObject;
 			mesh.transform.localEulerAngles = new Vector3(0, 0, 90);
 			var trigger = prefab.transform.Find("Trigger").gameObject;
-			trigger.transform.localEulerAngles = new Vector3(0, 0, 90);
-			GameObject.Destroy(trigger.GetComponent<GenericHandTarget>());
+			GameObject.DestroyImmediate(trigger.GetComponent<GenericHandTarget>());
 
 			GameObject powerCellSlotPrefab = GetPowerCellSlotModel();
 			GameObject powerCellSlot = GameObject.Instantiate(powerCellSlotPrefab);
@@ -258,11 +326,17 @@ namespace HabitatControlPanel
 
 			var controlPanel = prefab.AddComponent<HabitatControlPanel>();
 			controlPanel.powerCellSlot = powerCellSlot;
+			controlPanel.powerCellMesh = powerCellSlot.transform.GetChild(1).gameObject;
+			controlPanel.ionPowerCellMesh = powerCellSlot.transform.GetChild(2).gameObject;
 			controlPanel.background = CreateScreen(prefab.transform);
 
 			var slotGeo = powerCellSlot.transform.GetChild(0).gameObject;
 			var collider = slotGeo.AddComponent<BoxCollider>();
 			controlPanel.powerCellTrigger = collider;
+
+			var equipmentRoot = new GameObject("EquipmentRoot");
+			equipmentRoot.transform.SetParent(prefab.transform, false);
+			controlPanel.equipmentRoot = equipmentRoot.AddComponent<ChildObjectIdentifier>();
 
 			ModUtils.PrintObject(prefab);
 

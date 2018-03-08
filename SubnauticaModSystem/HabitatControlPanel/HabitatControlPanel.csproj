@@ -86,7 +86,6 @@
   <ItemGroup>
     <Compile Include="HabitatControlPanel.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="ModSaver.cs" />
     <Compile Include="LockerPrefabShared.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
@@ -98,7 +97,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SaveData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />
