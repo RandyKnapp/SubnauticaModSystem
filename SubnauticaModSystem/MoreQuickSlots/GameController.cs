@@ -12,9 +12,13 @@ namespace MoreQuickSlots
 	{
 		private static FieldInfo uGUI_QuickSlots_icons = typeof(uGUI_QuickSlots).GetField("icons", BindingFlags.NonPublic | BindingFlags.Instance);
 
+		private uGUI_QuickSlots quickSlots;
+		private bool tryAddLabels;
+
 		private void Awake()
 		{
 			Logger.Log("GameController Added");
+			quickSlots = GetComponent<uGUI_QuickSlots>();
 		}
 
 		private void OnDestroy()
@@ -38,6 +42,11 @@ namespace MoreQuickSlots
 						SelectQuickSlot(i);
 					}
 				}
+			}
+
+			if (tryAddLabels)
+			{
+				AddHotkeyLabels(quickSlots);
 			}
 		}
 
@@ -65,25 +74,23 @@ namespace MoreQuickSlots
 
 		public void AddHotkeyLabels(uGUI_QuickSlots instance)
 		{
-			if (instance == null || !instance.gameObject.activeSelf || !instance.gameObject.activeInHierarchy)
+			if (instance == null || !Mod.config.ShowInputText)
 			{
-				return;
-			}
-
-			if (!Mod.config.ShowInputText)
-			{
+				tryAddLabels = true;
 				return;
 			}
 			
 			Text textPrefab = GetTextPrefab();
 			if (textPrefab == null)
 			{
+				tryAddLabels = true;
 				return;
 			}
 
 			uGUI_ItemIcon[] icons = (uGUI_ItemIcon[])uGUI_QuickSlots_icons.GetValue(instance);
 			if (icons == null || icons.Length == 0)
 			{
+				tryAddLabels = true;
 				return;
 			}
 
@@ -92,6 +99,7 @@ namespace MoreQuickSlots
 				uGUI_ItemIcon icon = icons[i];
 				var text = CreateNewText(textPrefab, icon.transform, Mod.GetInputForSlot(i), i);
 			}
+			tryAddLabels = false;
 		}
 
 		private static Text GetTextPrefab()
