@@ -32,6 +32,7 @@ namespace DockedVehicleStorageAccess
 		private List<Vehicle> vehicles = new List<Vehicle>();
 
 #if USE_AUTOSORT
+		private bool transferringToAutosorter;
 		private List<AutosortLocker> autosorters = new List<AutosortLocker>();
 #endif
 
@@ -73,10 +74,14 @@ namespace DockedVehicleStorageAccess
 					GetDockingBays();
 					yield return TryExtractItems();
 #if USE_AUTOSORT
-					yield return TryMoveToAutosorter();
+					if (!extractingItems)
+					{
+						yield return new WaitForSeconds(Mod.config.AutosortTransferInterval);
+						yield return TryMoveToAutosorter();
+					}
 #endif
 				}
-				yield return new WaitForSeconds(1.0f);
+				yield return new WaitForSeconds(Mod.config.CheckVehiclesInterval);
 			}
 		}
 
@@ -131,27 +136,50 @@ namespace DockedVehicleStorageAccess
 			List<Vehicle> localVehicles = vehicles.ToList();
 			foreach (var vehicle in localVehicles)
 			{
-				var vName = vehicle.GetName();
-				extractionResults[vName] = 0;
-				var vContainers = vehicle.gameObject.GetComponentsInChildren<StorageContainer>().Select((x) => x.container).ToList();
-				vContainers.AddRange(GetSeamothStorage(vehicle));
-				foreach (var vContainer in vContainers)
+				var vehicleName = vehicle.GetName();
+				extractionResults[vehicleName] = 0;
+				var vehicleContainers = vehicle.gameObject.GetComponentsInChildren<StorageContainer>().Select((x) => x.container).ToList();
+				vehicleContainers.AddRange(GetSeamothStorage(vehicle));
+				bool couldNotAdd = false;
+				foreach (var vehicleContainer in vehicleContainers)
 				{
-					foreach (var item in vContainer.ToList())
+					foreach (var item in vehicleContainer.ToList())
 					{
 						if (container.container.HasRoomFor(item.item))
 						{
-							container.container.AddItem(item.item);
-							vContainer.RemoveItem(item.item.GetTechType());
-							extractionResults[vName]++;
-							extractedAnything = true;
-							extractingItems = true;
+							var success = container.container.AddItem(item.item);
+							if (success != null)
+							{
+								//vehicleContainer.RemoveItem(item.item.GetTechType());
+								extractionResults[vehicleName]++;
+								if (extractingItems == false)
+								{
+									ErrorMessage.AddDebug("Extracting items from vehicle storage...");
+								}
+								extractedAnything = true;
+								extractingItems = true;
+								yield return new WaitForSeconds(Mod.config.ExtractInterval);
+							}
+							else
+							{
+								couldNotAdd = true;
+								break;
+							}
 						}
-						yield return null;
+						else
+						{
+							couldNotAdd = true;
+							break;
+						}
+					}
+
+					if (couldNotAdd)
+					{
+						break;
 					}
 				}
 			}
-
+			
 			if (extractedAnything)
 			{
 				NotifyExtraction(extractionResults);
@@ -209,8 +237,14 @@ namespace DockedVehicleStorageAccess
 			{
 				yield break;
 			}
+			if (transferringToAutosorter)
+			{
+				yield break;
+			}
 
 			var items = container.container.ToList();
+			bool couldNotAdd = false;
+			int itemsTransferred = 0;
 			foreach (var item in items)
 			{
 				foreach (var autosorter in autosorters)
@@ -218,12 +252,41 @@ namespace DockedVehicleStorageAccess
 					var aContainer = GetAutosorterContainer(autosorter);
 					if (aContainer.container.HasRoomFor(item.item))
 					{
-						aContainer.container.AddItem(item.item);
-						container.container.RemoveItem(item.item.GetTechType());
+						var success = aContainer.container.AddItem(item.item);
+						if (success != null)
+						{
+							itemsTransferred++;
+							if (!transferringToAutosorter)
+							{
+								ErrorMessage.AddDebug("Transferring items to Autosorter...");
+							}
+							transferringToAutosorter = true;
+						}
+						else
+						{
+							couldNotAdd = true;
+							break;
+						}
 					}
-					yield return null;
+					else
+					{
+						couldNotAdd = true;
+						break;
+					}
+					yield return new WaitForSeconds(Mod.config.AutosortTransferInterval);
+				}
+
+				if (couldNotAdd)
+				{
+					break;
 				}
 			}
+
+			if (itemsTransferred > 0)
+			{
+				ErrorMessage.AddDebug("Transfer complete");
+			}
+			transferringToAutosorter = false;
 		}
 #endif
 
@@ -262,6 +325,12 @@ namespace DockedVehicleStorageAccess
 			{
 				text.text += "\n\n<EXTRACTING...>";
 			}
+#if USE_AUTOSORT
+			else if (autosorters.Count == 0 && transferringToAutosorter)
+			{
+				text.text += "\n\n<TRANSFERRING...>";
+			}
+#endif
 		}
 
 #if USE_AUTOSORT
