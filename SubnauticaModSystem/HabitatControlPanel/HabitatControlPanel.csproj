@@ -85,8 +85,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BatteryIndicator.cs" />
+    <Compile Include="BeaconColorPicker.cs" />
+    <Compile Include="BeaconColorSettings.cs" />
     <Compile Include="BeaconSettings.cs" />
+    <Compile Include="ColoredIconButton.cs" />
     <Compile Include="CheckboxButton.cs" />
+    <Compile Include="ColorPickerButton.cs" />
     <Compile Include="HabitatNameController.cs" />
     <Compile Include="HabitatControlPanel.cs" />
     <Compile Include="Config.cs" />
@@ -101,6 +105,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SubmenuCloseButton.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />

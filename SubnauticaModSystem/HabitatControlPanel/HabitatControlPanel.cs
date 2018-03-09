@@ -39,6 +39,7 @@ namespace HabitatControlPanel
 		private string habitatLabel;
 		private bool pingEnabled;
 		private PingInstance ping;
+		private GameObject currentSubMenu;
 
 		public ChildObjectIdentifier equipmentRoot;
 
@@ -60,8 +61,24 @@ namespace HabitatControlPanel
 		private HabitatNameController habitatNameController;
 		[SerializeField]
 		private BeaconSettings beaconSettings;
+		[SerializeField]
+		private BeaconColorSettings beaconColorSettings;
+		[SerializeField]
+		private Image scrim;
+		[SerializeField]
+		private BeaconColorPicker beaconColorPicker;
 
-		public string HabitatLabel { get => habitatLabel; set { habitatLabel = value; ping.SetLabel(value); } }
+		public string HabitatLabel
+		{
+			get => habitatLabel;
+			set
+			{
+				habitatLabel = value;
+				ping.SetLabel(value);
+				PingManager.NotifyRename(ping);
+			}
+		}
+
 		public bool BeaconEnabled
 		{
 			get
@@ -71,7 +88,20 @@ namespace HabitatControlPanel
 			internal set
 			{
 				pingEnabled = value;
-				UpdatePing();
+				PingManager.NotifyVisible(ping);
+			}
+		}
+
+		public int BeaconColorIndex
+		{
+			get
+			{
+				return ping.colorIndex;
+			}
+			internal set
+			{
+				ping.SetColor(value);
+				PingManager.NotifyColor(ping);
 			}
 		}
 
@@ -115,7 +145,7 @@ namespace HabitatControlPanel
 
 			UpdatePing();
 
-			PositionStuff();
+			PositionStuff(beaconColorPicker.gameObject);
 		}
 
 		private void UpdatePing()
@@ -123,6 +153,7 @@ namespace HabitatControlPanel
 			if (ping != null)
 			{
 				ping.enabled = pingEnabled && GetPower() > 0;
+				beaconColorSettings.SetColor(ping.colorIndex);
 			}
 		}
 		
@@ -132,6 +163,8 @@ namespace HabitatControlPanel
 
 			background.gameObject.SetActive(true);
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
+
+			scrim.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Scrim.png"));
 
 			transform.Find("mesh").gameObject.SetActive(false);
 
@@ -171,12 +204,19 @@ namespace HabitatControlPanel
 				ping.colorIndex = saveData.PingColorIndex;
 				ping.SetLabel(saveData.PingLabel);
 				ping.enabled = saveData.PingEnabled;
+				pingEnabled = saveData.PingEnabled;
 
 				HabitatLabel = saveData.PingLabel;
 			}
 			
 			habitatNameController.SetLabel(HabitatLabel);
 			beaconSettings.SetInitialValue(ping.enabled);
+			beaconColorSettings.SetInitialValue(ping.colorIndex);
+			beaconColorSettings.onClick += OnBeaconColorButtonClick;
+
+			PingManager.NotifyRename(ping);
+			PingManager.NotifyColor(ping);
+			PingManager.NotifyVisible(ping);
 
 			base.InvokeRepeating("UpdateConnection", 0, 1);
 
@@ -314,6 +354,27 @@ namespace HabitatControlPanel
 			return item == null;
 		}
 
+		private void OnBeaconColorButtonClick()
+		{
+			Logger.Log("OnBeaconColorButtonClick");
+			beaconColorPicker.Initialize(this, ping.colorIndex);
+			OpenSubmenu(beaconColorPicker.gameObject);
+		}
+
+		internal void OpenSubmenu(GameObject subMenu)
+		{
+			currentSubMenu = subMenu;
+			currentSubMenu.SetActive(true);
+			scrim.gameObject.SetActive(true);
+		}
+
+		internal void CloseSubmenu()
+		{
+			currentSubMenu.SetActive(false);
+			currentSubMenu = null;
+			scrim.gameObject.SetActive(false);
+		}
+
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
 			var saveDataFile = GetSaveDataPath();
@@ -376,40 +437,40 @@ namespace HabitatControlPanel
 			return saveFile;
 		}
 
-		public void PositionStuff()
+		public void PositionStuff(GameObject thing)
 		{
-			var t = beaconSettings.transform;
+			var t = thing.transform;
 			var amount = 1f;
 
 			if (Input.GetKeyDown(KeyCode.Keypad8))
 			{
 				t.localPosition += new Vector3(0, amount, 0);
-				PrintStuff();
+				PrintStuff(thing);
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad5))
 			{
 				t.localPosition += new Vector3(0, -amount, 0);
-				PrintStuff();
+				PrintStuff(thing);
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad6))
 			{
 				t.localPosition += new Vector3(amount, 0, 0);
-				PrintStuff();
+				PrintStuff(thing);
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad4))
 			{
 				t.localPosition += new Vector3(-amount, 0, 0);
-				PrintStuff();
+				PrintStuff(thing);
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad1))
 			{
 				t.localPosition += new Vector3(0, 0, amount);
-				PrintStuff();
+				PrintStuff(thing);
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad7))
 			{
 				t.localPosition += new Vector3(0, 0, -amount);
-				PrintStuff();
+				PrintStuff(thing);
 			}
 
 			//var scaleAmount = 0.01f;
@@ -425,10 +486,10 @@ namespace HabitatControlPanel
 			//}
 		}
 
-		private void PrintStuff()
+		private void PrintStuff(GameObject thing)
 		{
-			var t = beaconSettings.transform as RectTransform;
-			Logger.Log("beaconSettings p=" + t.anchoredPosition);
+			var t = thing.transform as RectTransform;
+			Logger.Log(thing.name + " p=" + t.anchoredPosition);
 		}
 
 
@@ -577,13 +638,29 @@ namespace HabitatControlPanel
 		private static void CreateScreenElements(HabitatControlPanel controlPanel, Transform parent)
 		{
 			controlPanel.batteryIndicator = BatteryIndicator.Create(controlPanel, parent);
-			controlPanel.batteryIndicator.rectTransform.anchoredPosition = new Vector2(23.0f, -85.0f);
+			controlPanel.batteryIndicator.rectTransform.anchoredPosition = new Vector2(23, -85);
 
 			controlPanel.habitatNameController = HabitatNameController.Create(controlPanel, parent);
-			controlPanel.habitatNameController.rectTransform.anchoredPosition = new Vector2(0, 118.0f);
+			controlPanel.habitatNameController.rectTransform.anchoredPosition = new Vector2(0, 118);
 
 			controlPanel.beaconSettings = BeaconSettings.Create(controlPanel, parent);
-			controlPanel.beaconSettings.rectTransform.anchoredPosition = new Vector2(0, 186.0f);
+			controlPanel.beaconSettings.rectTransform.anchoredPosition = new Vector2(0, 186);
+
+			controlPanel.beaconColorSettings = BeaconColorSettings.Create(controlPanel, parent);
+			controlPanel.beaconColorSettings.rectTransform.anchoredPosition = new Vector2(-25, 167);
+
+			var scrim = new GameObject("Background", typeof(RectTransform)).AddComponent<Image>();
+			var rt = scrim.rectTransform;
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			RectTransformExtensions.SetSize(rt, 178, 298);
+			controlPanel.scrim = scrim;
+			controlPanel.scrim.gameObject.SetActive(false);
+			var closeButton = controlPanel.scrim.gameObject.AddComponent<SubmenuCloseButton>();
+			closeButton.target = controlPanel;
+
+			controlPanel.beaconColorPicker = BeaconColorPicker.Create(controlPanel, parent);
+			controlPanel.beaconColorPicker.rectTransform.anchoredPosition = new Vector2(0, 30);
+			controlPanel.beaconColorPicker.gameObject.SetActive(false);
 		}
 	}
 }
