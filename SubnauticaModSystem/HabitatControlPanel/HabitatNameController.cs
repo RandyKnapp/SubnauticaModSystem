@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-	class BeaconController : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+	class HabitatNameController : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 	{
 		private bool hover;
 
@@ -71,19 +71,19 @@ namespace HabitatControlPanel
 
 
 		///////////////////////////////////////////////////////////////////////////////////////////
-		public static BeaconController Create(HabitatControlPanel controlPanel, Transform parent)
+		public static HabitatNameController Create(HabitatControlPanel controlPanel, Transform parent)
 		{
 			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = lockerPrefab.GetComponentInChildren<Text>();
 			textPrefab.fontSize = 12;
 			textPrefab.color = HabitatControlPanel.ScreenContentColor;
 
-			var beaconController = new GameObject("BeaconController", typeof(RectTransform)).AddComponent<BeaconController>();
-			var rt = beaconController.gameObject.transform as RectTransform;
+			var habitatNameController = new GameObject("HabitatNameController", typeof(RectTransform)).AddComponent<HabitatNameController>();
+			var rt = habitatNameController.gameObject.transform as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			beaconController.Initialize(controlPanel, textPrefab);
+			habitatNameController.Initialize(controlPanel, textPrefab);
 
-			return beaconController;
+			return habitatNameController;
 		}
 	}
 }

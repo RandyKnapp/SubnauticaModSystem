@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace DockedVehicleStorageAccess
+namespace Common.Mod
 {
 	public static class LockerPrefabShared
 	{

@@ -37,6 +37,7 @@ namespace HabitatControlPanel
 		private IBattery battery;
 		private PowerRelay connectedRelay;
 		private string habitatLabel;
+		private bool pingEnabled;
 		private PingInstance ping;
 
 		public ChildObjectIdentifier equipmentRoot;
@@ -56,9 +57,23 @@ namespace HabitatControlPanel
 		[SerializeField]
 		private BatteryIndicator batteryIndicator;
 		[SerializeField]
-		private BeaconController beaconController;
+		private HabitatNameController habitatNameController;
+		[SerializeField]
+		private BeaconSettings beaconSettings;
 
 		public string HabitatLabel { get => habitatLabel; set { habitatLabel = value; ping.SetLabel(value); } }
+		public bool BeaconEnabled
+		{
+			get
+			{
+				return ping != null && ping.enabled && pingEnabled;
+			}
+			internal set
+			{
+				pingEnabled = value;
+				UpdatePing();
+			}
+		}
 
 		private void Awake()
 		{
@@ -98,7 +113,17 @@ namespace HabitatControlPanel
 				return;
 			}
 
+			UpdatePing();
+
 			PositionStuff();
+		}
+
+		private void UpdatePing()
+		{
+			if (ping != null)
+			{
+				ping.enabled = pingEnabled && GetPower() > 0;
+			}
 		}
 		
 		private void Initialize()
@@ -150,7 +175,8 @@ namespace HabitatControlPanel
 				HabitatLabel = saveData.PingLabel;
 			}
 			
-			beaconController.SetLabel(HabitatLabel);
+			habitatNameController.SetLabel(HabitatLabel);
+			beaconSettings.SetInitialValue(ping.enabled);
 
 			base.InvokeRepeating("UpdateConnection", 0, 1);
 
@@ -352,7 +378,7 @@ namespace HabitatControlPanel
 
 		public void PositionStuff()
 		{
-			var t = beaconController.transform;
+			var t = beaconSettings.transform;
 			var amount = 1f;
 
 			if (Input.GetKeyDown(KeyCode.Keypad8))
@@ -401,8 +427,8 @@ namespace HabitatControlPanel
 
 		private void PrintStuff()
 		{
-			var t = beaconController.transform as RectTransform;
-			Logger.Log("beaconController p=" + t.anchoredPosition);
+			var t = beaconSettings.transform as RectTransform;
+			Logger.Log("beaconSettings p=" + t.anchoredPosition);
 		}
 
 
@@ -553,8 +579,11 @@ namespace HabitatControlPanel
 			controlPanel.batteryIndicator = BatteryIndicator.Create(controlPanel, parent);
 			controlPanel.batteryIndicator.rectTransform.anchoredPosition = new Vector2(23.0f, -85.0f);
 
-			controlPanel.beaconController = BeaconController.Create(controlPanel, parent);
-			controlPanel.beaconController.rectTransform.anchoredPosition = new Vector2(0, 118.0f);
+			controlPanel.habitatNameController = HabitatNameController.Create(controlPanel, parent);
+			controlPanel.habitatNameController.rectTransform.anchoredPosition = new Vector2(0, 118.0f);
+
+			controlPanel.beaconSettings = BeaconSettings.Create(controlPanel, parent);
+			controlPanel.beaconSettings.rectTransform.anchoredPosition = new Vector2(0, 186.0f);
 		}
 	}
 }

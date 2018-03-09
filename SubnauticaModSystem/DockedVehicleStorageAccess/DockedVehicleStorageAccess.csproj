@@ -99,7 +99,6 @@
     <Compile Include="ModSaver.cs" />
     <Compile Include="Patches\BuilderUtils_Patches.cs" />
     <Compile Include="CheckboxButton.cs" />
-    <Compile Include="LockerPrefabShared.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
     <Compile Include="Mod.cs" />
