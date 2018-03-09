@@ -24,7 +24,7 @@ namespace HabitatControlPanel
 			TechType.PrecursorIonPowerCell
 		};
 		private const string SlotName = "PowerCellCharger1";
-		private static readonly Color ScreenContentColor = new Color32(188, 254, 254, 255);
+		public static readonly Color ScreenContentColor = new Color32(188, 254, 254, 255);
 
 		private bool initialized;
 		private Constructable constructable;
@@ -65,8 +65,7 @@ namespace HabitatControlPanel
 				return;
 			}
 
-			//PositionTrigger();
-			//DrawBoxCollider();
+			PositionBatteryIndicator();
 		}
 		
 		private void Initialize()
@@ -184,7 +183,7 @@ namespace HabitatControlPanel
 
 		public float GetPower()
 		{
-			return battery == null ? 0 : battery.charge;
+			return battery == null || battery.charge < 1 ? 0 : battery.charge;
 		}
 
 		public float GetMaxPower()
@@ -291,115 +290,60 @@ namespace HabitatControlPanel
 			return saveFile;
 		}
 
-		/*public object Deserialize(object obj, ProtoReader reader, ProtobufSerializerPrecompiled model)
+		public void PositionBatteryIndicator()
 		{
-			Logger.Log("Deserialize(" + string.Join(",", new string[] { obj.ToString(), reader.ToString(), model.ToString() }));
-			return obj;
-		}
-
-		public void Serialize(object obj, ProtoWriter writer, ProtobufSerializerPrecompiled model)
-		{
-			Logger.Log("Serialize(" + string.Join(",", new string[] { obj.ToString(), writer.ToString(), model.ToString() }));
-		}*/
-
-		/*public void PositionTrigger()
-		{
-			var t = powerCellTrigger.transform;
-			var bc = powerCellTrigger;
-			var amount = 0.01f;
+			var t = batteryIndicator.transform;
+			var amount = 1f;
 
 			if (Input.GetKeyDown(KeyCode.Keypad8))
 			{
 				t.localPosition += new Vector3(0, amount, 0);
-				PrintBoxCollider();
+				PrintBatteryIndicator();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad5))
 			{
 				t.localPosition += new Vector3(0, -amount, 0);
-				PrintBoxCollider();
+				PrintBatteryIndicator();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad6))
 			{
 				t.localPosition += new Vector3(amount, 0, 0);
-				PrintBoxCollider();
+				PrintBatteryIndicator();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad4))
 			{
 				t.localPosition += new Vector3(-amount, 0, 0);
-				PrintBoxCollider();
+				PrintBatteryIndicator();
 			}
-			else if (Input.GetKeyDown(KeyCode.Keypad1))
+			/*else if (Input.GetKeyDown(KeyCode.Keypad1))
 			{
 				t.localPosition += new Vector3(0, 0, amount);
-				PrintBoxCollider();
+				PrintBatteryIndicator();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad7))
 			{
 				t.localPosition += new Vector3(0, 0, -amount);
-				PrintBoxCollider();
-			}
+				PrintBatteryIndicator();
+			}*/
 
-			var scaleAmount = 0.01f;
+			/*var scaleAmount = 0.01f;
 			if (Input.GetKeyDown(KeyCode.KeypadPlus))
 			{
 				bc.size += new Vector3(scaleAmount, scaleAmount, scaleAmount);
-				PrintBoxCollider();
+				PrintBatteryIndicator();
 			}
 			else if (Input.GetKeyDown(KeyCode.KeypadMinus))
 			{
 				bc.size -= new Vector3(scaleAmount, scaleAmount, scaleAmount);
-				PrintBoxCollider();
-			}
+				PrintBatteryIndicator();
+			}*/
 		}
 
-		private void PrintBoxCollider()
+		private void PrintBatteryIndicator()
 		{
-			var bc = powerCellTrigger;
-			var t = powerCellTrigger.transform;
-			Logger.Log("Trigger p=" + t.localPosition + " s=" + bc.bounds.size);
+			var t = batteryIndicator.transform as RectTransform;
+			Logger.Log("batteryIndicator p=" + t.anchoredPosition);
 		}
-
-		private void DrawBoxCollider()
-		{
-			var bc = powerCellTrigger;
-			var t = bc.transform;
-			var verts = new Vector3[8];
-			var worldTransform = bc.transform.localToWorldMatrix;
-			var storedRotation = bc.transform.rotation;
-			bc.transform.rotation = Quaternion.identity;
-
-			var extents = bc.bounds.extents;
-			verts[0] = worldTransform.MultiplyPoint3x4(extents);
-			verts[1] = worldTransform.MultiplyPoint3x4(new Vector3(-extents.x, extents.y, extents.z));
-			verts[2] = worldTransform.MultiplyPoint3x4(new Vector3(extents.x, extents.y, -extents.z));
-			verts[3] = worldTransform.MultiplyPoint3x4(new Vector3(-extents.x, extents.y, -extents.z));
-			verts[4] = worldTransform.MultiplyPoint3x4(new Vector3(extents.x, -extents.y, extents.z));
-			verts[5] = worldTransform.MultiplyPoint3x4(new Vector3(-extents.x, -extents.y, extents.z));
-			verts[6] = worldTransform.MultiplyPoint3x4(new Vector3(extents.x, -extents.y, -extents.z));
-			verts[7] = worldTransform.MultiplyPoint3x4(-extents);
-
-			bc.transform.rotation = storedRotation;
-
-			DrawLine(verts, 0, 1);
-			DrawLine(verts, 1, 2);
-			DrawLine(verts, 2, 3);
-			DrawLine(verts, 3, 0);
-
-			DrawLine(verts, 0, 4);
-			DrawLine(verts, 1, 5);
-			DrawLine(verts, 2, 6);
-			DrawLine(verts, 3, 7);
-
-			DrawLine(verts, 4, 5);
-			DrawLine(verts, 5, 6);
-			DrawLine(verts, 6, 7);
-			DrawLine(verts, 7, 4);
-		}
-
-		private void DrawLine(Vector3[] verts, int a, int b)
-		{
-			Debug.DrawLine(verts[a], verts[b], Color.green, 0);
-		}*/
 
 
 
@@ -545,20 +489,8 @@ namespace HabitatControlPanel
 
 		private static void CreateScreenElements(HabitatControlPanel controlPanel, Transform parent)
 		{
-			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
-			var textPrefab = lockerPrefab.GetComponentInChildren<Text>();
-			textPrefab.fontSize = 10;
-			textPrefab.color = ScreenContentColor;
-
-			var batteryIndicator = new GameObject("BatteryIndicator", typeof(RectTransform)).AddComponent<BatteryIndicator>();
-			var rt = batteryIndicator.gameObject.transform as RectTransform;
-			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			RectTransformExtensions.SetSize(rt, 100, 100);
-			rt.anchoredPosition = new Vector2(0, 0);
-			batteryIndicator.Initialize(textPrefab);
-			controlPanel.batteryIndicator = batteryIndicator;
-
-			GameObject.Destroy(lockerPrefab);
+			controlPanel.batteryIndicator = BatteryIndicator.Create(controlPanel, parent);
+			controlPanel.batteryIndicator.rectTransform.anchoredPosition = new Vector2(32.0f, -76.0f);
 		}
 	}
 }
