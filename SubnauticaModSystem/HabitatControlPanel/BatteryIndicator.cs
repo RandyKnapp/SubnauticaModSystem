@@ -20,12 +20,10 @@ namespace HabitatControlPanel
 
 		[SerializeField]
 		private Text text;
-		[SerializeField]
-		private Text text2;
+		//[SerializeField]
+		//private Text text2;
 		[SerializeField]
 		private Image bar;
-		[SerializeField]
-		private uGUI_ItemIcon icon;
 
 		private void Awake()
 		{
@@ -39,11 +37,12 @@ namespace HabitatControlPanel
 			text.rectTransform.SetParent(transform, false);
 			RectTransformExtensions.SetSize(text.rectTransform, 100, 100);
 
-			text2 = GameObject.Instantiate(textPrefab);
+			/*text2 = GameObject.Instantiate(textPrefab);
 			text2.gameObject.name = "CapacityText";
 			text2.rectTransform.SetParent(transform, false);
 			RectTransformExtensions.SetSize(text2.rectTransform, 100, 100);
-			text2.rectTransform.anchoredPosition = new Vector2(-20, -30);
+			text2.rectTransform.anchoredPosition = new Vector2(0, -30);
+			text2.fontSize = 10;*/
 
 			float scale = 1 / 4.0f;
 
@@ -61,16 +60,6 @@ namespace HabitatControlPanel
 
 			text.transform.SetAsLastSibling();
 
-			icon = new GameObject("Icon").AddComponent<uGUI_ItemIcon>();
-			icon.transform.SetParent(transform, false);
-			icon.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-			icon.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-			icon.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-			icon.rectTransform.anchoredPosition = new Vector2(-42, 0);
-			icon.SetSize(10, 10);
-			icon.SetScale(scale, scale);
-			icon.raycastTarget = false;
-
 			SetBattery(null);
 		}
 
@@ -78,12 +67,6 @@ namespace HabitatControlPanel
 		{
 			this.item = item;
 			this.battery = item?.GetComponent<IBattery>();
-
-			icon.SetActive(item != null);
-			if (item != null)
-			{
-				icon.SetForegroundSprite(SpriteManager.Get(item.GetTechType()));
-			}
 		}
 
 		private void Update()
@@ -92,7 +75,7 @@ namespace HabitatControlPanel
 			if (item == null)
 			{
 				text.text = Language.main.Get("ChargerSlotEmpty");
-				text2.text = "No Power Cell";
+				//text2.text = "";
 
 				material.SetColor(ShaderPropertyID._Color, ColorEmpty);
 				material.SetFloat(ShaderPropertyID._Amount, 0f);
@@ -102,7 +85,7 @@ namespace HabitatControlPanel
 				var percent = battery.charge / battery.capacity;
 				text.text = string.Format("{0:P0}", percent).Replace(" %", "%");
 
-				text2.text = "[" + Mathf.RoundToInt(battery.charge) + "/" + Mathf.RoundToInt(battery.capacity) + "]";
+				//text2.text = "[" + Mathf.RoundToInt(battery.charge) + "/" + Mathf.RoundToInt(battery.capacity) + "]";
 
 				Color value = (percent >= 0.5f) ? Color.Lerp(ColorHalf, ColorFull, 2f * percent - 1f) : Color.Lerp(ColorEmpty, ColorHalf, 2f * percent);
 				material.SetColor(ShaderPropertyID._Color, value);
@@ -123,7 +106,6 @@ namespace HabitatControlPanel
 			var chargerPrefab = Resources.Load<GameObject>("Submarine/Build/PowerCellCharger");
 			var charger = chargerPrefab.GetComponent<PowerCellCharger>();
 			var batteryUi = GameObject.Instantiate(charger.uiPowered.transform.Find("Battery1").gameObject);
-			ModUtils.PrintObject(batteryUi);
 
 			var batteryIndicator = new GameObject("BatteryIndicator", typeof(RectTransform)).AddComponent<BatteryIndicator>();
 			var rt = batteryIndicator.gameObject.transform as RectTransform;
@@ -131,9 +113,6 @@ namespace HabitatControlPanel
 			RectTransformExtensions.SetSize(rt, 100, 100);
 			rt.anchoredPosition = new Vector2(0, 0);
 			batteryIndicator.Initialize(textPrefab, batteryUi);
-
-			GameObject.Destroy(chargerPrefab);
-			GameObject.Destroy(lockerPrefab);
 
 			return batteryIndicator;
 		}

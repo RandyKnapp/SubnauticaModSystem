@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BatteryIndicator.cs" />
+    <Compile Include="BeaconController.cs" />
     <Compile Include="HabitatControlPanel.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="LockerPrefabShared.cs" />

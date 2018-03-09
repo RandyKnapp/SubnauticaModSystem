@@ -14,9 +14,12 @@ namespace HabitatControlPanel
 	{
 		public TechType PowerCellType = TechType.None;
 		public float PowerCellCharge = 0;
+		public bool PingEnabled = true;
+		public string PingLabel = "Habitat";
+		public int PingColorIndex = 0;
 	}
 
-	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener, IPowerInterface
+	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener, IPowerInterface, IObstacle
 	{
 		private static readonly HashSet<TechType> CompatibleTech = new HashSet<TechType>
 		{
@@ -25,6 +28,7 @@ namespace HabitatControlPanel
 		};
 		private const string SlotName = "PowerCellCharger1";
 		public static readonly Color ScreenContentColor = new Color32(188, 254, 254, 255);
+		private const string InitialHabitatLabel = "Habitat";
 
 		private bool initialized;
 		private Constructable constructable;
@@ -32,9 +36,13 @@ namespace HabitatControlPanel
 		private HabitatControlPanelSaveData saveData;
 		private IBattery battery;
 		private PowerRelay connectedRelay;
+		private string habitatLabel;
+		private PingInstance ping;
 
 		public ChildObjectIdentifier equipmentRoot;
 
+		[SerializeField]
+		private GameObject pictureFrameMesh;
 		[SerializeField]
 		private Image background;
 		[SerializeField]
@@ -47,14 +55,39 @@ namespace HabitatControlPanel
 		private BoxCollider powerCellTrigger;
 		[SerializeField]
 		private BatteryIndicator batteryIndicator;
+		[SerializeField]
+		private BeaconController beaconController;
+
+		public string HabitatLabel { get => habitatLabel; set { habitatLabel = value; ping.SetLabel(value); } }
 
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();
+			if (ping != null)
+			{
+				Logger.Log("Ping found on awake from serialize");
+				DestroyImmediate(ping);
+			}
+			ping = GetComponent<PingInstance>();
+			if (ping != null)
+			{
+				Logger.Log("Ping found on awake from GetComponent");
+				DestroyImmediate(ping);
+			}
 		}
 
 		private void Update()
 		{
+			pictureFrameMesh.SetActive(!constructable._constructed);
+			if (initialized)
+			{
+				background.gameObject.SetActive(constructable._constructed);
+				powerCellSlot.SetActive(constructable._constructed);
+
+				var item = equipment.GetItemInSlot(SlotName);
+				constructable.deconstructionAllowed = item == null;
+			}
+
 			if (!initialized && constructable._constructed && transform.parent != null)
 			{
 				Initialize();
@@ -65,7 +98,7 @@ namespace HabitatControlPanel
 				return;
 			}
 
-			PositionBatteryIndicator();
+			PositionStuff();
 		}
 		
 		private void Initialize()
@@ -75,7 +108,7 @@ namespace HabitatControlPanel
 			background.gameObject.SetActive(true);
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
 
-			Destroy(transform.Find("mesh").gameObject);
+			transform.Find("mesh").gameObject.SetActive(false);
 
 			var handTarget = powerCellTrigger.gameObject.AddComponent<GenericHandTarget>();
 			handTarget.onHandHover = new HandTargetEvent();
@@ -90,6 +123,14 @@ namespace HabitatControlPanel
 			equipment.onUnequip += OnUnequip;
 			equipment.AddSlot(SlotName);
 
+			ping = gameObject.AddComponent<PingInstance>();
+			ping.enabled = false;
+			ping.SetLabel(InitialHabitatLabel);
+			ping.pingType = PingType.Beacon;
+			ping.origin = transform;
+			HabitatLabel = InitialHabitatLabel;
+			ping.enabled = true;
+
 			if (saveData != null)
 			{
 				if (saveData.PowerCellType != TechType.None)
@@ -101,8 +142,15 @@ namespace HabitatControlPanel
 					equipment.AddItem(SlotName, new InventoryItem(powerCell.GetComponent<Pickupable>()));
 					powerCell.SetActive(false);
 				}
-				saveData = null;
+
+				ping.colorIndex = saveData.PingColorIndex;
+				ping.SetLabel(saveData.PingLabel);
+				ping.enabled = saveData.PingEnabled;
+
+				HabitatLabel = saveData.PingLabel;
 			}
+			
+			beaconController.SetLabel(HabitatLabel);
 
 			base.InvokeRepeating("UpdateConnection", 0, 1);
 
@@ -232,6 +280,14 @@ namespace HabitatControlPanel
 			return false;
 		}
 
+		public bool CanDeconstruct(out string reason)
+		{
+			Logger.Log("CanDeconstruct");
+			var item = equipment.GetItemInSlot(SlotName);
+			reason = "Test Can't Deconstruct Reason";
+			return item == null;
+		}
+
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
 			var saveDataFile = GetSaveDataPath();
@@ -256,6 +312,10 @@ namespace HabitatControlPanel
 				saveData.PowerCellType = item.item.GetTechType();
 				saveData.PowerCellCharge = item.item.GetComponent<IBattery>().charge;
 			}
+
+			saveData.PingColorIndex = ping.colorIndex;
+			saveData.PingLabel = HabitatLabel;
+			saveData.PingEnabled = ping.enabled;
 
 			return saveData;
 		}
@@ -290,59 +350,59 @@ namespace HabitatControlPanel
 			return saveFile;
 		}
 
-		public void PositionBatteryIndicator()
+		public void PositionStuff()
 		{
-			var t = batteryIndicator.transform;
+			var t = beaconController.transform;
 			var amount = 1f;
 
 			if (Input.GetKeyDown(KeyCode.Keypad8))
 			{
 				t.localPosition += new Vector3(0, amount, 0);
-				PrintBatteryIndicator();
+				PrintStuff();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad5))
 			{
 				t.localPosition += new Vector3(0, -amount, 0);
-				PrintBatteryIndicator();
+				PrintStuff();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad6))
 			{
 				t.localPosition += new Vector3(amount, 0, 0);
-				PrintBatteryIndicator();
+				PrintStuff();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad4))
 			{
 				t.localPosition += new Vector3(-amount, 0, 0);
-				PrintBatteryIndicator();
+				PrintStuff();
 			}
-			/*else if (Input.GetKeyDown(KeyCode.Keypad1))
+			else if (Input.GetKeyDown(KeyCode.Keypad1))
 			{
 				t.localPosition += new Vector3(0, 0, amount);
-				PrintBatteryIndicator();
+				PrintStuff();
 			}
 			else if (Input.GetKeyDown(KeyCode.Keypad7))
 			{
 				t.localPosition += new Vector3(0, 0, -amount);
-				PrintBatteryIndicator();
-			}*/
-
-			/*var scaleAmount = 0.01f;
-			if (Input.GetKeyDown(KeyCode.KeypadPlus))
-			{
-				bc.size += new Vector3(scaleAmount, scaleAmount, scaleAmount);
-				PrintBatteryIndicator();
+				PrintStuff();
 			}
-			else if (Input.GetKeyDown(KeyCode.KeypadMinus))
-			{
-				bc.size -= new Vector3(scaleAmount, scaleAmount, scaleAmount);
-				PrintBatteryIndicator();
-			}*/
+
+			//var scaleAmount = 0.01f;
+			//if (Input.GetKeyDown(KeyCode.KeypadPlus))
+			//{
+			//	bc.size += new Vector3(scaleAmount, scaleAmount, scaleAmount);
+			//	PrintBatteryIndicator();
+			//}
+			//else if (Input.GetKeyDown(KeyCode.KeypadMinus))
+			//{
+			//	bc.size -= new Vector3(scaleAmount, scaleAmount, scaleAmount);
+			//	PrintBatteryIndicator();
+			//}
 		}
 
-		private void PrintBatteryIndicator()
+		private void PrintStuff()
 		{
-			var t = batteryIndicator.transform as RectTransform;
-			Logger.Log("batteryIndicator p=" + t.anchoredPosition);
+			var t = beaconController.transform as RectTransform;
+			Logger.Log("beaconController p=" + t.anchoredPosition);
 		}
 
 
@@ -383,7 +443,9 @@ namespace HabitatControlPanel
 		{
 			Logger.Log("GetPrefab for HabitatControlPanel");
 			GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/PictureFrame");
+			Logger.Log("originalPrefab=" + originalPrefab);
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
+			Logger.Log("prefab=" + prefab);
 
 			prefab.name = "HabitatControlPanel";
 
@@ -398,6 +460,7 @@ namespace HabitatControlPanel
 
 			GameObject powerCellSlotPrefab = GetPowerCellSlotModel();
 			GameObject powerCellSlot = GameObject.Instantiate(powerCellSlotPrefab);
+			Logger.Log("powerCellSlot=" + powerCellSlot);
 			Destroy(powerCellSlotPrefab);
 			powerCellSlot.transform.SetParent(prefab.transform, false);
 			powerCellSlot.transform.localPosition = new Vector3(0.44f, -0.7f, -0.12f);
@@ -410,14 +473,12 @@ namespace HabitatControlPanel
 			sky.anchorSky = Skies.BaseInterior;
 			powerCellSlot.SetActive(true);
 
-			//GameObject beaconPrefab = Resources.Load<GameObject>("WorldEntities/Tools/Beacon");
-			//ModUtils.PrintObject(beaconPrefab);
-
 			var controlPanel = prefab.AddComponent<HabitatControlPanel>();
 			controlPanel.powerCellSlot = powerCellSlot;
 			controlPanel.powerCellMesh = powerCellSlot.transform.GetChild(1).gameObject;
 			controlPanel.ionPowerCellMesh = powerCellSlot.transform.GetChild(2).gameObject;
 			controlPanel.background = CreateScreen(prefab.transform);
+			controlPanel.pictureFrameMesh = mesh;
 
 			var slotGeo = powerCellSlot.transform.GetChild(0).gameObject;
 			var collider = slotGeo.AddComponent<BoxCollider>();
@@ -490,7 +551,10 @@ namespace HabitatControlPanel
 		private static void CreateScreenElements(HabitatControlPanel controlPanel, Transform parent)
 		{
 			controlPanel.batteryIndicator = BatteryIndicator.Create(controlPanel, parent);
-			controlPanel.batteryIndicator.rectTransform.anchoredPosition = new Vector2(32.0f, -76.0f);
+			controlPanel.batteryIndicator.rectTransform.anchoredPosition = new Vector2(23.0f, -85.0f);
+
+			controlPanel.beaconController = BeaconController.Create(controlPanel, parent);
+			controlPanel.beaconController.rectTransform.anchoredPosition = new Vector2(0, 118.0f);
 		}
 	}
 }
