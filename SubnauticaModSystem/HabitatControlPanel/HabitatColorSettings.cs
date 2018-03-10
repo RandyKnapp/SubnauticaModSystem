@@ -8,15 +8,17 @@ using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-	class BeaconSettings : MonoBehaviour
+	class HabitatColorSettings : MonoBehaviour
 	{
 		private bool hasPower = false;
+
 		public RectTransform rectTransform;
+		public Action onClick = delegate { };
 
 		[SerializeField]
 		private HabitatControlPanel target;
 		[SerializeField]
-		private CheckboxButton activeButton;
+		private ColoredIconButton activeButton;
 
 		private void Awake()
 		{
@@ -27,58 +29,53 @@ namespace HabitatControlPanel
 		{
 			target = controlPanel;
 
-			activeButton = CheckboxButton.CreateCheckbox(transform, HabitatControlPanel.ScreenContentColor, textPrefab, "", 150);
+			activeButton = ColoredIconButton.Create(transform, HabitatControlPanel.ScreenContentColor, textPrefab, "Exterior Color", 150, 15);
 			activeButton.text.supportRichText = true;
 			UpdateText();
 		}
 
-		internal void SetInitialValue(bool enabled)
+		internal void SetInitialValue(Color color)
 		{
-			activeButton.Initialize();
-			activeButton.toggled = enabled;
-			activeButton.onToggled += OnBeaconToggled;
+			SetColor(color);
+			activeButton.onClick += OnClick;
 			UpdateText();
 		}
 
-		private void OnBeaconToggled(bool toggled)
+		internal void SetColor(Color color)
 		{
-			target.BeaconEnabled = toggled;
-			UpdateText();
+			activeButton.Initialize("Circle.png", color);
+		}
+
+		private void OnClick()
+		{
+			onClick();
 		}
 
 		private void Update()
 		{
-			var prevHasPower = hasPower;
 			hasPower = target != null && target.GetPower() > 0;
-			if (prevHasPower != hasPower)
-			{
-				UpdateText();
-			}
 			activeButton.isEnabled = hasPower;
 		}
 
 		private void UpdateText()
 		{
-			var text = !hasPower ? "UNPOWERED" : (activeButton.toggled ? "ON" : "OFF");
-			var color = (activeButton.toggled && hasPower) ? "lime" : "red";
-			activeButton.text.text = string.Format("Beacon [<color={1}>{0}</color>]", text, color);
 		}
 
 
 		///////////////////////////////////////////////////////////////////////////////////////////
-		public static BeaconSettings Create(HabitatControlPanel controlPanel, Transform parent)
+		public static HabitatColorSettings Create(HabitatControlPanel controlPanel, Transform parent)
 		{
 			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
 			textPrefab.fontSize = 12;
 			textPrefab.color = HabitatControlPanel.ScreenContentColor;
 
-			var beaconController = new GameObject("BeaconController", typeof(RectTransform)).AddComponent<BeaconSettings>();
-			var rt = beaconController.gameObject.transform as RectTransform;
+			var habitatColorSettings = new GameObject("HabitatColorSettings", typeof(RectTransform)).AddComponent<HabitatColorSettings>();
+			var rt = habitatColorSettings.gameObject.transform as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			beaconController.Initialize(controlPanel, textPrefab);
+			habitatColorSettings.Initialize(controlPanel, textPrefab);
 
-			return beaconController;
+			return habitatColorSettings;
 		}
 	}
 }

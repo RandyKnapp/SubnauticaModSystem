@@ -49,7 +49,6 @@ namespace HabitatControlPanel
 
 		private void OnClick()
 		{
-			Logger.Log("BeaconColorSettings OnClick");
 			onClick();
 		}
 
@@ -68,7 +67,7 @@ namespace HabitatControlPanel
 		public static BeaconColorSettings Create(HabitatControlPanel controlPanel, Transform parent)
 		{
 			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
-			var textPrefab = lockerPrefab.GetComponentInChildren<Text>();
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
 			textPrefab.fontSize = 12;
 			textPrefab.color = HabitatControlPanel.ScreenContentColor;
 

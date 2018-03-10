@@ -14,6 +14,25 @@ using UnityEngine.UI;
 namespace HabitatControlPanel
 {
 	[Serializable]
+	public struct SerializableColor
+	{
+		public float r;
+		public float g;
+		public float b;
+		public float a;
+
+		public static implicit operator SerializableColor(Color c)
+		{
+			return new SerializableColor() { r = c.r, g = c.g, b = c.b, a = c.a };
+		}
+
+		public Color ToColor()
+		{
+			return new Color(r, g, b, a);
+		}
+	}
+
+	[Serializable]
 	public class HabitatControlPanelSaveData
 	{
 		public TechType PowerCellType = TechType.None;
@@ -21,6 +40,7 @@ namespace HabitatControlPanel
 		public bool PingEnabled = true;
 		public string PingLabel = "Habitat";
 		public int PingColorIndex = 0;
+		public SerializableColor ExteriorColor = Color.white;
 	}
 
 	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener, IPowerInterface, IObstacle
@@ -41,6 +61,7 @@ namespace HabitatControlPanel
 		private PowerRelay connectedRelay;
 		private string habitatLabel = InitialHabitatLabel;
 		private bool pingEnabled = true;
+		private Color exteriorColor;
 		private PingInstance ping;
 		private GameObject currentSubMenu;
 
@@ -74,6 +95,10 @@ namespace HabitatControlPanel
 		private SecretButton secretButton;
 		[SerializeField]
 		private SecretGame game;
+		[SerializeField]
+		private HabitatColorSettings habitatExteriorColorSettings;
+		[SerializeField]
+		private HabitatColorPicker habitatColorPicker;
 
 		public string HabitatLabel
 		{
@@ -109,6 +134,25 @@ namespace HabitatControlPanel
 			{
 				ping.SetColor(value);
 				PingManager.NotifyColor(ping);
+			}
+		}
+
+		public Color ExteriorColor
+		{
+			get => exteriorColor;
+			set
+			{
+				exteriorColor = value;
+				ColorBaseExterior(exteriorColor);
+				habitatExteriorColorSettings.SetColor(exteriorColor);
+
+				var subRoot = GetComponentInParent<SubRoot>();
+				var habitatControlPanels = subRoot.GetComponentsInChildren<HabitatControlPanel>();
+				foreach (var hcp in habitatControlPanels)
+				{
+					hcp.exteriorColor = value;
+					hcp.habitatExteriorColorSettings.SetColor(exteriorColor);
+				}
 			}
 		}
 
@@ -165,14 +209,14 @@ namespace HabitatControlPanel
 			//PositionStuff(secretButton.gameObject);
 		}
 
-		/*private void ColorBaseExterior(Color color)
+		private void ColorBaseExterior(Color color)
 		{
-			SubRoot subRoot = gameObject.FirstAncestorOfType<SubRoot>();
+			SubRoot subRoot = gameObject.GetComponentInParent<SubRoot>();
 			HashSet<MeshRenderer> allMeshes = new HashSet<MeshRenderer>(subRoot.GetAllComponentsInChildren<MeshRenderer>());
 			HashSet<MeshRenderer> exteriorRenderers = new HashSet<MeshRenderer>();
 
 			var includeIf = new string[] { "Exterior", "exterior", "_ext", "Platform", "BaseRoomObservatory", "_narrower", "Joint", "_wider", "BaseRoomMoonPoolExterior" };
-			var rejectIf = new string[] { "_int", "glass", "Glass", "InteriorStairs" };
+			var rejectIf = new string[] { "_int", "glass", "Glass", "InteriorStairs", "ladder" };
 			var forceInclude = new string[] { "ExteriorShell" };
 
 			var exteriorMeshes = allMeshes.Where(x => includeIf.Any(x.gameObject.name.Contains)).ToList();
@@ -183,9 +227,9 @@ namespace HabitatControlPanel
 
 			foreach (var meshRenderer in exteriorRenderers)
 			{
-				meshRenderer.material.color = color;
+				meshRenderer.material.SetColor(ShaderPropertyID._Color, color);
 			}
-		}*/
+		}
 
 		private void UpdatePing()
 		{
@@ -248,24 +292,32 @@ namespace HabitatControlPanel
 
 				HabitatLabel = saveData.PingLabel;
 				BeaconColorIndex = saveData.PingColorIndex;
+				ExteriorColor = saveData.ExteriorColor.ToColor();
+			}
+			else
+			{
+				ExteriorColor = Color.white;
 			}
 			
 			habitatNameController.SetLabel(HabitatLabel);
 			beaconSettings.SetInitialValue(ping.enabled);
 			beaconColorSettings.SetInitialValue(ping.colorIndex);
 			beaconColorSettings.onClick += OnBeaconColorButtonClick;
+			habitatExteriorColorSettings.SetInitialValue(ExteriorColor);
+			habitatExteriorColorSettings.onClick += OnExteriorColorButtonClick;
 
 			PingManager.NotifyRename(ping);
 			PingManager.NotifyColor(ping);
 			PingManager.NotifyVisible(ping);
 
-			base.InvokeRepeating("UpdateConnection", 0, 1);
+			base.InvokeRepeating("UpdatePowerRelay", 0, 1);
+			base.InvokeRepeating("UpdateBaseExteriorColor", UnityEngine.Random.Range(0.5f, 1.0f), 3);
 
 			UpdatePowerCell();
 			initialized = true;
 		}
 
-		private void UpdateConnection()
+		private void UpdatePowerRelay()
 		{
 			PowerRelay relay = PowerSource.FindRelay(transform);
 			if (relay != null && relay != connectedRelay)
@@ -281,6 +333,11 @@ namespace HabitatControlPanel
 			{
 				connectedRelay = null;
 			}
+		}
+
+		private void UpdateBaseExteriorColor()
+		{
+			ColorBaseExterior(ExteriorColor);
 		}
 
 		private void OnEquipmentChanged(string slot, InventoryItem item)
@@ -407,7 +464,7 @@ namespace HabitatControlPanel
 		public bool CanDeconstruct(out string reason)
 		{
 			var item = equipment.GetItemInSlot(SlotName);
-			reason = "Test Can't Deconstruct Reason";
+			reason = "Remove habitat control panel power cell";
 			return item == null;
 		}
 
@@ -415,6 +472,12 @@ namespace HabitatControlPanel
 		{
 			beaconColorPicker.Initialize(this, ping.colorIndex);
 			OpenSubmenu(beaconColorPicker.gameObject);
+		}
+
+		private void OnExteriorColorButtonClick()
+		{
+			habitatColorPicker.Initialize(this, ExteriorColor);
+			OpenSubmenu(habitatColorPicker.gameObject);
 		}
 
 		internal void OpenSubmenu(GameObject subMenu)
@@ -511,6 +574,8 @@ namespace HabitatControlPanel
 			saveData.PingColorIndex = ping.colorIndex;
 			saveData.PingLabel = HabitatLabel;
 			saveData.PingEnabled = ping.enabled;
+
+			saveData.ExteriorColor = ExteriorColor;
 
 			return saveData;
 		}
@@ -611,7 +676,7 @@ namespace HabitatControlPanel
 				knownAtStart = true,
 				assetPath = "Submarine/Build/HabitatControlPanel",
 				displayString = "Habitat Control Panel",
-				tooltip = "TODO TOOLTIP",
+				tooltip = "Adds a built-in beacon with customizable name and a power cell slot that can power your habitat.",
 				techTypeKey = CustomTechType.HabitatControlPanel.ToString(),
 				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(Mod.GetAssetPath("BlueprintIcon.png"))),
 				recipe = new List<CustomIngredient>
@@ -621,7 +686,7 @@ namespace HabitatControlPanel
 						amount = 1
 					},
 					new CustomIngredient() {
-						techType = TechType.ComputerChip,
+						techType = TechType.CopperWire,
 						amount = 1
 					},
 					new CustomIngredient() {
@@ -634,7 +699,6 @@ namespace HabitatControlPanel
 
 		public static GameObject GetPrefab()
 		{
-			Logger.Log("GetPrefab for HabitatControlPanel");
 			GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/PictureFrame");
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
@@ -750,6 +814,9 @@ namespace HabitatControlPanel
 			controlPanel.beaconColorSettings = BeaconColorSettings.Create(controlPanel, parent);
 			controlPanel.beaconColorSettings.rectTransform.anchoredPosition = new Vector2(-25, 167);
 
+			controlPanel.habitatExteriorColorSettings = HabitatColorSettings.Create(controlPanel, parent);
+			controlPanel.habitatExteriorColorSettings.rectTransform.anchoredPosition = new Vector2(0, 148);
+
 			controlPanel.secretButton = SecretButton.Create(parent);
 			(controlPanel.secretButton.transform as RectTransform).anchoredPosition = new Vector2(63, -126);
 
@@ -768,6 +835,10 @@ namespace HabitatControlPanel
 			controlPanel.beaconColorPicker = BeaconColorPicker.Create(controlPanel, parent);
 			controlPanel.beaconColorPicker.rectTransform.anchoredPosition = new Vector2(0, 30);
 			controlPanel.beaconColorPicker.gameObject.SetActive(false);
+
+			controlPanel.habitatColorPicker = HabitatColorPicker.Create(controlPanel, parent);
+			controlPanel.habitatColorPicker.rectTransform.anchoredPosition = new Vector2(0, 30);
+			controlPanel.habitatColorPicker.gameObject.SetActive(false);
 		}
 	}
 }

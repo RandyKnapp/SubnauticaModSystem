@@ -39,7 +39,6 @@ namespace HabitatControlPanel
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			Logger.Log("target=" + target);
 			uGUI.main.userInput.RequestString("Habitat Name", "Submit", target.HabitatLabel, 25, new uGUI_UserInput.UserInputCallback(SetLabel));
 		}
 
@@ -74,7 +73,7 @@ namespace HabitatControlPanel
 		public static HabitatNameController Create(HabitatControlPanel controlPanel, Transform parent)
 		{
 			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
-			var textPrefab = lockerPrefab.GetComponentInChildren<Text>();
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
 			textPrefab.fontSize = 12;
 			textPrefab.color = HabitatControlPanel.ScreenContentColor;
 

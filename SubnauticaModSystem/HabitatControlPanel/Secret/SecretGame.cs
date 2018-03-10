@@ -426,7 +426,7 @@ namespace HabitatControlPanel.Secret
 			game.rectTransform.anchoredPosition = new Vector2(0, 30);
 
 			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
-			var textPrefab = lockerPrefab.GetComponentInChildren<Text>();
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
 			textPrefab.fontSize = 8;
 			textPrefab.color = HabitatControlPanel.ScreenContentColor;
 
@@ -436,8 +436,6 @@ namespace HabitatControlPanel.Secret
 			game.text.rectTransform.SetParent(game.transform, false);
 			RectTransformExtensions.SetSize(game.text.rectTransform, GameWidth, 50);
 			game.text.rectTransform.anchoredPosition = new Vector2(0, -10);
-
-			Destroy(lockerPrefab);
 
 			return game;
 		}

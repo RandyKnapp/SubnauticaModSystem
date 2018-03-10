@@ -85,8 +85,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BatteryIndicator.cs" />
+    <Compile Include="HabitatColorPicker.cs" />
     <Compile Include="BeaconColorPicker.cs" />
     <Compile Include="BeaconColorSettings.cs" />
+    <Compile Include="HabitatColorSettings.cs" />
     <Compile Include="BeaconSettings.cs" />
     <Compile Include="ColoredIconButton.cs" />
     <Compile Include="CheckboxButton.cs" />

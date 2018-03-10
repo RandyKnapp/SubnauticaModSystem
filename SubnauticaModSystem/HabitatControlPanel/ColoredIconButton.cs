@@ -31,7 +31,6 @@ namespace HabitatControlPanel
 		{
 			if (isEnabled)
 			{
-				Logger.Log("ColoredIconButton OnClick");
 				onClick();
 			}
 		}
