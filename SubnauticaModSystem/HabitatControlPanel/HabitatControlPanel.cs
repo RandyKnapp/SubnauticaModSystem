@@ -1,9 +1,12 @@
 ﻿using Common.Mod;
 using Common.Utility;
+using mset;
 using Oculus.Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,8 +39,8 @@ namespace HabitatControlPanel
 		private HabitatControlPanelSaveData saveData;
 		private IBattery battery;
 		private PowerRelay connectedRelay;
-		private string habitatLabel;
-		private bool pingEnabled;
+		private string habitatLabel = InitialHabitatLabel;
+		private bool pingEnabled = true;
 		private PingInstance ping;
 		private GameObject currentSubMenu;
 
@@ -108,16 +111,19 @@ namespace HabitatControlPanel
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();
+			constructable.allowedInSub = false;
+			constructable.allowedInBase = true;
+
 			if (ping != null)
 			{
-				Logger.Log("Ping found on awake from serialize");
 				DestroyImmediate(ping);
+				ping = null;
 			}
 			ping = GetComponent<PingInstance>();
 			if (ping != null)
 			{
-				Logger.Log("Ping found on awake from GetComponent");
 				DestroyImmediate(ping);
+				ping = null;
 			}
 		}
 
@@ -145,8 +151,30 @@ namespace HabitatControlPanel
 
 			UpdatePing();
 
-			PositionStuff(beaconColorPicker.gameObject);
+			//PositionStuff(beaconColorPicker.gameObject);
 		}
+
+		/*private void ColorBaseExterior(Color color)
+		{
+			SubRoot subRoot = gameObject.FirstAncestorOfType<SubRoot>();
+			HashSet<MeshRenderer> allMeshes = new HashSet<MeshRenderer>(subRoot.GetAllComponentsInChildren<MeshRenderer>());
+			HashSet<MeshRenderer> exteriorRenderers = new HashSet<MeshRenderer>();
+
+			var includeIf = new string[] { "Exterior", "exterior", "_ext", "Platform", "BaseRoomObservatory", "_narrower", "Joint", "_wider", "BaseRoomMoonPoolExterior" };
+			var rejectIf = new string[] { "_int", "glass", "Glass", "InteriorStairs" };
+			var forceInclude = new string[] { "ExteriorShell" };
+
+			var exteriorMeshes = allMeshes.Where(x => includeIf.Any(x.gameObject.name.Contains)).ToList();
+			exteriorMeshes.RemoveAll(x => rejectIf.Any(x.gameObject.name.Contains));
+			exteriorMeshes.AddRange(allMeshes.Where(x => forceInclude.Any(x.gameObject.name.Contains)));
+
+			exteriorRenderers.UnionWith(exteriorMeshes);
+
+			foreach (var meshRenderer in exteriorRenderers)
+			{
+				meshRenderer.material.color = color;
+			}
+		}*/
 
 		private void UpdatePing()
 		{
@@ -177,8 +205,8 @@ namespace HabitatControlPanel
 			equipment = new Equipment(gameObject, equipmentRoot.transform);
 			equipment.SetLabel("Habitat Power");
 			equipment.isAllowedToAdd = new IsAllowedToAdd(IsAllowedToAdd);
-			equipment.onEquip += OnEquip;
-			equipment.onUnequip += OnUnequip;
+			equipment.onEquip += OnEquipmentChanged;
+			equipment.onUnequip += OnEquipmentChanged;
 			equipment.AddSlot(SlotName);
 
 			ping = gameObject.AddComponent<PingInstance>();
@@ -207,6 +235,7 @@ namespace HabitatControlPanel
 				pingEnabled = saveData.PingEnabled;
 
 				HabitatLabel = saveData.PingLabel;
+				BeaconColorIndex = saveData.PingColorIndex;
 			}
 			
 			habitatNameController.SetLabel(HabitatLabel);
@@ -242,15 +271,8 @@ namespace HabitatControlPanel
 			}
 		}
 
-		private void OnUnequip(string slot, InventoryItem item)
+		private void OnEquipmentChanged(string slot, InventoryItem item)
 		{
-			Logger.Log("Unequip " + slot + ":" + item.item.GetTechType());
-			UpdatePowerCell();
-		}
-
-		private void OnEquip(string slot, InventoryItem item)
-		{
-			Logger.Log("Equip " + slot + ":" + item.item.GetTechType());
 			UpdatePowerCell();
 		}
 
@@ -348,7 +370,6 @@ namespace HabitatControlPanel
 
 		public bool CanDeconstruct(out string reason)
 		{
-			Logger.Log("CanDeconstruct");
 			var item = equipment.GetItemInSlot(SlotName);
 			reason = "Test Can't Deconstruct Reason";
 			return item == null;
@@ -356,7 +377,6 @@ namespace HabitatControlPanel
 
 		private void OnBeaconColorButtonClick()
 		{
-			Logger.Log("OnBeaconColorButtonClick");
 			beaconColorPicker.Initialize(this, ping.colorIndex);
 			OpenSubmenu(beaconColorPicker.gameObject);
 		}
@@ -378,14 +398,12 @@ namespace HabitatControlPanel
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
 			var saveDataFile = GetSaveDataPath();
-			Logger.Log("OnProtoSerialize = " + saveDataFile);
 			saveData = CreateSaveData();
 			if (!Directory.Exists(GetSaveDataDir()))
 			{
 				Directory.CreateDirectory(GetSaveDataDir());
 			}
 			string fileContents = JsonConvert.SerializeObject(saveData, Formatting.Indented);
-			Logger.Log("File Contents=" + fileContents);
 			File.WriteAllText(saveDataFile, fileContents);
 		}
 
@@ -410,11 +428,9 @@ namespace HabitatControlPanel
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
 			var saveDataFile = GetSaveDataPath();
-			Logger.Log("OnProtoDeserialize = " + saveDataFile);
 			if (File.Exists(saveDataFile))
 			{
 				string fileContents = File.ReadAllText(saveDataFile);
-				Logger.Log("File Contents=" + fileContents);
 				saveData = JsonConvert.DeserializeObject<HabitatControlPanelSaveData>(fileContents);
 			}
 			else
@@ -437,7 +453,7 @@ namespace HabitatControlPanel
 			return saveFile;
 		}
 
-		public void PositionStuff(GameObject thing)
+		/*public void PositionStuff(GameObject thing)
 		{
 			var t = thing.transform;
 			var amount = 1f;
@@ -490,7 +506,7 @@ namespace HabitatControlPanel
 		{
 			var t = thing.transform as RectTransform;
 			Logger.Log(thing.name + " p=" + t.anchoredPosition);
-		}
+		}*/
 
 
 
@@ -530,9 +546,7 @@ namespace HabitatControlPanel
 		{
 			Logger.Log("GetPrefab for HabitatControlPanel");
 			GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/PictureFrame");
-			Logger.Log("originalPrefab=" + originalPrefab);
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
-			Logger.Log("prefab=" + prefab);
 
 			prefab.name = "HabitatControlPanel";
 
@@ -547,7 +561,6 @@ namespace HabitatControlPanel
 
 			GameObject powerCellSlotPrefab = GetPowerCellSlotModel();
 			GameObject powerCellSlot = GameObject.Instantiate(powerCellSlotPrefab);
-			Logger.Log("powerCellSlot=" + powerCellSlot);
 			Destroy(powerCellSlotPrefab);
 			powerCellSlot.transform.SetParent(prefab.transform, false);
 			powerCellSlot.transform.localPosition = new Vector3(0.44f, -0.7f, -0.12f);
@@ -578,7 +591,7 @@ namespace HabitatControlPanel
 
 			CreateScreenElements(controlPanel, controlPanel.background.transform);
 
-			ModUtils.PrintObject(prefab);
+			//ModUtils.PrintObject(prefab);
 
 			return prefab;
 		}

@@ -54,6 +54,7 @@ namespace HabitatControlPanel
 			{
 				var button = buttons[i];
 				button.toggled = index == i;
+				button.OnPointerExit(null);
 				button.onClick -= OnClick;
 				button.Update();
 			}
