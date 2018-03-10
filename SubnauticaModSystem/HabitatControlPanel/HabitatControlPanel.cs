@@ -1,5 +1,6 @@
 ﻿using Common.Mod;
 using Common.Utility;
+using HabitatControlPanel.Secret;
 using mset;
 using Oculus.Newtonsoft.Json;
 using System;
@@ -70,6 +71,10 @@ namespace HabitatControlPanel
 		private Image scrim;
 		[SerializeField]
 		private BeaconColorPicker beaconColorPicker;
+		[SerializeField]
+		private SecretButton secretButton;
+		[SerializeField]
+		private SecretGame game;
 
 		public string HabitatLabel
 		{
@@ -150,8 +155,14 @@ namespace HabitatControlPanel
 			}
 
 			UpdatePing();
+			UpdateSecret();
 
-			//PositionStuff(beaconColorPicker.gameObject);
+			if (currentSubMenu != null && !HasBatteryPower())
+			{
+				CloseSubmenu();
+			}
+
+			PositionStuff(secretButton.gameObject);
 		}
 
 		/*private void ColorBaseExterior(Color color)
@@ -195,6 +206,9 @@ namespace HabitatControlPanel
 			scrim.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Scrim.png"));
 
 			transform.Find("mesh").gameObject.SetActive(false);
+
+			secretButton.onActivate += ToggleGame;
+			game.onLoseGame = OnLoseGame;
 
 			var handTarget = powerCellTrigger.gameObject.AddComponent<GenericHandTarget>();
 			handTarget.onHandHover = new HandTargetEvent();
@@ -390,9 +404,63 @@ namespace HabitatControlPanel
 
 		internal void CloseSubmenu()
 		{
-			currentSubMenu.SetActive(false);
+			currentSubMenu?.SetActive(false);
 			currentSubMenu = null;
 			scrim.gameObject.SetActive(false);
+		}
+
+		private void UpdateSecret()
+		{
+			if (!HasBatteryPower() && game.isActiveAndEnabled)
+			{
+				ShowGame(false);
+			}
+		}
+
+		private void ToggleGame()
+		{
+			if (HasBatteryPower())
+			{
+				var gameShowing = game.gameObject.activeSelf;
+				ShowGame(!gameShowing);
+			}
+		}
+
+		private void ShowGame(bool show)
+		{
+			if (show && !HasBatteryPower())
+			{
+				return;
+			}
+
+			CloseSubmenu();
+
+			game.gameObject.SetActive(show);
+			if (show)
+			{
+				game.StartGame();
+			}
+
+			batteryIndicator.gameObject.SetActive(!show);
+			habitatNameController.gameObject.SetActive(!show);
+			beaconSettings.gameObject.SetActive(!show);
+			beaconColorSettings.gameObject.SetActive(!show);
+		}
+
+		private bool HasBatteryPower()
+		{
+			var item = equipment.GetItemInSlot(SlotName);
+			return item != null && GetPower() > 0;
+		}
+
+		private void OnLoseGame()
+		{
+			var item = equipment.GetItemInSlot(SlotName);
+			if (item != null)
+			{
+				var battery = item.item.GetComponent<IBattery>();
+				battery.charge = 0;
+			}
 		}
 
 		public void OnProtoSerialize(ProtobufSerializer serializer)
@@ -453,7 +521,7 @@ namespace HabitatControlPanel
 			return saveFile;
 		}
 
-		/*public void PositionStuff(GameObject thing)
+		public void PositionStuff(GameObject thing)
 		{
 			var t = thing.transform;
 			var amount = 1f;
@@ -506,7 +574,7 @@ namespace HabitatControlPanel
 		{
 			var t = thing.transform as RectTransform;
 			Logger.Log(thing.name + " p=" + t.anchoredPosition);
-		}*/
+		}
 
 
 
@@ -661,6 +729,12 @@ namespace HabitatControlPanel
 
 			controlPanel.beaconColorSettings = BeaconColorSettings.Create(controlPanel, parent);
 			controlPanel.beaconColorSettings.rectTransform.anchoredPosition = new Vector2(-25, 167);
+
+			controlPanel.secretButton = SecretButton.Create(parent);
+			(controlPanel.secretButton.transform as RectTransform).anchoredPosition = new Vector2(63, -126);
+
+			controlPanel.game = SecretGame.Create(parent);
+			controlPanel.game.gameObject.SetActive(false);
 
 			var scrim = new GameObject("Background", typeof(RectTransform)).AddComponent<Image>();
 			var rt = scrim.rectTransform;

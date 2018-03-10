@@ -105,6 +105,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Secret\SecretButton.cs" />
+    <Compile Include="Secret\SecretGame.cs" />
     <Compile Include="SubmenuCloseButton.cs" />
   </ItemGroup>
   <ItemGroup>
