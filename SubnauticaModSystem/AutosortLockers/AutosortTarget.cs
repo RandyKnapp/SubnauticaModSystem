@@ -371,10 +371,6 @@ namespace AutosortLockers
 						amount = 2
 					},
 					new CustomIngredient() {
-						techType = TechType.UraniniteCrystal,
-						amount = 1
-					},
-					new CustomIngredient() {
 						techType = TechType.Magnetite,
 						amount = 1
 					}

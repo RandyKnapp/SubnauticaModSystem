@@ -94,7 +94,6 @@
     <Compile Include="PickerPageButton.cs" />
     <Compile Include="PickerCloseButton.cs" />
     <Compile Include="ConfigureButton.cs" />
-    <Compile Include="LockerPrefabShared.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
     <Compile Include="Mod.cs" />
