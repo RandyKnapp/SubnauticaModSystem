@@ -44,6 +44,15 @@ namespace CustomizedStorage
 	}
 
 	[Serializable]
+	class FiltrationMachineConfig
+	{
+		public int width = 2;
+		public int height = 2;
+		public int maxSalt = 2;
+		public int maxWater = 2;
+	}
+
+	[Serializable]
 	class Config
 	{
 		public Size Inventory = new Size(6, 8);
@@ -56,5 +65,6 @@ namespace CustomizedStorage
 		public ExosuitConfig Exosuit = new ExosuitConfig();
 		public Size SeamothStorage = new Size(4, 4);
 		public Size BioReactor = new Size(4, 4);
+		public FiltrationMachineConfig FiltrationMachine = new FiltrationMachineConfig();
 	}
 }

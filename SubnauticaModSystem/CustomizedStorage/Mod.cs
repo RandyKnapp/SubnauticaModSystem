@@ -4,6 +4,7 @@ using Oculus.Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Reflection;
+using UnityEngine;
 
 namespace CustomizedStorage
 {
@@ -90,6 +91,21 @@ namespace CustomizedStorage
 					"MaxHeight = baseHeight + (heightPerStorageModule * 4)"
 				);
 				config.Exosuit = defaultConfig.Exosuit;
+			}
+
+			ModUtils.ValidateConfigValue("width", min.width, max.width, ref config.FiltrationMachine, ref defaultConfig.FiltrationMachine);
+			ModUtils.ValidateConfigValue("height", min.height, max.height, ref config.FiltrationMachine, ref defaultConfig.FiltrationMachine);
+			var totalSpace = config.FiltrationMachine.width * config.FiltrationMachine.height;
+			var totalContents = config.FiltrationMachine.maxSalt + config.FiltrationMachine.maxWater;
+			if (totalContents > totalSpace)
+			{
+				Console.WriteLine("Config values for 'FiltrationMachine' were not valid. Total capacity is {0} but the maxWater and maxSalt combined are more than that. (maxSalt={1}, maxWater={2})",
+					totalSpace,
+					config.FiltrationMachine.maxSalt,
+					config.FiltrationMachine.maxWater
+				);
+				config.FiltrationMachine.maxSalt = Mathf.FloorToInt(totalSpace / 2);
+				config.FiltrationMachine.maxWater = Mathf.CeilToInt(totalSpace / 2);
 			}
 		}
 	}

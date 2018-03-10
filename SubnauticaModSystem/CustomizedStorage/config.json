@@ -39,5 +39,11 @@
   "BioReactor": {
     "width": 4,
     "height": 4
+  },
+  "FiltrationMachine": {
+    "width": 4,
+    "height": 4,
+    "maxSalt": 8,
+    "maxWater": 8
   }
 }

@@ -131,6 +131,18 @@ namespace CustomizedStorage.Patches
 		}
 	}
 
+	[HarmonyPatch(typeof(FiltrationMachine))]
+	[HarmonyPatch("Start")]
+	class FiltrationMachine_Start_Patch
+	{
+		private static void Postfix(FiltrationMachine __instance)
+		{
+			__instance.maxSalt = Mod.config.FiltrationMachine.maxSalt;
+			__instance.maxWater = Mod.config.FiltrationMachine.maxWater;
+			__instance.storageContainer.Resize(Mod.config.FiltrationMachine.width, Mod.config.FiltrationMachine.height);
+		}
+	}
+
 	[HarmonyPatch(typeof(uGUI_ItemsContainer))]
 	[HarmonyPatch("OnResize")]
 	class uGUI_ItemsContainer_OnResize_Patch
