@@ -62,7 +62,6 @@ namespace HabitatControlPanel
 			var text = !hasPower ? "UNPOWERED" : (activeButton.toggled ? "ON" : "OFF");
 			var color = (activeButton.toggled && hasPower) ? "lime" : "red";
 			activeButton.text.text = string.Format("Beacon [<color={1}>{0}</color>]", text, color);
-			Logger.Log("UpdateText: t=" + text + " c=" + color + " full=" + string.Format("Beacon [<color={1}>{0}</color>]", text, color));
 		}
 
 

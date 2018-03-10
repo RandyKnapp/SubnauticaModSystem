@@ -10,22 +10,11 @@ namespace HabitatControlPanel.Secret
 {
 	class SecretButton : MonoBehaviour, IPointerClickHandler
 	{
-		private int count;
-
 		public Action onActivate = delegate { };
-
-		private void OnEnable()
-		{
-			count = 0;
-		}
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			count++;
-			if (count >= 10)
-			{
-				onActivate();
-			}
+			onActivate();
 		}
 
 

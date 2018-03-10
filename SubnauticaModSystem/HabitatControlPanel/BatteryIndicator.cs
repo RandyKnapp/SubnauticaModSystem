@@ -15,13 +15,9 @@ namespace HabitatControlPanel
 		public static readonly Color ColorFull = new Color(0f, 1f, 0f, 1f);
 
 		public RectTransform rectTransform;
-		private Pickupable item;
-		private IBattery battery;
 
 		[SerializeField]
 		private Text text;
-		//[SerializeField]
-		//private Text text2;
 		[SerializeField]
 		private Image bar;
 
@@ -37,13 +33,6 @@ namespace HabitatControlPanel
 			text.rectTransform.SetParent(transform, false);
 			RectTransformExtensions.SetSize(text.rectTransform, 100, 100);
 
-			/*text2 = GameObject.Instantiate(textPrefab);
-			text2.gameObject.name = "CapacityText";
-			text2.rectTransform.SetParent(transform, false);
-			RectTransformExtensions.SetSize(text2.rectTransform, 100, 100);
-			text2.rectTransform.anchoredPosition = new Vector2(0, -30);
-			text2.fontSize = 10;*/
-
 			float scale = 1 / 4.0f;
 
 			var rt = batteryUI.transform as RectTransform;
@@ -52,6 +41,7 @@ namespace HabitatControlPanel
 			rt.anchoredPosition = new Vector2(0, 0);
 			rt.localEulerAngles = new Vector3(0, 0, -90);
 			bar = batteryUI.transform.Find("Bar").GetComponent<Image>();
+			bar.material = new Material(bar.material);
 			Destroy(batteryUI.transform.Find("Text").gameObject);
 			Destroy(batteryUI.transform.Find("Label").gameObject);
 
@@ -60,37 +50,29 @@ namespace HabitatControlPanel
 
 			text.transform.SetAsLastSibling();
 
-			SetBattery(null);
+			UpdateNoBattery();
 		}
 
-		public void SetBattery(Pickupable item)
+		internal void UpdateNoBattery()
 		{
-			this.item = item;
-			this.battery = item?.GetComponent<IBattery>();
+			text.text = Language.main.Get("ChargerSlotEmpty");
+
+			Material material = new Material(bar.material);
+			material.SetColor(ShaderPropertyID._Color, ColorEmpty);
+			material.SetFloat(ShaderPropertyID._Amount, 0f);
+			bar.material = material;
 		}
 
-		private void Update()
+		internal void UpdateBattery(float charge, float capacity)
 		{
-			Material material = bar.material;
-			if (item == null)
-			{
-				text.text = Language.main.Get("ChargerSlotEmpty");
-				//text2.text = "";
+			var percent = charge / capacity;
+			text.text = string.Format("{0:P0}", percent).Replace(" %", "%");
 
-				material.SetColor(ShaderPropertyID._Color, ColorEmpty);
-				material.SetFloat(ShaderPropertyID._Amount, 0f);
-			}
-			else
-			{
-				var percent = battery.charge / battery.capacity;
-				text.text = string.Format("{0:P0}", percent).Replace(" %", "%");
-
-				//text2.text = "[" + Mathf.RoundToInt(battery.charge) + "/" + Mathf.RoundToInt(battery.capacity) + "]";
-
-				Color value = (percent >= 0.5f) ? Color.Lerp(ColorHalf, ColorFull, 2f * percent - 1f) : Color.Lerp(ColorEmpty, ColorHalf, 2f * percent);
-				material.SetColor(ShaderPropertyID._Color, value);
-				material.SetFloat(ShaderPropertyID._Amount, percent);
-			}
+			Color value = (percent >= 0.5f) ? Color.Lerp(ColorHalf, ColorFull, 2f * percent - 1f) : Color.Lerp(ColorEmpty, ColorHalf, 2f * percent);
+			Material material = new Material(bar.material);
+			material.SetColor(ShaderPropertyID._Color, value);
+			material.SetFloat(ShaderPropertyID._Amount, percent);
+			bar.material = material;
 		}
 
 

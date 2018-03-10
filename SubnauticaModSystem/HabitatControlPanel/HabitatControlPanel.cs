@@ -38,7 +38,6 @@ namespace HabitatControlPanel
 		private Constructable constructable;
 		private Equipment equipment;
 		private HabitatControlPanelSaveData saveData;
-		private IBattery battery;
 		private PowerRelay connectedRelay;
 		private string habitatLabel = InitialHabitatLabel;
 		private bool pingEnabled = true;
@@ -154,6 +153,7 @@ namespace HabitatControlPanel
 				return;
 			}
 
+			UpdateBatteryIndicator();
 			UpdatePing();
 			UpdateSecret();
 
@@ -162,7 +162,7 @@ namespace HabitatControlPanel
 				CloseSubmenu();
 			}
 
-			PositionStuff(secretButton.gameObject);
+			//PositionStuff(secretButton.gameObject);
 		}
 
 		/*private void ColorBaseExterior(Color color)
@@ -198,8 +198,6 @@ namespace HabitatControlPanel
 		
 		private void Initialize()
 		{
-			Logger.Log("Initialize");
-
 			background.gameObject.SetActive(true);
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
 
@@ -295,10 +293,20 @@ namespace HabitatControlPanel
 			var equippedPowerCell = equipment.GetItemInSlot(SlotName);
 			powerCellMesh.SetActive(equippedPowerCell != null && equippedPowerCell.item.GetTechType() == TechType.PowerCell);
 			ionPowerCellMesh.SetActive(equippedPowerCell != null && equippedPowerCell.item.GetTechType() == TechType.PrecursorIonPowerCell);
+		}
 
-			batteryIndicator.SetBattery(equippedPowerCell?.item);
-
-			battery = equippedPowerCell?.item.GetComponent<IBattery>();
+		private void UpdateBatteryIndicator()
+		{
+			var equippedPowerCell = equipment.GetItemInSlot(SlotName);
+			if (equippedPowerCell == null)
+			{
+				batteryIndicator.UpdateNoBattery();
+			}
+			else
+			{
+				var battery = equippedPowerCell.item.GetComponent<IBattery>();
+				batteryIndicator.UpdateBattery(battery.charge, battery.capacity);
+			}
 		}
 
 		private void OnPowerCellHandHover(HandTargetEventData eventData)
@@ -333,21 +341,35 @@ namespace HabitatControlPanel
 
 		public float GetPower()
 		{
+			var powerCell = equipment.GetItemInSlot(SlotName);
+			if (powerCell == null)
+			{
+				return 0;
+			}
+			var battery = powerCell.item.GetComponent<IBattery>();
 			return battery == null || battery.charge < 1 ? 0 : battery.charge;
 		}
 
 		public float GetMaxPower()
 		{
+			var powerCell = equipment.GetItemInSlot(SlotName);
+			if (powerCell == null)
+			{
+				return 0;
+			}
+			var battery = powerCell.item.GetComponent<IBattery>();
 			return battery == null ? 0 : battery.capacity;
 		}
 
 		public bool ModifyPower(float amount, out float modified)
 		{
 			modified = 0f;
-			if (battery == null)
+			var powerCell = equipment.GetItemInSlot(SlotName);
+			if (powerCell == null)
 			{
 				return false;
 			}
+			var battery = powerCell.item.GetComponent<IBattery>();
 
 			bool result;
 			if (amount >= 0f)
@@ -361,8 +383,8 @@ namespace HabitatControlPanel
 				result = (battery.charge >= -amount);
 				if (GameModeUtils.RequiresPower())
 				{
-					modified = -Mathf.Min(-amount, this.battery.charge);
-					this.battery.charge += modified;
+					modified = -Mathf.Min(-amount, battery.charge);
+					battery.charge += modified;
 				}
 				else
 				{
@@ -455,10 +477,10 @@ namespace HabitatControlPanel
 
 		private void OnLoseGame()
 		{
-			var item = equipment.GetItemInSlot(SlotName);
-			if (item != null)
+			var powerCell = equipment.GetItemInSlot(SlotName);
+			if (powerCell != null)
 			{
-				var battery = item.item.GetComponent<IBattery>();
+				var battery = powerCell.item.GetComponent<IBattery>();
 				battery.charge = 0;
 			}
 		}
@@ -521,7 +543,7 @@ namespace HabitatControlPanel
 			return saveFile;
 		}
 
-		public void PositionStuff(GameObject thing)
+		/*public void PositionStuff(GameObject thing)
 		{
 			var t = thing.transform;
 			var amount = 1f;
@@ -574,7 +596,7 @@ namespace HabitatControlPanel
 		{
 			var t = thing.transform as RectTransform;
 			Logger.Log(thing.name + " p=" + t.anchoredPosition);
-		}
+		}*/
 
 
 
@@ -658,8 +680,6 @@ namespace HabitatControlPanel
 			equipmentRoot.SetActive(false);
 
 			CreateScreenElements(controlPanel, controlPanel.background.transform);
-
-			//ModUtils.PrintObject(prefab);
 
 			return prefab;
 		}
