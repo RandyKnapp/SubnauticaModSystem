@@ -78,6 +78,7 @@ namespace HabitatControlPanel
 			RectTransformExtensions.SetParams(highlight.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), button.transform);
 			RectTransformExtensions.SetSize(highlight.rectTransform, width, width);
 			button.highlight = highlight;
+			button.highlight.gameObject.SetActive(false);
 
 			var image = new GameObject("Image", typeof(RectTransform)).AddComponent<uGUI_Icon>();
 			RectTransformExtensions.SetParams(image.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), button.transform);
