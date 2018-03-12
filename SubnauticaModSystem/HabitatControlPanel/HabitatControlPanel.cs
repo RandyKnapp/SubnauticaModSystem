@@ -146,6 +146,7 @@ namespace HabitatControlPanel
 			get => (PingType)pingType;
 			set
 			{
+				Logger.Log("BeaconPingType=" + value);
 				pingType = (int)value;
 				ping.pingType = value;
 				beaconIconSettings.SetValue(value, BeaconColorIndex);
@@ -283,11 +284,10 @@ namespace HabitatControlPanel
 					powerCell.SetActive(false);
 				}
 
-				HabitatLabel = saveData.PingLabel;
-
+				BeaconPingType = (PingType)Mathf.Clamp(saveData.PingIcon, 0, Enum.GetNames(typeof(PingType)).Length - 1);
+				BeaconColorIndex = Mathf.Clamp(saveData.PingColorIndex, 0, PingManager.colorOptions.Length - 1);
 				BeaconVisible = saveData.PingVisible;
-				BeaconPingType = (PingType)saveData.PingIcon;
-				BeaconColorIndex = saveData.PingColorIndex;
+				HabitatLabel = saveData.PingLabel;
 
 				ExteriorColor = saveData.ExteriorColor.ToColor();
 			}
