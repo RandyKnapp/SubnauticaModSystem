@@ -1,37 +1,16 @@
 ﻿using Common.Mod;
 using Common.Utility;
 using HabitatControlPanel.Secret;
-using mset;
 using Oculus.Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-	[Serializable]
-	public struct SerializableColor
-	{
-		public float r;
-		public float g;
-		public float b;
-		public float a;
-
-		public static implicit operator SerializableColor(Color c)
-		{
-			return new SerializableColor() { r = c.r, g = c.g, b = c.b, a = c.a };
-		}
-
-		public Color ToColor()
-		{
-			return new Color(r, g, b, a);
-		}
-	}
-
 	[Serializable]
 	public class HabitatControlPanelSaveData
 	{
@@ -40,6 +19,7 @@ namespace HabitatControlPanel
 		public bool PingEnabled = true;
 		public string PingLabel = "Habitat";
 		public int PingColorIndex = 0;
+		public int PingIcon = (int)PingType.Beacon;
 		public SerializableColor ExteriorColor = Color.white;
 	}
 
@@ -61,6 +41,7 @@ namespace HabitatControlPanel
 		private PowerRelay connectedRelay;
 		private string habitatLabel = InitialHabitatLabel;
 		private bool pingEnabled = true;
+		private int pingType = 0;
 		private Color exteriorColor;
 		private PingInstance ping;
 		private GameObject currentSubMenu;
@@ -99,6 +80,10 @@ namespace HabitatControlPanel
 		private HabitatColorSettings habitatExteriorColorSettings;
 		[SerializeField]
 		private HabitatColorPicker habitatColorPicker;
+		[SerializeField]
+		private BeaconIconSettings beaconIconSettings;
+		[SerializeField]
+		private BeaconIconPicker beaconIconPicker;
 
 		public string HabitatLabel
 		{
@@ -156,6 +141,18 @@ namespace HabitatControlPanel
 			}
 		}
 
+		public PingType BeaconPingType
+		{
+			get => (PingType)pingType;
+			set
+			{
+				pingType = (int)value;
+				ping.pingType = value;
+				beaconIconSettings.SetValue(value, BeaconColorIndex);
+				PingManager.NotifyVisible(ping);
+			}
+		}
+
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();
@@ -201,9 +198,12 @@ namespace HabitatControlPanel
 			UpdatePing();
 			UpdateSecret();
 
-			if (currentSubMenu != null && !HasBatteryPower())
+			if (Mod.config.RequireBatteryToUse)
 			{
-				CloseSubmenu();
+				if (currentSubMenu != null && !HasBatteryPower())
+				{
+					CloseSubmenu();
+				}
 			}
 
 			//PositionStuff(secretButton.gameObject);
@@ -235,8 +235,16 @@ namespace HabitatControlPanel
 		{
 			if (ping != null)
 			{
-				ping.enabled = pingEnabled && GetPower() > 0;
+				if (Mod.config.RequireBatteryToUse)
+				{
+					ping.enabled = pingEnabled && GetPower() > 0;
+				}
+				else
+				{
+					ping.enabled = pingEnabled;
+				}
 				beaconColorSettings.SetColor(ping.colorIndex);
+				beaconIconSettings.SetValue(ping.pingType, ping.colorIndex);
 			}
 		}
 		
@@ -293,6 +301,7 @@ namespace HabitatControlPanel
 				HabitatLabel = saveData.PingLabel;
 				BeaconColorIndex = saveData.PingColorIndex;
 				ExteriorColor = saveData.ExteriorColor.ToColor();
+				BeaconPingType = (PingType)saveData.PingIcon;
 			}
 			else
 			{
@@ -301,6 +310,8 @@ namespace HabitatControlPanel
 			
 			habitatNameController.SetLabel(HabitatLabel);
 			beaconSettings.SetInitialValue(ping.enabled);
+			beaconIconSettings.SetInitialValue(ping.pingType, ping.colorIndex);
+			beaconIconSettings.onClick += OnBeaconIconButtonClick;
 			beaconColorSettings.SetInitialValue(ping.colorIndex);
 			beaconColorSettings.onClick += OnBeaconColorButtonClick;
 			habitatExteriorColorSettings.SetInitialValue(ExteriorColor);
@@ -332,6 +343,12 @@ namespace HabitatControlPanel
 			else
 			{
 				connectedRelay = null;
+			}
+
+			if (connectedRelay != null)
+			{
+				connectedRelay.RemoveInboundPower(this);
+				connectedRelay.AddInboundPower(this);
 			}
 		}
 
@@ -468,6 +485,12 @@ namespace HabitatControlPanel
 			return item == null;
 		}
 
+		private void OnBeaconIconButtonClick()
+		{
+			beaconIconPicker.Initialize(this, ping.pingType);
+			OpenSubmenu(beaconIconPicker.gameObject);
+		}
+
 		private void OnBeaconColorButtonClick()
 		{
 			beaconColorPicker.Initialize(this, ping.colorIndex);
@@ -496,15 +519,23 @@ namespace HabitatControlPanel
 
 		private void UpdateSecret()
 		{
-			if (!HasBatteryPower() && game.isActiveAndEnabled)
+			if (Mod.config.RequireBatteryToUse)
 			{
-				ShowGame(false);
+				if (!HasBatteryPower() && game.isActiveAndEnabled)
+				{
+					ShowGame(false);
+				}
 			}
+		}
+
+		private bool CanShowGame()
+		{
+			return Mod.config.RequireBatteryToUse ? HasBatteryPower() : true;
 		}
 
 		private void ToggleGame()
 		{
-			if (HasBatteryPower())
+			if (CanShowGame())
 			{
 				var gameShowing = game.gameObject.activeSelf;
 				ShowGame(!gameShowing);
@@ -513,7 +544,7 @@ namespace HabitatControlPanel
 
 		private void ShowGame(bool show)
 		{
-			if (show && !HasBatteryPower())
+			if (show && !CanShowGame())
 			{
 				return;
 			}
@@ -574,6 +605,7 @@ namespace HabitatControlPanel
 			saveData.PingColorIndex = ping.colorIndex;
 			saveData.PingLabel = HabitatLabel;
 			saveData.PingEnabled = ping.enabled;
+			saveData.PingIcon = (int)BeaconPingType;
 
 			saveData.ExteriorColor = ExteriorColor;
 
@@ -809,13 +841,16 @@ namespace HabitatControlPanel
 			controlPanel.habitatNameController.rectTransform.anchoredPosition = new Vector2(0, 118);
 
 			controlPanel.beaconSettings = BeaconSettings.Create(controlPanel, parent);
-			controlPanel.beaconSettings.rectTransform.anchoredPosition = new Vector2(0, 186);
+			controlPanel.beaconSettings.rectTransform.anchoredPosition = new Vector2(0, 82);
+
+			controlPanel.beaconIconSettings = BeaconIconSettings.Create(controlPanel, parent);
+			controlPanel.beaconIconSettings.rectTransform.anchoredPosition = new Vector2(-25, 63);
 
 			controlPanel.beaconColorSettings = BeaconColorSettings.Create(controlPanel, parent);
-			controlPanel.beaconColorSettings.rectTransform.anchoredPosition = new Vector2(-25, 167);
+			controlPanel.beaconColorSettings.rectTransform.anchoredPosition = new Vector2(-25, 44);
 
 			controlPanel.habitatExteriorColorSettings = HabitatColorSettings.Create(controlPanel, parent);
-			controlPanel.habitatExteriorColorSettings.rectTransform.anchoredPosition = new Vector2(0, 148);
+			controlPanel.habitatExteriorColorSettings.rectTransform.anchoredPosition = new Vector2(0, 25);
 
 			controlPanel.secretButton = SecretButton.Create(parent);
 			(controlPanel.secretButton.transform as RectTransform).anchoredPosition = new Vector2(63, -126);
@@ -832,13 +867,17 @@ namespace HabitatControlPanel
 			var closeButton = controlPanel.scrim.gameObject.AddComponent<SubmenuCloseButton>();
 			closeButton.target = controlPanel;
 
-			controlPanel.beaconColorPicker = BeaconColorPicker.Create(controlPanel, parent);
-			controlPanel.beaconColorPicker.rectTransform.anchoredPosition = new Vector2(0, 30);
+			controlPanel.beaconColorPicker = BeaconColorPicker.Create(parent);
+			controlPanel.beaconColorPicker.rectTransform.anchoredPosition = new Vector2(0, 50);
 			controlPanel.beaconColorPicker.gameObject.SetActive(false);
 
-			controlPanel.habitatColorPicker = HabitatColorPicker.Create(controlPanel, parent);
-			controlPanel.habitatColorPicker.rectTransform.anchoredPosition = new Vector2(0, 30);
+			controlPanel.habitatColorPicker = HabitatColorPicker.Create(parent);
+			controlPanel.habitatColorPicker.rectTransform.anchoredPosition = new Vector2(0, 50);
 			controlPanel.habitatColorPicker.gameObject.SetActive(false);
+
+			controlPanel.beaconIconPicker = BeaconIconPicker.Create(parent);
+			controlPanel.beaconIconPicker.rectTransform.anchoredPosition = new Vector2(0, 50);
+			controlPanel.beaconIconPicker.gameObject.SetActive(false);
 		}
 	}
 }

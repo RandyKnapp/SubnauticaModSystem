@@ -85,6 +85,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BatteryIndicator.cs" />
+    <Compile Include="BeaconIconSettings.cs" />
+    <Compile Include="BeaconIconPicker.cs" />
+    <Compile Include="PickerPageButton.cs" />
+    <Compile Include="uGUI_ColoredIconButton.cs" />
+    <Compile Include="Picker.cs" />
     <Compile Include="HabitatColorPicker.cs" />
     <Compile Include="BeaconColorPicker.cs" />
     <Compile Include="BeaconColorSettings.cs" />
@@ -92,7 +97,7 @@
     <Compile Include="BeaconSettings.cs" />
     <Compile Include="ColoredIconButton.cs" />
     <Compile Include="CheckboxButton.cs" />
-    <Compile Include="ColorPickerButton.cs" />
+    <Compile Include="PickerButton.cs" />
     <Compile Include="HabitatNameController.cs" />
     <Compile Include="HabitatControlPanel.cs" />
     <Compile Include="Config.cs" />

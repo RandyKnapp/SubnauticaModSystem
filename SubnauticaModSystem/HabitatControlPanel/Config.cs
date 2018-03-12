@@ -5,5 +5,6 @@ namespace HabitatControlPanel
 	[Serializable]
 	class Config
 	{
+		public bool RequireBatteryToUse = false;
 	}
 }

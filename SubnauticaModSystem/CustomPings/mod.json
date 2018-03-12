@@ -1,0 +1,12 @@
+{
+  "Id": "CustomPings",
+  "DisplayName": "CustomPings",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "CustomPings.dll",
+  "EntryMethod": "CustomPings.QPatch.Patch",
+  "Config": {
+  }
+}

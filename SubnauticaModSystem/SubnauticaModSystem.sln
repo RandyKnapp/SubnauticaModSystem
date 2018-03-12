@@ -33,10 +33,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zzzEnableConsole", "zzzEnab
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockedVehicleStorageAccess", "DockedVehicleStorageAccess\DockedVehicleStorageAccess.csproj", "{683A1124-D419-49F6-B602-60A803658315}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomPings", "CustomPings\CustomPings.csproj", "{667BF0BB-F5AB-446C-A6B3-3FAABB2F49D5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{0d86304e-0a53-422a-99e6-0c687d9dbbc6}*SharedItemsImports = 4
 		Common\Common.projitems*{2b390daa-56b9-42d9-bad4-8a47736c0563}*SharedItemsImports = 4
+		Common\Common.projitems*{667bf0bb-f5ab-446c-a6b3-3faabb2f49d5}*SharedItemsImports = 4
 		Common\Common.projitems*{683a1124-d419-49f6-b602-60a803658315}*SharedItemsImports = 4
 		Common\Common.projitems*{6c883b28-31e6-4c26-b32b-bf5be0d70190}*SharedItemsImports = 4
 		Common\Common.projitems*{7b7cdbe9-9fac-4e28-a42c-80a21066d7ab}*SharedItemsImports = 4
@@ -138,6 +141,12 @@ Global
 		{683A1124-D419-49F6-B602-60A803658315}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{683A1124-D419-49F6-B602-60A803658315}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{683A1124-D419-49F6-B602-60A803658315}.Release|Any CPU.Build.0 = Release|Any CPU
+		{667BF0BB-F5AB-446C-A6B3-3FAABB2F49D5}.Debug_Autosort|Any CPU.ActiveCfg = Debug|Any CPU
+		{667BF0BB-F5AB-446C-A6B3-3FAABB2F49D5}.Debug_Autosort|Any CPU.Build.0 = Debug|Any CPU
+		{667BF0BB-F5AB-446C-A6B3-3FAABB2F49D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{667BF0BB-F5AB-446C-A6B3-3FAABB2F49D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{667BF0BB-F5AB-446C-A6B3-3FAABB2F49D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{667BF0BB-F5AB-446C-A6B3-3FAABB2F49D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

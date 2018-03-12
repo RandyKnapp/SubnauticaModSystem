@@ -93,7 +93,7 @@ namespace HabitatControlPanel
 			var rt = checkboxButton.transform as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(rt, width, 20);
-			rt.anchoredPosition = new Vector2(0, -104);
+			rt.anchoredPosition = new Vector2(0, 0);
 
 			var iconWidth = 20;
 			var checkbox = LockerPrefabShared.CreateIcon(rt, color, 0);

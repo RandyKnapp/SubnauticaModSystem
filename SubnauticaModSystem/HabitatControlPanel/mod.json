@@ -8,5 +8,6 @@
   "AssemblyName": "HabitatControlPanel.dll",
   "EntryMethod": "HabitatControlPanel.QPatch.Patch",
   "Config": {
+    "RequireBatteryToUse": false
   }
 }

@@ -37,12 +37,18 @@ namespace HabitatControlPanel
 
 		public void Initialize(string spriteName, Color color)
 		{
+			var sprite = ImageUtils.LoadSprite(Mod.GetAssetPath(spriteName), new Vector2(0.5f, 0.5f));
+			Initialize(sprite, color);
+		}
+
+		public void Initialize(Sprite sprite, Color color)
+		{
 			imageColor = color;
 
 			color.a = 0.5f;
 			imageDisabledColor = color;
 
-			image.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath(spriteName));
+			image.sprite = sprite;
 			image.color = imageColor;
 		}
 
@@ -50,9 +56,12 @@ namespace HabitatControlPanel
 		{
 			var color = !isEnabled ? DisabledColor : (pointerDown ? DownColor : (pointerOver ? HoverColor : UpColor));
 
-			if (image != null && text != null)
+			if (image != null)
 			{
 				image.color = isEnabled ? imageColor : imageDisabledColor;
+			}
+			if (text != null)
+			{
 				text.color = color;
 			}
 		}
@@ -79,29 +88,33 @@ namespace HabitatControlPanel
 
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		public static ColoredIconButton Create(Transform parent, Color color, Text textPrefab, string label, float width = 100, float iconWidth = 20)
+		public static ColoredIconButton Create(Transform parent, Color color, Text textPrefab = null, string label = "", float width = 100, float iconWidth = 20)
 		{
 			var checkboxButton = new GameObject("Checkbox", typeof(RectTransform));
 			var rt = checkboxButton.transform as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(rt, width, 20);
-			rt.anchoredPosition = new Vector2(0, -104);
+			rt.anchoredPosition = new Vector2(0, 0);
 
 			var checkbox = LockerPrefabShared.CreateIcon(rt, color, 0);
 			RectTransformExtensions.SetSize(checkbox.rectTransform, iconWidth, iconWidth);
-			checkbox.rectTransform.anchoredPosition = new Vector2(-width / 2 + 10, 0);
+			checkbox.rectTransform.anchoredPosition = new Vector2(textPrefab != null ? - width / 2 + 10 : 0, 0);
 
-			var spacing = 5;
-			var text = LockerPrefabShared.CreateText(rt, textPrefab, color, 0, 10, label);
-			RectTransformExtensions.SetSize(text.rectTransform, width - 20 - spacing, 20);
-			text.rectTransform.anchoredPosition = new Vector2(10 + spacing, 0);
-			text.alignment = TextAnchor.MiddleLeft;
+			Text text = null;
+			if (textPrefab != null)
+			{
+				var spacing = 5;
+				text = LockerPrefabShared.CreateText(rt, textPrefab, color, 0, 10, label);
+				RectTransformExtensions.SetSize(text.rectTransform, width - 20 - spacing, 20);
+				text.rectTransform.anchoredPosition = new Vector2(10 + spacing, 0);
+				text.alignment = TextAnchor.MiddleLeft;
+			}
 
 			checkboxButton.AddComponent<BoxCollider2D>();
 
 			var button = checkboxButton.AddComponent<ColoredIconButton>();
 			button.image = checkbox;
-			button.text = text;
+			button.text = text ?? null;
 			button.UpColor = color;
 
 			return button;

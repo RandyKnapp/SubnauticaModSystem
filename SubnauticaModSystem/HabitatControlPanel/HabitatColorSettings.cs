@@ -31,14 +31,12 @@ namespace HabitatControlPanel
 
 			activeButton = ColoredIconButton.Create(transform, HabitatControlPanel.ScreenContentColor, textPrefab, "Exterior Color", 150, 15);
 			activeButton.text.supportRichText = true;
-			UpdateText();
 		}
 
 		internal void SetInitialValue(Color color)
 		{
 			SetColor(color);
 			activeButton.onClick += OnClick;
-			UpdateText();
 		}
 
 		internal void SetColor(Color color)
@@ -53,12 +51,11 @@ namespace HabitatControlPanel
 
 		private void Update()
 		{
-			hasPower = target != null && target.GetPower() > 0;
-			activeButton.isEnabled = hasPower;
-		}
-
-		private void UpdateText()
-		{
+			if (Mod.config.RequireBatteryToUse)
+			{
+				hasPower = target != null && target.GetPower() > 0;
+				activeButton.isEnabled = hasPower;
+			}
 		}
 
 

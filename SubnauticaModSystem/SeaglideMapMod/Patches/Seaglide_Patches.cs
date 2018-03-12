@@ -63,6 +63,12 @@ namespace SeaglideMapControls.Patches
 		{
 			__instance.toggleLights.maxLightStates = 1;
 			__instance.toggleLights.lightState = Mod.config.SeaglideMapStartOn ? 0 : 2;
+
+			var lights = __instance.toggleLights.lightsParent.GetComponentsInChildren<Light>();
+			foreach (var light in lights)
+			{
+				light.color = new Color(1, 1, 1);
+			}
 			return true;
 		}
 	}
