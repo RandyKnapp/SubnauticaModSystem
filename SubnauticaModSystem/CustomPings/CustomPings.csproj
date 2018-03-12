@@ -89,6 +89,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="ModLoaderIntegration.cs" />
     <Compile Include="Mod.cs" />
+    <Compile Include="Patches\PingTab_Patches.cs" />
     <Compile Include="Patches\Ping_Patches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

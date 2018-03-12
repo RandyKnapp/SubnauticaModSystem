@@ -42,7 +42,7 @@ namespace HabitatControlPanel
 
 		private void OnBeaconToggled(bool toggled)
 		{
-			target.BeaconEnabled = toggled;
+			target.BeaconVisible = toggled;
 			UpdateText();
 		}
 
@@ -50,24 +50,24 @@ namespace HabitatControlPanel
 		{
 			if (Mod.config.RequireBatteryToUse)
 			{
-				var prevHasPower = hasPower;
 				hasPower = target != null && target.GetPower() > 0;
-				if (prevHasPower != hasPower)
-				{
-					UpdateText();
-				}
 				activeButton.isEnabled = hasPower;
 			}
+
+			UpdateText();
 		}
 
 		private void UpdateText()
 		{
-			var text = (activeButton.toggled ? "ON" : "OFF");
-			var color = (activeButton.toggled) ? "lime" : "red";
+			activeButton.toggled = target.BeaconVisible;
+
+			var text = activeButton.toggled ? "ON" : "OFF";
+			var color = activeButton.toggled ? "lime" : "red";
 			if (Mod.config.RequireBatteryToUse && !hasPower)
 			{
 				text = "UNPOWERED";
 				color = "red";
+				activeButton.toggled = false;
 			}
 			activeButton.text.text = string.Format("Beacon [<color={1}>{0}</color>]", text, color);
 		}

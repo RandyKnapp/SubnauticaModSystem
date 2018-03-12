@@ -52,7 +52,7 @@ namespace HabitatControlPanel
 		{
 			highlight.gameObject.SetActive(toggled || pointerOver);
 			highlight.transform.localScale = new Vector3(toggled ? 1 : 0.8f, toggled ? 1 : 0.8f, 1);
-			highlight.color = new Color(1, 1, 1, toggled ? 1 : 0.5f);
+			highlight.color = new Color(1, 1, 1, toggled ? 0.5f : 0.7f);
 		}
 
 		public void OnPointerEnter(PointerEventData eventData)

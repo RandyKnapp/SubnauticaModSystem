@@ -16,7 +16,7 @@ namespace HabitatControlPanel
 	{
 		public TechType PowerCellType = TechType.None;
 		public float PowerCellCharge = 0;
-		public bool PingEnabled = true;
+		public bool PingVisible = true;
 		public string PingLabel = "Habitat";
 		public int PingColorIndex = 0;
 		public int PingIcon = (int)PingType.Beacon;
@@ -40,7 +40,6 @@ namespace HabitatControlPanel
 		private HabitatControlPanelSaveData saveData;
 		private PowerRelay connectedRelay;
 		private string habitatLabel = InitialHabitatLabel;
-		private bool pingEnabled = true;
 		private int pingType = 0;
 		private Color exteriorColor;
 		private PingInstance ping;
@@ -96,15 +95,15 @@ namespace HabitatControlPanel
 			}
 		}
 
-		public bool BeaconEnabled
+		public bool BeaconVisible
 		{
 			get
 			{
-				return ping != null && ping.enabled && pingEnabled;
+				return ping != null && ping.visible;
 			}
 			internal set
 			{
-				pingEnabled = value;
+				ping.visible = value;
 				PingManager.NotifyVisible(ping);
 			}
 		}
@@ -117,6 +116,7 @@ namespace HabitatControlPanel
 			}
 			internal set
 			{
+				ping.colorIndex = value;
 				ping.SetColor(value);
 				PingManager.NotifyColor(ping);
 			}
@@ -235,14 +235,6 @@ namespace HabitatControlPanel
 		{
 			if (ping != null)
 			{
-				if (Mod.config.RequireBatteryToUse)
-				{
-					ping.enabled = pingEnabled && GetPower() > 0;
-				}
-				else
-				{
-					ping.enabled = pingEnabled;
-				}
 				beaconColorSettings.SetColor(ping.colorIndex);
 				beaconIconSettings.SetValue(ping.pingType, ping.colorIndex);
 			}
@@ -274,12 +266,10 @@ namespace HabitatControlPanel
 			equipment.AddSlot(SlotName);
 
 			ping = gameObject.AddComponent<PingInstance>();
-			ping.enabled = false;
 			ping.SetLabel(InitialHabitatLabel);
 			ping.pingType = PingType.Beacon;
 			ping.origin = transform;
 			HabitatLabel = InitialHabitatLabel;
-			ping.enabled = true;
 
 			if (saveData != null)
 			{
@@ -293,15 +283,13 @@ namespace HabitatControlPanel
 					powerCell.SetActive(false);
 				}
 
-				ping.colorIndex = saveData.PingColorIndex;
-				ping.SetLabel(saveData.PingLabel);
-				ping.enabled = saveData.PingEnabled;
-				pingEnabled = saveData.PingEnabled;
-
 				HabitatLabel = saveData.PingLabel;
-				BeaconColorIndex = saveData.PingColorIndex;
-				ExteriorColor = saveData.ExteriorColor.ToColor();
+
+				BeaconVisible = saveData.PingVisible;
 				BeaconPingType = (PingType)saveData.PingIcon;
+				BeaconColorIndex = saveData.PingColorIndex;
+
+				ExteriorColor = saveData.ExteriorColor.ToColor();
 			}
 			else
 			{
@@ -309,7 +297,7 @@ namespace HabitatControlPanel
 			}
 			
 			habitatNameController.SetLabel(HabitatLabel);
-			beaconSettings.SetInitialValue(ping.enabled);
+			beaconSettings.SetInitialValue(ping.visible);
 			beaconIconSettings.SetInitialValue(ping.pingType, ping.colorIndex);
 			beaconIconSettings.onClick += OnBeaconIconButtonClick;
 			beaconColorSettings.SetInitialValue(ping.colorIndex);
@@ -604,7 +592,7 @@ namespace HabitatControlPanel
 
 			saveData.PingColorIndex = ping.colorIndex;
 			saveData.PingLabel = HabitatLabel;
-			saveData.PingEnabled = ping.enabled;
+			saveData.PingVisible = ping.visible;
 			saveData.PingIcon = (int)BeaconPingType;
 
 			saveData.ExteriorColor = ExteriorColor;
