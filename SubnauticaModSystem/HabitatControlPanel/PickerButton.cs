@@ -10,6 +10,8 @@ namespace HabitatControlPanel
 	{
 		private bool pointerOver;
 		private int id;
+		private Sprite hoverSprite;
+		private Sprite selectedSprite;
 
 		public RectTransform rectTransform;
 		public bool toggled;
@@ -39,10 +41,16 @@ namespace HabitatControlPanel
 			this.id = id;
 			this.toggled = toggled;
 
-			if (highlight.sprite == null)
+			if (hoverSprite == null)
 			{
-				highlight.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Circle.png"), new Vector2(0.5f, 0.5f));
+				hoverSprite = ImageUtils.LoadSprite(Mod.GetAssetPath("SelectorHover.png"), new Vector2(0.5f, 0.5f));
 			}
+			if (selectedSprite == null)
+			{
+				selectedSprite = ImageUtils.LoadSprite(Mod.GetAssetPath("SelectorSelected.png"), new Vector2(0.5f, 0.5f));
+			}
+
+			highlight.sprite = hoverSprite;
 
 			image.sprite = imageSprite;
 			image.color = color;
@@ -51,8 +59,9 @@ namespace HabitatControlPanel
 		public void Update()
 		{
 			highlight.gameObject.SetActive(toggled || pointerOver);
-			highlight.transform.localScale = new Vector3(toggled ? 1 : 0.8f, toggled ? 1 : 0.8f, 1);
-			highlight.color = new Color(1, 1, 1, toggled ? 0.5f : 0.7f);
+			//highlight.transform.localScale = new Vector3(toggled ? 1 : 0.8f, toggled ? 1 : 0.8f, 1);
+			highlight.color = new Color(1, 1, 1, 1);
+			highlight.sprite = toggled ? selectedSprite : hoverSprite;
 		}
 
 		public void OnPointerEnter(PointerEventData eventData)
