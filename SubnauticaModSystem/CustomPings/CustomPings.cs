@@ -111,17 +111,17 @@ namespace CustomPings
 
 		public static bool PingExists(string name)
 		{
-			return PingTypesByName.ContainsKey(name);
+			return name != null && PingTypesByName.ContainsKey(name);
 		}
 
 		public static PingType GetPingType(string name)
 		{
-			return (PingType)GetPingTypeAsInt(name);
+			return name == null ? PingType.None : (PingType)GetPingTypeAsInt(name);
 		}
 
 		public static int GetPingTypeAsInt(string name)
 		{
-			if (PingTypesByName.TryGetValue(name, out int value))
+			if (name != null && PingTypesByName.TryGetValue(name, out int value))
 			{
 				return value;
 			}
@@ -144,7 +144,7 @@ namespace CustomPings
 
 		public static Atlas.Sprite GetSprite(string name)
 		{
-			if (PingSpritesByName.TryGetValue(name, out Atlas.Sprite sprite))
+			if (name != null && PingSpritesByName.TryGetValue(name, out Atlas.Sprite sprite))
 			{
 				return sprite;
 			}

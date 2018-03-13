@@ -284,7 +284,11 @@ namespace HabitatControlPanel
 					powerCell.SetActive(false);
 				}
 
-				BeaconPingType = (PingType)Mathf.Clamp(saveData.PingIcon, 0, Enum.GetNames(typeof(PingType)).Length - 1);
+				if (Enum.GetName(typeof(PingType), saveData.PingIcon) == null)
+				{
+					saveData.PingIcon = (int)PingType.Beacon;
+				}
+				BeaconPingType = (PingType)saveData.PingIcon;
 				BeaconColorIndex = Mathf.Clamp(saveData.PingColorIndex, 0, PingManager.colorOptions.Length - 1);
 				BeaconVisible = saveData.PingVisible;
 				HabitatLabel = saveData.PingLabel;

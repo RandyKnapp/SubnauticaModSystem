@@ -15,9 +15,24 @@ namespace CustomPings.Patches
 	[HarmonyPatch("OnAdd")]
 	class uGUI_Pings_OnAdd_Patch
 	{
-		private static bool Prefix(uGUI_Pings __instance, int id, PingInstance instance)
+		private static bool Prefix()
 		{
 			CustomPings.Initialize();
+			return true;
+		}
+	}
+
+	[HarmonyPatch(typeof(PingInstance))]
+	[HarmonyPatch("OnEnable")]
+	class PingInstance_OnEnable_Patch
+	{
+		private static bool Prefix(PingInstance __instance)
+		{
+			var saver = __instance.GetComponent<PingInstanceSaver>();
+			if (saver == null)
+			{
+				__instance.gameObject.AddComponent<PingInstanceSaver>();
+			}
 			return true;
 		}
 	}
@@ -26,7 +41,7 @@ namespace CustomPings.Patches
 	[HarmonyPatch("SetColor")]
 	class PingInstance_SetColor_Patch
 	{
-		private static bool Prefix(PingInstance __instance, int index)
+		private static bool Prefix()
 		{
 			CustomPings.Initialize();
 			return true;

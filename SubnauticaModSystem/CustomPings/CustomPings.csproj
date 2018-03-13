@@ -84,6 +84,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BeaconColorPicker.cs" />
+    <Compile Include="BeaconIconPicker.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="CustomPings.cs" />
     <Compile Include="Logger.cs" />
@@ -91,6 +93,12 @@
     <Compile Include="Mod.cs" />
     <Compile Include="Patches\PingTab_Patches.cs" />
     <Compile Include="Patches\Ping_Patches.cs" />
+    <Compile Include="Picker.cs" />
+    <Compile Include="PickerButton.cs" />
+    <Compile Include="PickerPageButton.cs" />
+    <Compile Include="PingColorButton.cs" />
+    <Compile Include="PingEntryController.cs" />
+    <Compile Include="PingInstanceSaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

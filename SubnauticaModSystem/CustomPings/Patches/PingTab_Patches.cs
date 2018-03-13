@@ -28,6 +28,13 @@ namespace CustomPings.Patches
 				toggle.onValueChanged.RemoveAllListeners();
 			}
 
+			var controller = __instance.gameObject.GetComponent<PingEntryController>();
+			if (controller == null)
+			{
+				controller = __instance.gameObject.AddComponent<PingEntryController>();
+			}
+			controller.OnInitialize(id, type, realColorIndex);
+
 			return true;
 		}
 
