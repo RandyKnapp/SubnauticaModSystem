@@ -25,11 +25,11 @@ namespace HabitatControlPanel
 			rectTransform = transform as RectTransform;
 		}
 
-		private void Initialize(HabitatControlPanel controlPanel, Text textPrefab)
+		private void Initialize(HabitatControlPanel controlPanel, Text textPrefab, string label)
 		{
 			target = controlPanel;
 
-			activeButton = ColoredIconButton.Create(transform, HabitatControlPanel.ScreenContentColor, textPrefab, "Exterior Color", 150, 15);
+			activeButton = ColoredIconButton.Create(transform, HabitatControlPanel.ScreenContentColor, textPrefab, label, 150, 15);
 			activeButton.text.supportRichText = true;
 		}
 
@@ -60,7 +60,7 @@ namespace HabitatControlPanel
 
 
 		///////////////////////////////////////////////////////////////////////////////////////////
-		public static HabitatColorSettings Create(HabitatControlPanel controlPanel, Transform parent)
+		public static HabitatColorSettings Create(HabitatControlPanel controlPanel, Transform parent, string label)
 		{
 			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
@@ -70,9 +70,14 @@ namespace HabitatControlPanel
 			var habitatColorSettings = new GameObject("HabitatColorSettings", typeof(RectTransform)).AddComponent<HabitatColorSettings>();
 			var rt = habitatColorSettings.gameObject.transform as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			habitatColorSettings.Initialize(controlPanel, textPrefab);
+			habitatColorSettings.Initialize(controlPanel, textPrefab, label);
 
 			return habitatColorSettings;
+		}
+
+		internal void SetInitialValue(object interiorColor)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

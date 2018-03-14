@@ -17,6 +17,8 @@ namespace HabitatControlPanel
 
 		private HabitatControlPanel target;
 
+		public Action<Color> onColorSelect = delegate { };
+
 		private void Awake()
 		{
 			rectTransform = transform as RectTransform;
@@ -40,7 +42,7 @@ namespace HabitatControlPanel
 
 		public void OnSelect(int index)
 		{
-			target.ExteriorColor = Colors[index];
+			onColorSelect(Colors[index]);
 			target.CloseSubmenu();
 		}
 

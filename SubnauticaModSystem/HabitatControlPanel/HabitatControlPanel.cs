@@ -21,6 +21,7 @@ namespace HabitatControlPanel
 		public int PingColorIndex = 0;
 		public int PingIcon = (int)PingType.Beacon;
 		public SerializableColor ExteriorColor = Color.white;
+		public SerializableColor InteriorColor = Color.white;
 	}
 
 	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener, IPowerInterface, IObstacle
@@ -33,6 +34,7 @@ namespace HabitatControlPanel
 		private const string SlotName = "PowerCellCharger1";
 		public static readonly Color ScreenContentColor = new Color32(188, 254, 254, 255);
 		private const string InitialHabitatLabel = "Habitat";
+		private const int MaxDistance = 3;
 
 		private bool initialized;
 		private Constructable constructable;
@@ -42,6 +44,7 @@ namespace HabitatControlPanel
 		private string habitatLabel = InitialHabitatLabel;
 		private int pingType = 0;
 		private Color exteriorColor;
+		private Color interiorColor;
 		private PingInstance ping;
 		private GameObject currentSubMenu;
 
@@ -77,6 +80,8 @@ namespace HabitatControlPanel
 		private SecretGame game;
 		[SerializeField]
 		private HabitatColorSettings habitatExteriorColorSettings;
+		[SerializeField]
+		private HabitatColorSettings habitatInteriorColorSettings;
 		[SerializeField]
 		private HabitatColorPicker habitatColorPicker;
 		[SerializeField]
@@ -137,6 +142,25 @@ namespace HabitatControlPanel
 				{
 					hcp.exteriorColor = value;
 					hcp.habitatExteriorColorSettings.SetColor(exteriorColor);
+				}
+			}
+		}
+
+		public Color InteriorColor
+		{
+			get => interiorColor;
+			set
+			{
+				interiorColor = value;
+				ColorBaseInterior(interiorColor);
+				habitatInteriorColorSettings.SetColor(interiorColor);
+
+				var subRoot = GetComponentInParent<SubRoot>();
+				var habitatControlPanels = subRoot.GetComponentsInChildren<HabitatControlPanel>();
+				foreach (var hcp in habitatControlPanels)
+				{
+					hcp.interiorColor = value;
+					hcp.habitatInteriorColorSettings.SetColor(interiorColor);
 				}
 			}
 		}
@@ -207,7 +231,23 @@ namespace HabitatControlPanel
 				}
 			}
 
+			UpdateDistanceFromPlayer();
+
 			//PositionStuff(secretButton.gameObject);
+		}
+
+		private void UpdateDistanceFromPlayer()
+		{
+			if (Player.main != null)
+			{
+				float distSq = (Player.main.transform.position - transform.position).sqrMagnitude;
+				bool playerInRange = distSq <= (MaxDistance * MaxDistance);
+
+				if (currentSubMenu != null && !playerInRange)
+				{
+					CloseSubmenu();
+				}
+			}
 		}
 
 		private void ColorBaseExterior(Color color)
@@ -216,9 +256,31 @@ namespace HabitatControlPanel
 			HashSet<MeshRenderer> allMeshes = new HashSet<MeshRenderer>(subRoot.GetAllComponentsInChildren<MeshRenderer>());
 			HashSet<MeshRenderer> exteriorRenderers = new HashSet<MeshRenderer>();
 
-			var includeIf = new string[] { "Exterior", "exterior", "_ext", "Platform", "BaseRoomObservatory", "_narrower", "Joint", "_wider", "BaseRoomMoonPoolExterior" };
-			var rejectIf = new string[] { "_int", "glass", "Glass", "InteriorStairs", "ladder" };
+			var includeIf = new string[] { "Exterior", "exterior", "_ext", "Platform", "BaseRoomObservatory" };
+			var rejectIf = new string[] { "_int", "glass", "Glass", "InteriorStairs", "ladder", "ground" };
 			var forceInclude = new string[] { "ExteriorShell" };
+
+			var exteriorMeshes = allMeshes.Where(x => includeIf.Any(x.gameObject.name.Contains)).ToList();
+			exteriorMeshes.RemoveAll(x => rejectIf.Any(x.gameObject.name.Contains));
+			exteriorMeshes.AddRange(allMeshes.Where(x => forceInclude.Any(x.gameObject.name.Contains)));
+
+			exteriorRenderers.UnionWith(exteriorMeshes);
+
+			foreach (var meshRenderer in exteriorRenderers)
+			{
+				meshRenderer.material.SetColor(ShaderPropertyID._Color, color);
+			}
+		}
+
+		private void ColorBaseInterior(Color color)
+		{
+			SubRoot subRoot = gameObject.GetComponentInParent<SubRoot>();
+			HashSet<MeshRenderer> allMeshes = new HashSet<MeshRenderer>(subRoot.GetAllComponentsInChildren<MeshRenderer>());
+			HashSet<MeshRenderer> exteriorRenderers = new HashSet<MeshRenderer>();
+
+			var includeIf = new string[] { "Interior", "interior", "_int" };
+			var rejectIf = new string[] { "_ext", "glass", "Glass", "InteriorStairs", "ladder", "stairs", "Stairs", "_Ivy", "ground" };
+			var forceInclude = new string[] { };
 
 			var exteriorMeshes = allMeshes.Where(x => includeIf.Any(x.gameObject.name.Contains)).ToList();
 			exteriorMeshes.RemoveAll(x => rejectIf.Any(x.gameObject.name.Contains));
@@ -294,6 +356,7 @@ namespace HabitatControlPanel
 				HabitatLabel = saveData.PingLabel;
 
 				ExteriorColor = saveData.ExteriorColor.ToColor();
+				InteriorColor = saveData.InteriorColor.ToColor();
 			}
 			else
 			{
@@ -308,13 +371,15 @@ namespace HabitatControlPanel
 			beaconColorSettings.onClick += OnBeaconColorButtonClick;
 			habitatExteriorColorSettings.SetInitialValue(ExteriorColor);
 			habitatExteriorColorSettings.onClick += OnExteriorColorButtonClick;
+			habitatInteriorColorSettings.SetInitialValue(InteriorColor);
+			habitatInteriorColorSettings.onClick += OnInteriorColorButtonClick;
 
 			PingManager.NotifyRename(ping);
 			PingManager.NotifyColor(ping);
 			PingManager.NotifyVisible(ping);
 
 			base.InvokeRepeating("UpdatePowerRelay", 0, 1);
-			base.InvokeRepeating("UpdateBaseExteriorColor", UnityEngine.Random.Range(0.5f, 1.0f), 3);
+			base.InvokeRepeating("UpdateBaseColor", UnityEngine.Random.Range(0.5f, 1.0f), 3);
 
 			UpdatePowerCell();
 			initialized = true;
@@ -344,9 +409,10 @@ namespace HabitatControlPanel
 			}
 		}
 
-		private void UpdateBaseExteriorColor()
+		private void UpdateBaseColor()
 		{
 			ColorBaseExterior(ExteriorColor);
+			ColorBaseInterior(InteriorColor);
 		}
 
 		private void OnEquipmentChanged(string slot, InventoryItem item)
@@ -492,7 +558,25 @@ namespace HabitatControlPanel
 		private void OnExteriorColorButtonClick()
 		{
 			habitatColorPicker.Initialize(this, ExteriorColor);
+			habitatColorPicker.onColorSelect = OnExteriorColorSelect;
 			OpenSubmenu(habitatColorPicker.gameObject);
+		}
+
+		private void OnExteriorColorSelect(Color color)
+		{
+			ExteriorColor = color;
+		}
+
+		private void OnInteriorColorButtonClick()
+		{
+			habitatColorPicker.Initialize(this, InteriorColor);
+			habitatColorPicker.onColorSelect = OnInteriorColorSelect;
+			OpenSubmenu(habitatColorPicker.gameObject);
+		}
+
+		private void OnInteriorColorSelect(Color color)
+		{
+			InteriorColor = color;
 		}
 
 		internal void OpenSubmenu(GameObject subMenu)
@@ -600,6 +684,7 @@ namespace HabitatControlPanel
 			saveData.PingIcon = (int)BeaconPingType;
 
 			saveData.ExteriorColor = ExteriorColor;
+			saveData.InteriorColor = InteriorColor;
 
 			return saveData;
 		}
@@ -841,8 +926,11 @@ namespace HabitatControlPanel
 			controlPanel.beaconColorSettings = BeaconColorSettings.Create(controlPanel, parent);
 			controlPanel.beaconColorSettings.rectTransform.anchoredPosition = new Vector2(-25, 44);
 
-			controlPanel.habitatExteriorColorSettings = HabitatColorSettings.Create(controlPanel, parent);
+			controlPanel.habitatExteriorColorSettings = HabitatColorSettings.Create(controlPanel, parent, "Exterior Color");
 			controlPanel.habitatExteriorColorSettings.rectTransform.anchoredPosition = new Vector2(0, 25);
+
+			controlPanel.habitatInteriorColorSettings = HabitatColorSettings.Create(controlPanel, parent, "Interior Color");
+			controlPanel.habitatInteriorColorSettings.rectTransform.anchoredPosition = new Vector2(0, 6);
 
 			controlPanel.secretButton = SecretButton.Create(parent);
 			(controlPanel.secretButton.transform as RectTransform).anchoredPosition = new Vector2(63, -126);

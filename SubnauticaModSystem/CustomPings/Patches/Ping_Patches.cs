@@ -33,6 +33,7 @@ namespace CustomPings.Patches
 			{
 				__instance.gameObject.AddComponent<PingInstanceSaver>();
 			}
+			PingManager.NotifyColor(__instance);
 			return true;
 		}
 	}
