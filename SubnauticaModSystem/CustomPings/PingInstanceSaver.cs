@@ -34,10 +34,9 @@ namespace CustomPings
 			}
 			else
 			{
-				Logger.Log("Created a PingInstance with no uniqueIdentifier (" + gameObject.name + ")");
+				Logger.Error("Created a PingInstance with no uniqueIdentifier (" + gameObject.name + ")");
 				Destroy(this);
 			}
-			Logger.Log("PingInstance on " + gameObject.name);
 		}
 
 		private string GetSaveDataDir()
