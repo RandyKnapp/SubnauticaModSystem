@@ -170,7 +170,6 @@ namespace HabitatControlPanel
 			get => (PingType)pingType;
 			set
 			{
-				Logger.Log("BeaconPingType=" + value);
 				pingType = (int)value;
 				ping.pingType = value;
 				beaconIconSettings.SetValue(value, BeaconColorIndex);
