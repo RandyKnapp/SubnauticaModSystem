@@ -16,6 +16,7 @@ namespace CustomPings.Patches
 
 		private static bool Prefix(uGUI_PingEntry __instance, int id, bool visible, PingType type, string name, ref int colorIndex)
 		{
+			CustomPings.Initialize();
 			realColorIndex = colorIndex;
 			if (colorIndex >= 5)
 			{
