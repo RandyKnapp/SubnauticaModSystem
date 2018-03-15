@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomPings
+namespace CustomBeacons
 {
 	class BeaconIconPicker : Picker
 	{
@@ -25,7 +25,7 @@ namespace CustomPings
 			
 			var names = Enum.GetNames(typeof(PingType));
 			var values = (PingType[])Enum.GetValues(typeof(PingType));
-			var color = PingManager.colorOptions[target.colorIndex];
+			var color = CustomPings.GetColor(target.colorIndex);
 			for (int i = 0; i < buttons.Count; ++i)
 			{
 				var button = buttons[i];

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace CustomPings
+namespace CustomBeacons
 {
 	public static class CustomPings
 	{
@@ -93,6 +93,16 @@ namespace CustomPings
 					InjectPingColorsToGlobalList();
 				}
 			}
+		}
+
+		public static Color GetColor(int colorIndex)
+		{
+			if (colorIndex >= 0 && colorIndex < PingManager.colorOptions.Length)
+			{
+				return PingManager.colorOptions[colorIndex];
+			}
+			Logger.Error(StackTraceUtility.ExtractStackTrace());
+			return Color.black;
 		}
 
 		internal static string GetPingName(int type)

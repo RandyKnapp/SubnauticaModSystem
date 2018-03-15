@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace CustomPings
+namespace CustomBeacons
 {
 	[Serializable]
 	class PingInstanceSaveData
@@ -41,7 +41,7 @@ namespace CustomPings
 
 		private string GetSaveDataDir()
 		{
-			return Path.Combine(ModUtils.GetSaveDataDirectory(), "CustomPings");
+			return Path.Combine(ModUtils.GetSaveDataDirectory(), "CustomBeacons");
 		}
 
 		private string GetSaveDataPath()

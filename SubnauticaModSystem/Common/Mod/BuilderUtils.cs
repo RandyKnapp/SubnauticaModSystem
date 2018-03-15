@@ -54,7 +54,13 @@ namespace Common.Mod
 			string tooltipKey = "Tooltip_" + info.techTypeKey;
 			valueToString[info.techType] = tooltipKey;
 
-			Console.WriteLine("[BuilderUtils] Added builder entry for " + info.techTypeKey + " (" + info.techType + ")");
+			Log("Added builder entry for " + info.techTypeKey + " (" + info.techType + ")");
+		}
+
+		private static void Log(string message)
+		{
+			var assemblyName = typeof(BuilderUtils).Assembly.GetName().Name;
+			Console.WriteLine("<BuilderUtils:" + assemblyName + "> " + message);
 		}
 
 		public static void OnTechMappingInitialized()
@@ -65,7 +71,7 @@ namespace Common.Mod
 			}
 			techMappingInitialized = true;
 
-			Console.WriteLine("[BuilderUtils] Initializing tech mapping");
+			Log("Initializing tech mapping");
 			var techMapping = (Dictionary<TechType, string>)CraftData_techMapping.GetValue(null);
 			foreach (var entry in techData)
 			{
@@ -82,7 +88,7 @@ namespace Common.Mod
 			}
 			knownTechInitialized = true;
 
-			Console.WriteLine("[BuilderUtils] Adding initially known blueprints to KnownTech");
+			Log("Adding initially known blueprints to KnownTech");
 			foreach (var entry in techData)
 			{
 				var info = entry.Value;
@@ -95,7 +101,7 @@ namespace Common.Mod
 
 		public static void OnLanguageStringsInitialized()
 		{
-			Console.WriteLine("[BuilderUtils] Adding tooltip strings to language file");
+			Log("Adding tooltip strings to language file");
 			Dictionary <string, string> strings = (Dictionary<string, string>)Language_strings.GetValue(Language.main);
 			foreach (var entry in techData)
 			{
@@ -119,7 +125,7 @@ namespace Common.Mod
 			prefabsByTechType.Clear();
 			prefabsByClassID.Clear();
 
-			Console.WriteLine("[BuilderUtils] Initializing prefabs");
+			Log("Initializing prefabs");
 			foreach (var entry in techData)
 			{
 				var info = entry.Value;
@@ -136,7 +142,7 @@ namespace Common.Mod
 
 				if (prefab == null)
 				{
-					Console.WriteLine("[BuilderUtils] ERROR creating prefab for " + info.techTypeKey);
+					Log("ERROR creating prefab for " + info.techTypeKey);
 					continue;
 				}
 
@@ -172,7 +178,7 @@ namespace Common.Mod
 
 		private static void OnPrefabDestroyed(GameObject prefab)
 		{
-			Console.WriteLine("OnPrefabDestroyed:" + prefab);
+			Log("OnPrefabDestroyed:" + prefab);
 			var entry1 = prefabsByTechType.FirstOrDefault((x) => x.Value == prefab);
 			prefabsByTechType.Remove(entry1.Key);
 

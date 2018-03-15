@@ -9,7 +9,7 @@ using System.Reflection;
 using UnityEngine;
 using Oculus.Newtonsoft.Json;
 
-namespace CustomPings
+namespace CustomBeacons
 {
 	static class Mod
 	{
@@ -24,7 +24,7 @@ namespace CustomPings
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
 			LoadConfig();
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.CustomPings.mod");
+			HarmonyInstance harmony = HarmonyInstance.Create("com.CustomBeacons.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			CustomPings.AddPingColor(new Color32(112, 192, 65, 255));

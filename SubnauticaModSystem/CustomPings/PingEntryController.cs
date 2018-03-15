@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomPings
+namespace CustomBeacons
 {
 	class PingEntryController : MonoBehaviour
 	{
@@ -66,7 +66,7 @@ namespace CustomPings
 
 		private void OnEnable()
 		{
-			colorButton.Initialize(ping != null ? PingManager.colorOptions[ping.colorIndex] : Color.white);
+			colorButton.Initialize(ping != null ? CustomPings.GetColor(ping.colorIndex) : Color.white);
 			colorPicker.Initialize(ping);
 			iconButton.Initialize(Color.clear);
 			iconPicker.Initialize(ping);
@@ -82,7 +82,7 @@ namespace CustomPings
 		{
 			if (ping != null && colorButton != null)
 			{
-				colorButton.image.color = PingManager.colorOptions[ping.colorIndex];
+				colorButton.image.color = CustomPings.GetColor(ping.colorIndex);
 			}
 
 			label.gameObject.SetActive(!iconPicker.gameObject.activeSelf);
@@ -108,12 +108,14 @@ namespace CustomPings
 		private void OnColorButtonClick()
 		{
 			CloseAllOtherPickers();
+			iconPicker.Close();
 			colorPicker.Toggle();
 		}
 
 		private void OnIconButtonClick()
 		{
 			CloseAllOtherPickers();
+			colorPicker.Close();
 			iconPicker.Toggle();
 		}
 	}

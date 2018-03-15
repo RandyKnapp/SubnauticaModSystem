@@ -1,12 +1,12 @@
 {
-  "Id": "CustomPings",
-  "DisplayName": "CustomPings",
+  "Id": "CustomBeacons",
+  "DisplayName": "CustomBeacons",
   "Author": "RandyKnapp",
   "Version": "1.0.0",
   "Requires": [ "0Harmony.dll" ],
   "Enable": true,
-  "AssemblyName": "CustomPings.dll",
-  "EntryMethod": "CustomPings.QPatch.Patch",
+  "AssemblyName": "CustomBeacons.dll",
+  "EntryMethod": "CustomBeacons.QPatch.Patch",
   "Config": {
   }
 }

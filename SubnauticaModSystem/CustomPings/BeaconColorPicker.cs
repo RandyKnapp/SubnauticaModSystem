@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomPings
+namespace CustomBeacons
 {
 	class BeaconColorPicker : Picker
 	{
@@ -27,7 +27,7 @@ namespace CustomPings
 			for (int i = 0; i < buttons.Count; ++i)
 			{
 				var button = buttons[i];
-				button.Initialize(i, PingManager.colorOptions[i], i == target.colorIndex, sprite);
+				button.Initialize(i, CustomPings.GetColor(i), i == target.colorIndex, sprite);
 			}
 
 			onSelect = OnSelect;
@@ -35,7 +35,9 @@ namespace CustomPings
 
 		public void OnSelect(int index)
 		{
+			Logger.Log("OnSelect: " + index);
 			target.SetColor(index);
+			Logger.Log("    result=" + target.colorIndex);
 			Close();
 		}
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CustomPings
+namespace CustomBeacons
 {
 	[Serializable]
 	class Config

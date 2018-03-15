@@ -7,8 +7,8 @@
     <ProjectGuid>{667BF0BB-F5AB-446C-A6B3-3FAABB2F49D5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CustomPings</RootNamespace>
-    <AssemblyName>CustomPings</AssemblyName>
+    <RootNamespace>CustomBeacons</RootNamespace>
+    <AssemblyName>CustomBeacons</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
