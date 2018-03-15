@@ -1,0 +1,12 @@
+{
+  "Id": "BaseTeleporters",
+  "DisplayName": "BaseTeleporters",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "BaseTeleporters.dll",
+  "EntryMethod": "BaseTeleporters.QPatch.Patch",
+  "Config": {
+  }
+}
