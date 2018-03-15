@@ -11,11 +11,18 @@ using Oculus.Newtonsoft.Json;
 
 namespace CustomBeacons
 {
+	[Serializable]
+	public class ColorInfo
+	{
+		public List<SerializableColor> Colors = new List<SerializableColor>();
+	}
+
 	static class Mod
 	{
 		private const int StartingPingIndex = 100;
 
 		public static Config config;
+		public static ColorInfo colorInfo;
 
 		private static string modDirectory;
 
@@ -27,21 +34,10 @@ namespace CustomBeacons
 			HarmonyInstance harmony = HarmonyInstance.Create("com.CustomBeacons.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-			CustomPings.AddPingColor(new Color32(112, 192, 65, 255));
-			CustomPings.AddPingColor(new Color32(64, 192, 147, 255));
-			CustomPings.AddPingColor(new Color32(179, 106, 226, 255));
-			CustomPings.AddPingColor(new Color32(226, 105, 209, 255));
-			CustomPings.AddPingColor(Color.red);
-			CustomPings.AddPingColor(new Color32(255, 165, 0, 255));
-			CustomPings.AddPingColor(Color.yellow);
-			CustomPings.AddPingColor(Color.green);
-			CustomPings.AddPingColor(Color.cyan);
-			CustomPings.AddPingColor(Color.blue);
-			CustomPings.AddPingColor(new Color32(131, 0, 255, 255));
-			CustomPings.AddPingColor(Color.magenta);
-			CustomPings.AddPingColor(Color.white);
-			CustomPings.AddPingColor(Color.gray);
-			CustomPings.AddPingColor(new Color32(60, 60, 60, 255));
+			foreach (var color in colorInfo.Colors)
+			{
+				CustomPings.AddPingColor(color.ToColor());
+			}
 
 			AddCustomPings();
 
@@ -84,6 +80,30 @@ namespace CustomBeacons
 		{
 			config = ModUtils.LoadConfig<Config>(GetModInfoPath());
 			ValidateConfig();
+
+			LoadCustomColors();
+		}
+
+		private static void LoadCustomColors()
+		{
+			var colorInfoPath = GetAssetPath("colors.json");
+			if (File.Exists(colorInfoPath))
+			{
+				try
+				{
+					colorInfo = JsonConvert.DeserializeObject<ColorInfo>(File.ReadAllText(colorInfoPath));
+				}
+				catch (Exception)
+				{
+					colorInfo = new ColorInfo();
+					Logger.Error("Could not load colors.json! Check to make sure its JSON is valid.");
+				}
+			}
+			else
+			{
+				colorInfo = new ColorInfo();
+				File.WriteAllText(colorInfoPath, JsonConvert.SerializeObject(colorInfo, Formatting.Indented));
+			}
 		}
 
 		private static void ValidateConfig()
