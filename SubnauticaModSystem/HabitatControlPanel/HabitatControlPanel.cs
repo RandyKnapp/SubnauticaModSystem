@@ -328,6 +328,7 @@ namespace HabitatControlPanel
 			equipment.AddSlot(SlotName);
 
 			ping = gameObject.AddComponent<PingInstance>();
+			ping.enabled = false;
 			ping.SetLabel(InitialHabitatLabel);
 			ping.pingType = PingType.Beacon;
 			ping.origin = transform;
@@ -360,6 +361,7 @@ namespace HabitatControlPanel
 			else
 			{
 				ExteriorColor = Color.white;
+				InteriorColor = Color.white;
 			}
 			
 			habitatNameController.SetLabel(HabitatLabel);
@@ -372,6 +374,8 @@ namespace HabitatControlPanel
 			habitatExteriorColorSettings.onClick += OnExteriorColorButtonClick;
 			habitatInteriorColorSettings.SetInitialValue(InteriorColor);
 			habitatInteriorColorSettings.onClick += OnInteriorColorButtonClick;
+
+			ping.enabled = true;
 
 			PingManager.NotifyRename(ping);
 			PingManager.NotifyColor(ping);

@@ -87,6 +87,7 @@
     <Compile Include="BatteryIndicator.cs" />
     <Compile Include="BeaconIconSettings.cs" />
     <Compile Include="BeaconIconPicker.cs" />
+    <Compile Include="Patches\Ping_Patches.cs" />
     <Compile Include="PickerPageButton.cs" />
     <Compile Include="uGUI_ColoredIconButton.cs" />
     <Compile Include="Picker.cs" />
