@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using Oculus.Newtonsoft.Json;
 using System;
 using System.Reflection;
+using System.IO;
 
 #if USE_AUTOSORT
 using AutosortLockers;
@@ -15,7 +16,14 @@ using AutosortLockers;
 
 namespace DockedVehicleStorageAccess
 {
-	public class VehicleStorageAccess : MonoBehaviour
+	[Serializable]
+	public class VehicleStorageAccessSaveData
+	{
+		public bool Enabled = true;
+		public bool Autosort = true;
+	}
+
+	public class VehicleStorageAccess : MonoBehaviour, IProtoEventListener
 	{
 		private static readonly Color PrimaryColor = new Color32(66, 134, 244, 255);
 		private static readonly Color HiddenColor = new Color32(66, 134, 244, 20);
@@ -24,6 +32,7 @@ namespace DockedVehicleStorageAccess
 #endif
 
 		private bool initialized;
+		VehicleStorageAccessSaveData saveData;
 		private bool extractingItems;
 		private Constructable constructable;
 		private StorageContainer container;
@@ -52,6 +61,8 @@ namespace DockedVehicleStorageAccess
 		private Image exosuitIcon;
 		[SerializeField]
 		private Text exosuitCountText;
+		[SerializeField]
+		private CheckboxButton enableCheckbox;
 
 #if USE_AUTOSORT
 		[SerializeField]
@@ -67,9 +78,9 @@ namespace DockedVehicleStorageAccess
 
 		private IEnumerator Start()
 		{
-			while(true)
+			while (true)
 			{
-				if (initialized)
+				if (initialized && constructable.constructed && enableCheckbox.toggled)
 				{
 					GetDockingBays();
 					yield return TryExtractItems();
@@ -85,23 +96,39 @@ namespace DockedVehicleStorageAccess
 			}
 		}
 
+		private void OnDisable()
+		{
+			RemoveDockingBayListeners();
+			StopAllCoroutines();
+		}
+
 		private void GetDockingBays()
 		{
-			foreach (var dockingBay in dockingBays)
-			{
-				dockingBay.onDockedChanged -= OnDockedVehicleChanged;
-			}
+			RemoveDockingBayListeners();
 			dockingBays = subRoot.GetComponentsInChildren<VehicleDockingBay>().ToList();
-			foreach (var dockingBay in dockingBays)
-			{
-				dockingBay.onDockedChanged += OnDockedVehicleChanged;
-			}
+			AddDockingBayListeners();
 
 			UpdateDockedVehicles();
 
 #if USE_AUTOSORT
 			autosorters = subRoot.GetComponentsInChildren<AutosortLocker>().ToList();
 #endif
+		}
+
+		private void AddDockingBayListeners()
+		{
+			foreach (var dockingBay in dockingBays)
+			{
+				dockingBay.onDockedChanged += OnDockedVehicleChanged;
+			}
+		}
+
+		private void RemoveDockingBayListeners()
+		{
+			foreach (var dockingBay in dockingBays)
+			{
+				dockingBay.onDockedChanged -= OnDockedVehicleChanged;
+			}
 		}
 
 		private void UpdateDockedVehicles()
@@ -129,6 +156,10 @@ namespace DockedVehicleStorageAccess
 			{
 				yield break;
 			}
+			if (!enableCheckbox.toggled)
+			{
+				yield break;
+			}
 
 			bool extractedAnything = false;
 			Dictionary<string, int> extractionResults = new Dictionary<string, int>();
@@ -145,12 +176,16 @@ namespace DockedVehicleStorageAccess
 				{
 					foreach (var item in vehicleContainer.ToList())
 					{
+						if (!enableCheckbox.toggled)
+						{
+							break;
+						}
+
 						if (container.container.HasRoomFor(item.item))
 						{
 							var success = container.container.AddItem(item.item);
 							if (success != null)
 							{
-								//vehicleContainer.RemoveItem(item.item.GetTechType());
 								extractionResults[vehicleName]++;
 								if (extractingItems == false)
 								{
@@ -173,7 +208,7 @@ namespace DockedVehicleStorageAccess
 						}
 					}
 
-					if (couldNotAdd)
+					if (couldNotAdd || !enableCheckbox.toggled)
 					{
 						break;
 					}
@@ -203,7 +238,7 @@ namespace DockedVehicleStorageAccess
 						}
 
 						var container = module.item.GetComponent<SeamothStorageContainer>();
-						if (container != null)
+						if (container != null && !container.gameObject.name.Contains("Torpedo"))
 						{
 							results.Add(container.container);
 						}
@@ -233,7 +268,7 @@ namespace DockedVehicleStorageAccess
 			{
 				yield break;
 			}
-			if (!autosortCheckbox.toggled)
+			if (!autosortCheckbox.toggled || !enableCheckbox.toggled)
 			{
 				yield break;
 			}
@@ -249,6 +284,11 @@ namespace DockedVehicleStorageAccess
 			{
 				foreach (var autosorter in autosorters)
 				{
+					if (!enableCheckbox.toggled || !autosortCheckbox.toggled)
+					{
+						break;
+					}
+
 					var aContainer = GetAutosorterContainer(autosorter);
 					if (aContainer.container.HasRoomFor(item.item))
 					{
@@ -276,7 +316,7 @@ namespace DockedVehicleStorageAccess
 					yield return new WaitForSeconds(Mod.config.AutosortTransferInterval);
 				}
 
-				if (couldNotAdd)
+				if (couldNotAdd || !enableCheckbox.toggled || !autosortCheckbox.toggled)
 				{
 					break;
 				}
@@ -321,16 +361,24 @@ namespace DockedVehicleStorageAccess
 			seamothIcon.color = seamothCount > 0 ? PrimaryColor : HiddenColor;
 			exosuitIcon.color = exosuitCount > 0 ? PrimaryColor : HiddenColor;
 
-			if (extractingItems)
+			if (!enableCheckbox.toggled)
 			{
-				text.text += "\n\n<EXTRACTING...>";
+				text.text += "\n\n<color=red>DISABLED</color>";
+			}
+			else if (extractingItems)
+			{
+				text.text += "\n\n<color=lime>EXTRACTING...</color>";
 			}
 #if USE_AUTOSORT
 			else if (autosorters.Count == 0 && transferringToAutosorter)
 			{
-				text.text += "\n\n<TRANSFERRING...>";
+				text.text += "\n\n<color=lime>TRANSFERRING...</color>";
 			}
 #endif
+			else
+			{
+				text.text += "\n\n<color=lime>READY</color>";
+			}
 		}
 
 #if USE_AUTOSORT
@@ -354,20 +402,15 @@ namespace DockedVehicleStorageAccess
 
 			container.enabled = ShouldEnableContainer();
 
-			if (SaveLoadManager.main != null && SaveLoadManager.main.isSaving && !Mod.IsSaving())
-			{
-				Mod.Save();
-			}
-
 			UpdateText();
 		}
 
 		private bool ShouldEnableContainer()
 		{
 #if USE_AUTOSORT
-			return !autosortCheckbox.pointerOver;
+			return !enableCheckbox.pointerOver && !autosortCheckbox.pointerOver;
 #else
-			return true;
+			return !enableCheckbox.pointerOver;
 #endif
 		}
 
@@ -376,15 +419,18 @@ namespace DockedVehicleStorageAccess
 			background.gameObject.SetActive(true);
 			icon.gameObject.SetActive(true);
 			text.gameObject.SetActive(true);
+			text.supportRichText = true;
 
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("LockerScreen.png"));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
 			seamothIcon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Seamoth.png"));
 			exosuitIcon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Exosuit.png"));
 
+			enableCheckbox.toggled = saveData != null ? saveData.Enabled : true;
+			enableCheckbox.Initialize();
 
 #if USE_AUTOSORT
-			autosortCheckbox.toggled = true;
+			autosortCheckbox.toggled = saveData != null ? saveData.Autosort : true;
 			autosortCheckbox.Initialize();
 #endif
 
@@ -394,6 +440,61 @@ namespace DockedVehicleStorageAccess
 			UpdateText();
 
 			initialized = true;
+		}
+
+		public void OnProtoSerialize(ProtobufSerializer serializer)
+		{
+			var saveDataFile = GetSaveDataPath();
+			saveData = CreateSaveData();
+			if (!Directory.Exists(GetSaveDataDir()))
+			{
+				Directory.CreateDirectory(GetSaveDataDir());
+			}
+			string fileContents = JsonConvert.SerializeObject(saveData, Formatting.Indented);
+			File.WriteAllText(saveDataFile, fileContents);
+		}
+
+		private VehicleStorageAccessSaveData CreateSaveData()
+		{
+			VehicleStorageAccessSaveData saveData = new VehicleStorageAccessSaveData();
+
+			saveData.Enabled = enableCheckbox.toggled;
+
+#if USE_AUTOSORT
+			saveData.Autosort = autosortCheckbox.toggled;
+#else
+			saveData.Autosort = true;
+#endif
+
+			return saveData;
+		}
+
+		public void OnProtoDeserialize(ProtobufSerializer serializer)
+		{
+			var saveDataFile = GetSaveDataPath();
+			if (File.Exists(saveDataFile))
+			{
+				string fileContents = File.ReadAllText(saveDataFile);
+				saveData = JsonConvert.DeserializeObject<VehicleStorageAccessSaveData>(fileContents);
+			}
+			else
+			{
+				saveData = new VehicleStorageAccessSaveData();
+			}
+		}
+
+		private string GetSaveDataDir()
+		{
+			return Path.Combine(ModUtils.GetSaveDataDirectory(), "DockedVehicleStorageAccess");
+		}
+
+		public string GetSaveDataPath()
+		{
+			var prefabIdentifier = GetComponent<PrefabIdentifier>();
+			var id = prefabIdentifier.Id;
+
+			var saveFile = Path.Combine(GetSaveDataDir(), id + ".json");
+			return saveFile;
 		}
 
 
@@ -464,44 +565,16 @@ namespace DockedVehicleStorageAccess
 			storageAccess.exosuitCountText.rectTransform.anchoredPosition += new Vector2(23, 0);
 
 #if USE_AUTOSORT
-			storageAccess.autosortCheckbox = CreateAutosortCheckbox(storageAccess.background.transform, PrimaryColor, storageAccess.textPrefab, storageAccess);
+			storageAccess.autosortCheckbox = CheckboxButton.CreateCheckbox(storageAccess.background.transform, PrimaryColor, storageAccess.textPrefab, "Autosort");
+			storageAccess.autosortCheckbox.transform.localPosition = new Vector3(0, -104 + 19);
 #endif
+
+			storageAccess.enableCheckbox = CheckboxButton.CreateCheckbox(storageAccess.background.transform, PrimaryColor, storageAccess.textPrefab, "Enabled");
+			storageAccess.enableCheckbox.transform.localPosition = new Vector3(0, -104);
 
 			storageAccess.background.gameObject.SetActive(false);
 
 			return prefab;
 		}
-
-#if USE_AUTOSORT
-		private static CheckboxButton CreateAutosortCheckbox(Transform parent, Color color, Text textPrefab, VehicleStorageAccess target)
-		{
-			var w = 100;
-			var checkboxButton = new GameObject("AutosortCheckbox", typeof(RectTransform));
-			var rt = checkboxButton.transform as RectTransform;
-			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			RectTransformExtensions.SetSize(rt, w, 20);
-			rt.anchoredPosition = new Vector2(0, -104);
-
-			var iconWidth = 20;
-			var checkbox = LockerPrefabShared.CreateIcon(rt, color, 0);
-			RectTransformExtensions.SetSize(checkbox.rectTransform, iconWidth, iconWidth);
-			checkbox.rectTransform.anchoredPosition = new Vector2(-w / 2 + iconWidth / 2, 0);
-
-			var spacing = 5;
-			var text = LockerPrefabShared.CreateText(rt, textPrefab, color, 0, 10, "Autosort");
-			RectTransformExtensions.SetSize(text.rectTransform, w - iconWidth - spacing, iconWidth);
-			text.rectTransform.anchoredPosition = new Vector2(iconWidth / 2 + spacing, 0);
-			text.alignment = TextAnchor.MiddleLeft;
-
-			checkboxButton.AddComponent<BoxCollider2D>();
-
-			var button = checkboxButton.AddComponent<CheckboxButton>();
-			button.target = target;
-			button.image = checkbox;
-			button.text = text;
-
-			return button;
-		}
-#endif
 	}
 }

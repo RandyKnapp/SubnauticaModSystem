@@ -39,6 +39,8 @@ namespace DockedVehicleStorageAccess.Patches
 			console.transform.localPosition = new Vector3(4.96f, 1.4f, 3.23f);
 			console.transform.localEulerAngles = new Vector3(0, 42.5f, 0);
 
+			console.AddComponent<MoonpoolTerminalController>();
+
 			var terminalManager = console.GetComponent<CyclopsVehicleStorageTerminalManager>();
 			terminalManager.dockingBay = __instance;
 
