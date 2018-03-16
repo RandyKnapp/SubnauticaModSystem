@@ -11,46 +11,6 @@ using UnityEngine;
 
 namespace CustomBeacons.Patches
 {
-	[HarmonyPatch(typeof(uGUI_Pings))]
-	[HarmonyPatch("OnAdd")]
-	class uGUI_Pings_OnAdd_Patch
-	{
-		private static bool Prefix()
-		{
-			CustomPings.Initialize();
-			return true;
-		}
-	}
-
-	[HarmonyPatch(typeof(PingInstance))]
-	[HarmonyPatch("OnEnable")]
-	class PingInstance_OnEnable_Patch
-	{
-		private static bool Prefix(PingInstance __instance)
-		{
-			var saver = __instance.GetComponent<PingInstanceSaver>();
-			if (saver == null)
-			{
-				__instance.gameObject.AddComponent<PingInstanceSaver>();
-			}
-			PingManager.NotifyColor(__instance);
-			return true;
-		}
-	}
-
-	[HarmonyPatch(typeof(PingInstance))]
-	[HarmonyPatch("SetColor")]
-	class PingInstance_SetColor_Patch
-	{
-		private static bool Prefix(PingInstance __instance, int index)
-		{
-			CustomPings.Initialize();
-			__instance.colorIndex = index;
-			PingManager.NotifyColor(__instance);
-			return false;
-		}
-	}
-
 	[HarmonyPatch(typeof(SpriteManager))]
 	[HarmonyPatch("Get")]
 	[HarmonyPatch(new Type[] { typeof(SpriteManager.Group), typeof(string) })]
@@ -144,24 +104,6 @@ namespace CustomBeacons.Patches
 	}
 
 	[HarmonyPatch(typeof(uGUI_Pings))]
-	[HarmonyPatch("OnVisible")]
-	class uGUI_Pings_OnVisible_Patch
-	{
-		private static readonly FieldInfo uGUI_Pings_pings = typeof(uGUI_Pings).GetField("pings", BindingFlags.NonPublic | BindingFlags.Instance);
-
-		private static void Postfix(uGUI_Pings __instance, int id, bool visible)
-		{
-			var pings = (Dictionary<int, uGUI_Ping>)uGUI_Pings_pings.GetValue(__instance);
-			if (pings.TryGetValue(id, out uGUI_Ping guiPing))
-			{
-				var ping = PingManager.Get(id);
-				var sprite = SpriteManager.Get(SpriteManager.Group.Pings, Enum.GetName(typeof(PingType), ping.pingType));
-				guiPing.SetIcon(sprite);
-			}
-		}
-	}
-
-	[HarmonyPatch(typeof(uGUI_Pings))]
 	[HarmonyPatch("OnWillRenderCanvases")]
 	class uGUI_Pings_OnWillRenderCanvases_Patch
 	{
@@ -184,6 +126,9 @@ namespace CustomBeacons.Patches
 				var guiPing = entry.Value;
 
 				guiPing.SetColor(CustomPings.GetColor(ping.colorIndex));
+
+				var sprite = SpriteManager.Get(SpriteManager.Group.Pings, Enum.GetName(typeof(PingType), ping.pingType));
+				guiPing.SetIcon(sprite);
 			}
 		}
 	}

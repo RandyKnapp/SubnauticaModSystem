@@ -65,6 +65,13 @@ namespace CustomBeacons
 
 		public override void Open()
 		{
+			var color = CustomPings.GetColor(target.colorIndex);
+			for (int i = 0; i < buttons.Count; ++i)
+			{
+				var button = buttons[i];
+				button.image.color = color;
+			}
+
 			base.Open();
 			int initialPage = GetPageForType(target.pingType);
 			ShowPage(initialPage);
