@@ -103,6 +103,20 @@ namespace CustomBeacons.Patches
 		}
 	}
 
+	[HarmonyPatch(typeof(PingInstance))]
+	[HarmonyPatch("OnEnable")]
+	class PingInstance_OnEnable_Patch
+	{
+		private static void Postfix(PingInstance __instance)
+		{
+			var saver = __instance.gameObject.GetComponent<PingInstanceSaver>();
+			if (saver == null)
+			{
+				saver = __instance.gameObject.AddComponent<PingInstanceSaver>();
+			}
+		}
+	}
+
 	[HarmonyPatch(typeof(uGUI_Pings))]
 	[HarmonyPatch("OnWillRenderCanvases")]
 	class uGUI_Pings_OnWillRenderCanvases_Patch
