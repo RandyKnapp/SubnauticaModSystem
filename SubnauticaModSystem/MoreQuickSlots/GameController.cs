@@ -79,16 +79,16 @@ namespace MoreQuickSlots
 				tryAddLabels = true;
 				return;
 			}
-			
-			Text textPrefab = GetTextPrefab();
-			if (textPrefab == null)
+
+			uGUI_ItemIcon[] icons = (uGUI_ItemIcon[])uGUI_QuickSlots_icons.GetValue(instance);
+			if (icons == null || icons.Length == 0)
 			{
 				tryAddLabels = true;
 				return;
 			}
 
-			uGUI_ItemIcon[] icons = (uGUI_ItemIcon[])uGUI_QuickSlots_icons.GetValue(instance);
-			if (icons == null || icons.Length == 0)
+			Text textPrefab = GetTextPrefab();
+			if (textPrefab == null)
 			{
 				tryAddLabels = true;
 				return;
