@@ -308,6 +308,7 @@ namespace AutosortLockers
 		private void CreatePicker()
 		{
 			SetPicker(AutosortTypePicker.Create(transform, textPrefab));
+			picker.transform.localPosition = background.canvas.transform.localPosition + new Vector3(0, 0, 0.04f);
 			picker.Initialize(this);
 			picker.gameObject.SetActive(false);
 		}
@@ -347,7 +348,7 @@ namespace AutosortLockers
 		public static void AddBuildable()
 		{
 			BuilderUtils.AddBuildable(new CustomTechInfo() {
-				getPrefab = AutosortTarget.GetPrefab,
+				getPrefab = AutosortTarget.GetSmallPrefab,
 				techType = Mod.GetTechType(CustomTechType.AutosortTarget),
 				techGroup = TechGroup.InteriorModules,
 				techCategory = TechCategory.InteriorModule,
@@ -376,14 +377,66 @@ namespace AutosortLockers
 					}
 				}
 			});
+
+			BuilderUtils.AddBuildable(new CustomTechInfo() {
+				getPrefab = AutosortTarget.GetStandingPrefab,
+				techType = Mod.GetTechType(CustomTechType.AutosortTargetStanding),
+				techGroup = TechGroup.InteriorModules,
+				techCategory = TechCategory.InteriorModule,
+				knownAtStart = true,
+				assetPath = "Submarine/Build/AutosortTargetStanding",
+				displayString = "Standing Autosort Receptacle",
+				tooltip = "Large locker linked to an Autosorter that receives sorted items.",
+				techTypeKey = CustomTechType.AutosortTargetStanding.ToString(),
+				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(Mod.GetAssetPath("AutosortTargetStanding.png"))),
+				recipe = Mod.config.EasyBuild
+				? new List<CustomIngredient> {
+					new CustomIngredient() {
+						techType = TechType.Titanium,
+						amount = 2
+					},
+					new CustomIngredient() {
+						techType = TechType.Quartz,
+						amount = 1
+					}
+				}
+				: new List<CustomIngredient>
+				{
+					new CustomIngredient() {
+						techType = TechType.Titanium,
+						amount = 2
+					},
+					new CustomIngredient() {
+						techType = TechType.Magnetite,
+						amount = 1
+					}
+				}
+			});
 		}
 
-		public static GameObject GetPrefab()
+		public static GameObject GetStandingPrefab()
 		{
-			GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+			var prefab = GetPrefab("StandingAutosortReceptacle", "Submarine/Build/Locker");
+			var autosortTarget = prefab.GetComponent<AutosortTarget>();
+
+			var canvas = prefab.GetComponentInChildren<Canvas>();
+			var t = canvas.transform;
+			t.localPosition = new Vector3(0, 1.1f, 0.25f);
+
+			return prefab;
+		}
+
+		public static GameObject GetSmallPrefab()
+		{
+			return GetPrefab("AutosortReceptacle", "Submarine/Build/SmallLocker");
+		}
+
+		public static GameObject GetPrefab(string name, string basePrefab)
+		{
+			GameObject originalPrefab = Resources.Load<GameObject>(basePrefab);
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
-			prefab.name = "AutosortReceptacle";
+			prefab.name = name;
 
 			var container = prefab.GetComponent<StorageContainer>();
 			container.width = Mod.config.ReceptacleWidth;
@@ -398,7 +451,8 @@ namespace AutosortLockers
 
 			var autosortTarget = prefab.AddComponent<AutosortTarget>();
 
-			autosortTarget.textPrefab = GameObject.Instantiate(prefab.GetComponentInChildren<Text>());
+			var smallLockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+			autosortTarget.textPrefab = GameObject.Instantiate(smallLockerPrefab.GetComponentInChildren<Text>());
 			var label = prefab.FindChild("Label");
 			DestroyImmediate(label);
 

@@ -14,7 +14,8 @@ namespace AutosortLockers
 	public enum CustomTechType
 	{
 		AutosortLocker = 11110,
-		AutosortTarget
+		AutosortTarget,
+		AutosortTargetStanding
 	}
 
 	static class Mod
