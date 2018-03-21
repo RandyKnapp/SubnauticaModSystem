@@ -566,12 +566,24 @@ namespace AutosortLockers
 			var t = canvas.transform;
 			t.localPosition = new Vector3(0, 1.1f, 0.25f);
 
+			var container = prefab.GetComponent<StorageContainer>();
+			container.width = Mod.config.StandingReceptacleWidth;
+			container.height = Mod.config.StandingReceptacleHeight;
+			container.container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
+
 			return prefab;
 		}
 
 		public static GameObject GetSmallPrefab()
 		{
-			return GetPrefab("AutosortReceptacle", "Submarine/Build/SmallLocker");
+			var prefab = GetPrefab("AutosortReceptacle", "Submarine/Build/SmallLocker");
+
+			var container = prefab.GetComponent<StorageContainer>();
+			container.width = Mod.config.ReceptacleWidth;
+			container.height = Mod.config.ReceptacleHeight;
+			container.container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
+
+			return prefab;
 		}
 
 		public static GameObject GetPrefab(string name, string basePrefab)
@@ -580,11 +592,6 @@ namespace AutosortLockers
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
 			prefab.name = name;
-
-			var container = prefab.GetComponent<StorageContainer>();
-			container.width = Mod.config.ReceptacleWidth;
-			container.height = Mod.config.ReceptacleHeight;
-			container.container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
 
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
 			foreach (var meshRenderer in meshRenderers)

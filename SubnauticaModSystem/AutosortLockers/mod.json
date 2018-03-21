@@ -14,6 +14,8 @@
     "AutosorterWidth": 5,
     "AutosorterHeight": 6,
     "ReceptacleWidth": 6,
-    "ReceptacleHeight": 8
+    "ReceptacleHeight": 8,
+    "StandingReceptacleWidth": 6,
+    "StandingReceptacleHeight": 8
   }
 }

@@ -12,5 +12,7 @@ namespace AutosortLockers
 		public int AutosorterHeight = 6;
 		public int ReceptacleWidth = 6;
 		public int ReceptacleHeight = 8;
+		public int StandingReceptacleWidth = 6;
+		public int StandingReceptacleHeight = 8;
 	}
 }

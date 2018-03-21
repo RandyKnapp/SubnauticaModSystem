@@ -532,10 +532,31 @@ namespace AutosortLockers
 			}
 		}
 
+		[Serializable]
+		private class TypeReference
+		{
+			public string Name = "";
+			public TechType Value = TechType.None;
+		}
+
 		private static void InitializeFilters()
 		{
 			var path = Mod.GetAssetPath("filters.json");
 			Filters = JsonConvert.DeserializeObject<List<AutosorterFilter>>(File.ReadAllText(path));
+
+			if (Mod.config.ShowAllItems)
+			{
+				Filters = Filters.Where((f) => f.IsCategory()).ToList();
+
+				var typeRefPath = Mod.GetAssetPath("type_reference.json");
+				List<TypeReference> typeReferences = JsonConvert.DeserializeObject<List<TypeReference>>(File.ReadAllText(typeRefPath));
+				typeReferences.Sort((TypeReference a, TypeReference b) => a.Name.ToLowerInvariant().CompareTo(b.Name.ToLowerInvariant()));
+				
+				foreach (var typeRef in typeReferences)
+				{
+					Filters.Add(new AutosorterFilter() { Category = "", Types = new List<TechType> { typeRef.Value } });
+				}
+			}
 		}
 
 		private static void AddEntry(string category, List<TechType> types)
