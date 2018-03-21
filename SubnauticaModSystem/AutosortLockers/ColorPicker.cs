@@ -27,12 +27,29 @@ namespace AutosortLockers
 
 		public void OnSelect(int index)
 		{
+			foreach (var button in buttons)
+			{
+				button.toggled = false;
+			}
 			Close();
 		}
 
 		public override void Open()
 		{
 			base.Open();
+
+			var index = 0;
+			for (int i = 0; i < buttons.Count; ++i)
+			{
+				if (buttons[i].toggled)
+				{
+					index = i;
+					break;
+				}
+			}
+
+			int buttonPage = index / ButtonsPerPage;
+			ShowPage(buttonPage);
 		}
 
 

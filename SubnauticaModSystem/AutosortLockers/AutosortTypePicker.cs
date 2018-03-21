@@ -73,11 +73,11 @@ namespace AutosortLockers
 		{
 			if (currentMode == Mode.Categories)
 			{
-				return AutosorterList.GetEntries().Where((e) => e.IsCategory()).ToList();
+				return AutosorterList.GetFilters().Where((e) => e.IsCategory()).ToList();
 			}
 			else
 			{
-				return AutosorterList.GetEntries().Where((e) => !e.IsCategory()).ToList();
+				return AutosorterList.GetFilters().Where((e) => !e.IsCategory()).ToList();
 			}
 		}
 

@@ -118,7 +118,7 @@ namespace AutosortLockers
 					return entry;
 				}
 			}
-			return new SaveDataEntry();
+			return new SaveDataEntry() { Id = id };
 		}
 
 		public static void Save()

@@ -158,7 +158,7 @@ namespace AutosortLockers
 		
 		private void OnLockerColorSettingClicked()
 		{
-			colorPicker.Initialize(target.ButtonsColor.ToColor());
+			colorPicker.Initialize(target.LockerColor.ToColor());
 			colorPicker.Open();
 			colorPicker.onSelect += OnLockerColorPicked;
 		}
@@ -207,10 +207,10 @@ namespace AutosortLockers
 			screen.iconColorSetting = ColorSetting.Create(screen.background.transform, "Icon Color");
 			screen.iconColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - 19);
 
-			screen.textColorSetting = ColorSetting.Create(screen.background.transform, "Text Color");
+			screen.textColorSetting = ColorSetting.Create(screen.background.transform, "Filters Color");
 			screen.textColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 2));
 
-			screen.buttonsColorSetting = ColorSetting.Create(screen.background.transform, "Buttons Color");
+			screen.buttonsColorSetting = ColorSetting.Create(screen.background.transform, "Misc Color");
 			screen.buttonsColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 3));
 
 			screen.lockerColorSetting = ColorSetting.Create(screen.background.transform, "Locker Color");

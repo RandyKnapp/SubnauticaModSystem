@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Oculus.Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -442,19 +444,19 @@ namespace AutosortLockers
 	[Serializable]
 	public class AutosorterFilter
 	{
-		public AutoSorterCategory Category;
+		public string Category;
 		public List<TechType> Types = new List<TechType>();
 
 		public bool IsCategory()
 		{
-			return Category != AutoSorterCategory.None;
+			return Category != null && Category.Length > 0;
 		}
 
 		public string GetString()
 		{
 			if (IsCategory())
 			{
-				return System.Text.RegularExpressions.Regex.Replace(Category.ToString(), "[A-Z]", " $0").Trim();
+				return Category;
 			}
 			else
 			{
@@ -474,21 +476,33 @@ namespace AutosortLockers
 		}
 	}
 
+	[Serializable]
 	public static class AutosorterList
 	{
-		private static List<AutosorterFilter> entries;
+		public static List<AutosorterFilter> Filters;
 
-		public static List<AutosorterFilter> GetEntries()
+		public static List<AutosorterFilter> GetFilters()
 		{
-			if (entries == null)
+			if (Filters == null)
 			{
-				InitializeEntries();
+				InitializeFilters();
 			}
-			return entries;
+			return Filters;
 		}
 
-		private static List<TechType> GetListForCategory(AutoSorterCategory category)
+		public static List<TechType> GetOldFilter(string oldCategory, out bool success, out string newCategory)
 		{
+			var category = AutoSorterCategory.None;
+			if (!Int32.TryParse(oldCategory, out int oldCategoryInt))
+			{
+				newCategory = "";
+				success = false;
+				return new List<TechType>();
+			}
+			category = (AutoSorterCategory)oldCategoryInt;
+			newCategory = category.ToString();
+
+			success = true;
 			switch (category)
 			{
 				default:
@@ -518,61 +532,24 @@ namespace AutosortLockers
 			}
 		}
 
-		private static void InitializeEntries()
+		private static void InitializeFilters()
 		{
-			entries = new List<AutosorterFilter>();
-			var distinctEntires = new HashSet<TechType>();
-
-			foreach (AutoSorterCategory value in Enum.GetValues(typeof(AutoSorterCategory)))
-			{
-				if (value == AutoSorterCategory.None)
-				{
-					foreach (TechType type in AutosorterCategoryData.IndividualItems)
-					{
-						distinctEntires.Add(type);
-						AddEntry(AutoSorterCategory.None, type);
-					}
-				}
-				else
-				{
-					var items = GetListForCategory(value);
-					AddEntry(value, items);
-
-					if (Mod.config.ShowAllItems)
-					{
-						foreach (TechType type in items)
-						{
-							if (!distinctEntires.Contains(type))
-							{
-								distinctEntires.Add(type);
-								AddEntry(AutoSorterCategory.None, type);
-							}
-						}
-					}
-				}
-			}
-
-			entries.Sort((AutosorterFilter a, AutosorterFilter b) => {
-				if (a.Category == b.Category)
-				{
-					return string.Compare(a.GetString(), b.GetString());
-				}
-				return a.Category.CompareTo(b.Category);
-			});
+			var path = Mod.GetAssetPath("filters.json");
+			Filters = JsonConvert.DeserializeObject<List<AutosorterFilter>>(File.ReadAllText(path));
 		}
 
-		private static void AddEntry(AutoSorterCategory category, List<TechType> types)
+		private static void AddEntry(string category, List<TechType> types)
 		{
-			entries.Add(new AutosorterFilter {
+			Filters.Add(new AutosorterFilter {
 				Category = category,
 				Types = types
 			});
 		}
 
-		private static void AddEntry(AutoSorterCategory category, TechType type)
+		private static void AddEntry(TechType type)
 		{
-			entries.Add(new AutosorterFilter {
-				Category = category,
+			Filters.Add(new AutosorterFilter {
+				Category = "",
 				Types = new List<TechType> { type }
 			});
 		}

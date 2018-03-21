@@ -348,7 +348,7 @@ namespace AutosortLockers
 			configureButtonImage.color = saveData.ButtonsColor.ToColor();
 			customizeButtonImage.color = saveData.ButtonsColor.ToColor();
 			text.color = saveData.OtherTextColor.ToColor();
-			quantityText.color = saveData.OtherTextColor.ToColor();
+			quantityText.color = saveData.ButtonsColor.ToColor();
 			SetLockerColor(saveData.LockerColor.ToColor());
 		}
 
@@ -377,7 +377,52 @@ namespace AutosortLockers
 				return;
 			}
 
-			currentFilters = saveData.FilterData.ShallowCopy();
+			currentFilters = GetNewVersion(saveData.FilterData);
+		}
+
+		private List<AutosorterFilter> GetNewVersion(List<AutosorterFilter> filterData)
+		{
+			Dictionary<TechType, AutosorterFilter> validItems = new Dictionary<TechType, AutosorterFilter>();
+			Dictionary<string, AutosorterFilter> validCategories = new Dictionary<string, AutosorterFilter>();
+			var filterList = AutosorterList.GetFilters();
+			foreach (var filter in filterList)
+			{
+				if (filter.IsCategory())
+				{
+					validCategories[filter.Category] = filter;
+				}
+				else
+				{
+					validItems[filter.Types[0]] = filter;
+				}
+			}
+
+			var newData = new List<AutosorterFilter>();
+			foreach (var filter in filterData)
+			{
+				if (validCategories.ContainsKey(filter.Category) || filter.Category == "")
+				{
+					newData.Add(filter);
+					continue;
+				}
+
+				if (filter.Category == "0")
+				{
+					filter.Category = "";
+					newData.Add(filter);
+					continue;
+				}
+
+				var newTypes = AutosorterList.GetOldFilter(filter.Category, out bool success, out string newCategory);
+				if (success)
+				{
+					newData.Add(new AutosorterFilter() { Category = newCategory, Types = newTypes });
+					continue;
+				}
+
+				newData.Add(filter);
+			}
+			return newData;
 		}
 
 		private void CreatePicker()
@@ -403,9 +448,11 @@ namespace AutosortLockers
 
 			if (saveData == null)
 			{
-				saveData = new SaveDataEntry() { Id = id, FilterData = currentFilters };
+				saveData = new SaveDataEntry() { Id = id };
 			}
 
+			saveData.Id = id;
+			saveData.FilterData = currentFilters;
 			saveData.Label = label.text;
 			saveData.LabelColor = label.color;
 			saveData.IconColor = icon.color;
