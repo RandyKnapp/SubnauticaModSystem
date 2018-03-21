@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Mod;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,14 +11,20 @@ namespace AutosortLockers
 	public class ConfigureButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 	{
 		public bool pointerOver;
-		public AutosortTarget target;
+		public RectTransform rectTransform;
+		public Action onClick = delegate { };
 		
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			if (target != null && enabled)
+			if (enabled)
 			{
-				target.ShowConfigureMenu();
+				onClick();
 			}
+		}
+
+		private void Awake()
+		{
+			rectTransform = transform as RectTransform;
 		}
 
 		public void Update()
@@ -34,6 +41,19 @@ namespace AutosortLockers
 		public void OnPointerExit(PointerEventData eventData)
 		{
 			pointerOver = false;
+		}
+
+
+		public static ConfigureButton Create(Transform parent, Color color, float x)
+		{
+			var config = LockerPrefabShared.CreateIcon(parent, color, 0);
+			RectTransformExtensions.SetSize(config.rectTransform, 20, 20);
+			config.rectTransform.anchoredPosition = new Vector2(x, -104);
+
+			config.gameObject.AddComponent<BoxCollider2D>();
+			var button = config.gameObject.AddComponent<ConfigureButton>();
+
+			return button;
 		}
 	}
 }

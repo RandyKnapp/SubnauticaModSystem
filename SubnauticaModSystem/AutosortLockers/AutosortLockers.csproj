@@ -88,9 +88,17 @@
     <Compile Include="AutosortTarget.cs" />
     <Compile Include="AutosortLocker.cs" />
     <Compile Include="AutosortTypePicker.cs" />
+    <Compile Include="ColorPicker.cs" />
+    <Compile Include="ColorPickerButton.cs" />
+    <Compile Include="ColorPickerPageButton.cs" />
+    <Compile Include="ColorSetting.cs" />
+    <Compile Include="ColoredIconButton.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="CustomizeScreen.cs" />
+    <Compile Include="LabelController.cs" />
     <Compile Include="ModSaver.cs" />
     <Compile Include="Patches\BuilderUtils_Patches.cs" />
+    <Compile Include="Picker.cs" />
     <Compile Include="PickerPageButton.cs" />
     <Compile Include="PickerCloseButton.cs" />
     <Compile Include="ConfigureButton.cs" />

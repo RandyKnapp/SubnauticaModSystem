@@ -19,7 +19,9 @@ namespace AutosortLockers
 		private Constructable constructable;
 		private StorageContainer container;
 		private AutosortTypePicker picker;
+		private CustomizeScreen customizeScreen;
 		private Coroutine plusCoroutine;
+		private SaveDataEntry saveData;
 
 		[SerializeField]
 		private Text textPrefab;
@@ -32,7 +34,13 @@ namespace AutosortLockers
 		[SerializeField]
 		private Image configureButtonImage;
 		[SerializeField]
+		private ConfigureButton customizeButton;
+		[SerializeField]
+		private Image customizeButtonImage;
+		[SerializeField]
 		private Text text;
+		[SerializeField]
+		private Text label;
 		[SerializeField]
 		private Text plus;
 		[SerializeField]
@@ -232,10 +240,15 @@ namespace AutosortLockers
 				float distSq = (Player.main.transform.position - transform.position).sqrMagnitude;
 				bool playerInRange = distSq <= (MaxDistance * MaxDistance);
 				configureButton.enabled = playerInRange;
+				customizeButton.enabled = playerInRange;
 
 				if (picker != null && picker.isActiveAndEnabled && !playerInRange)
 				{
 					picker.gameObject.SetActive(false);
+				}
+				if (customizeScreen != null && customizeScreen.isActiveAndEnabled && !playerInRange)
+				{
+					customizeScreen.gameObject.SetActive(false);
 				}
 			}
 
@@ -251,21 +264,53 @@ namespace AutosortLockers
 
 		private bool ShouldEnableContainer()
 		{
-			return (picker == null || !picker.isActiveAndEnabled) && (!configureButton.pointerOver || !configureButton.enabled);
+			return (picker == null || !picker.isActiveAndEnabled)
+				&& (customizeScreen == null || !customizeScreen.isActiveAndEnabled)
+				&& (!configureButton.pointerOver || !configureButton.enabled)
+				&& (!customizeButton.pointerOver || !customizeButton.enabled);
 		}
 
 		internal void ShowConfigureMenu()
 		{
-			foreach (var otherPicker in GameObject.FindObjectsOfType<AutosortTypePicker>())
+			foreach (var otherPicker in GameObject.FindObjectsOfType<AutosortTarget>())
 			{
-				otherPicker.gameObject.SetActive(false);
+				otherPicker.HideAllMenus();
 			}
 			picker.gameObject.SetActive(true);
 		}
 
+		internal void ShowCustomizeMenu()
+		{
+			foreach (var otherPicker in GameObject.FindObjectsOfType<AutosortTarget>())
+			{
+				otherPicker.HideAllMenus();
+			}
+			customizeScreen.gameObject.SetActive(true);
+		}
+
 		internal void HideConfigureMenu()
 		{
-			picker.gameObject.SetActive(false);
+			if (picker != null)
+			{
+				picker.gameObject.SetActive(false);
+			}
+		}
+
+		internal void HideCustomizeMenu()
+		{
+			if (customizeScreen != null)
+			{
+				customizeScreen.gameObject.SetActive(false);
+			}
+		}
+
+		internal void HideAllMenus()
+		{
+			if (initialized)
+			{
+				HideConfigureMenu();
+				HideCustomizeMenu();
+			}
 		}
 
 		private void Initialize()
@@ -277,32 +322,62 @@ namespace AutosortLockers
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("LockerScreen.png"));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
 			configureButtonImage.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Configure.png"));
+			customizeButtonImage.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Edit.png"));
+
+			configureButton.onClick = ShowConfigureMenu;
+			customizeButton.onClick = ShowCustomizeMenu;
+
+			saveData = GetSaveData();
+			InitializeFromSaveData();
 
 			InitializeFilters();
 
 			UpdateText();
 
 			CreatePicker();
+			CreateCustomizeScreen();
 
 			initialized = true;
 		}
 
-		private void InitializeFilters()
+		private void InitializeFromSaveData()
+		{
+			label.text = saveData.Label;
+			label.color = saveData.LabelColor.ToColor();
+			icon.color = saveData.IconColor.ToColor();
+			configureButtonImage.color = saveData.ButtonsColor.ToColor();
+			customizeButtonImage.color = saveData.ButtonsColor.ToColor();
+			text.color = saveData.OtherTextColor.ToColor();
+			quantityText.color = saveData.OtherTextColor.ToColor();
+			SetLockerColor(saveData.LockerColor.ToColor());
+		}
+
+		private void SetLockerColor(Color color)
+		{
+			var meshRenderers = GetComponentsInChildren<MeshRenderer>();
+			foreach (var meshRenderer in meshRenderers)
+			{
+				meshRenderer.material.color = color;
+			}
+		}
+
+		private SaveDataEntry GetSaveData()
 		{
 			var prefabIdentifier = GetComponent<PrefabIdentifier>();
 			var id = prefabIdentifier.Id;
 
-			var saveData = Mod.GetSaveData();
-			foreach (var entry in saveData.Entries)
+			return Mod.GetSaveData(id);
+		}
+
+		private void InitializeFilters()
+		{
+			if (saveData == null)
 			{
-				if (entry.Id == id && entry.FilterData != null)
-				{
-					currentFilters = entry.FilterData.ShallowCopy();
-					return;
-				}
+				currentFilters = new List<AutosorterFilter>();
+				return;
 			}
 
-			currentFilters = new List<AutosorterFilter>();
+			currentFilters = saveData.FilterData.ShallowCopy();
 		}
 
 		private void CreatePicker()
@@ -313,13 +388,34 @@ namespace AutosortLockers
 			picker.gameObject.SetActive(false);
 		}
 
-		public void SaveFilters(SaveData saveData)
+		private void CreateCustomizeScreen()
+		{
+			customizeScreen = CustomizeScreen.Create(background.transform, saveData);
+			customizeScreen.onModified += InitializeFromSaveData;
+			customizeScreen.Initialize(saveData);
+			customizeScreen.gameObject.SetActive(false);
+		}
+
+		public void Save(SaveData saveDataList)
 		{
 			var prefabIdentifier = GetComponent<PrefabIdentifier>();
 			var id = prefabIdentifier.Id;
 
-			var entry = new SaveDataEntry() { Id = id, FilterData = currentFilters };
-			saveData.Entries.Add(entry);
+			if (saveData == null)
+			{
+				saveData = new SaveDataEntry() { Id = id, FilterData = currentFilters };
+			}
+
+			saveData.Label = label.text;
+			saveData.LabelColor = label.color;
+			saveData.IconColor = icon.color;
+			saveData.OtherTextColor = text.color;
+			saveData.ButtonsColor = configureButtonImage.color;
+
+			var meshRenderer = GetComponentInChildren<MeshRenderer>();
+			saveData.LockerColor = meshRenderer.material.color;
+
+			saveDataList.Entries.Add(saveData);
 		}
 
 		public IEnumerator ShowPlus()
@@ -458,36 +554,28 @@ namespace AutosortLockers
 
 			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
 			autosortTarget.background = LockerPrefabShared.CreateBackground(canvas.transform);
-			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, autosortTarget.textPrefab.color, 80);
-			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, -10, 12, "Any");
-			autosortTarget.configureButton = CreateConfigureButton(autosortTarget.background.transform, autosortTarget.textPrefab.color, autosortTarget);
-			autosortTarget.configureButtonImage = autosortTarget.configureButton.GetComponent<Image>();
+			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, autosortTarget.textPrefab.color, 70);
+			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, -20, 12, "Any");
 
-			autosortTarget.plus = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, 0, 30, "+");
-			autosortTarget.plus.color = new Color(autosortTarget.textPrefab.color.r, autosortTarget.textPrefab.color.g, autosortTarget.textPrefab.color.g, 0);
-			autosortTarget.plus.rectTransform.anchoredPosition += new Vector2(30, 80);
-
-			autosortTarget.quantityText = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, 0, 10, "XX");
-			autosortTarget.quantityText.rectTransform.anchoredPosition += new Vector2(-35, -104);
+			autosortTarget.label = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, 100, 12, "Locker");
 
 			autosortTarget.background.gameObject.SetActive(false);
 			autosortTarget.icon.gameObject.SetActive(false);
 			autosortTarget.text.gameObject.SetActive(false);
 
+			autosortTarget.plus = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, 0, 30, "+");
+			autosortTarget.plus.color = new Color(autosortTarget.textPrefab.color.r, autosortTarget.textPrefab.color.g, autosortTarget.textPrefab.color.g, 0);
+			autosortTarget.plus.rectTransform.anchoredPosition += new Vector2(30, 70);
+
+			autosortTarget.quantityText = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, 0, 10, "XX");
+			autosortTarget.quantityText.rectTransform.anchoredPosition += new Vector2(-35, -104);
+
+			autosortTarget.configureButton = ConfigureButton.Create(autosortTarget.background.transform, autosortTarget.textPrefab.color, 40);
+			autosortTarget.configureButtonImage = autosortTarget.configureButton.GetComponent<Image>();
+			autosortTarget.customizeButton = ConfigureButton.Create(autosortTarget.background.transform, autosortTarget.textPrefab.color, 20);
+			autosortTarget.customizeButtonImage = autosortTarget.customizeButton.GetComponent<Image>();
+
 			return prefab;
-		}
-
-		private static ConfigureButton CreateConfigureButton(Transform parent, Color color, AutosortTarget target)
-		{
-			var config = LockerPrefabShared.CreateIcon(parent, color, 0);
-			RectTransformExtensions.SetSize(config.rectTransform, 20, 20);
-			config.rectTransform.anchoredPosition = new Vector2(40, -104);
-
-			config.gameObject.AddComponent<BoxCollider2D>();
-			var button = config.gameObject.AddComponent<ConfigureButton>();
-			button.target = target;
-
-			return button;
 		}
 	}
 }

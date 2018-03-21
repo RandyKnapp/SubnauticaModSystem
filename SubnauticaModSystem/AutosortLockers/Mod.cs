@@ -23,6 +23,7 @@ namespace AutosortLockers
 		public const string SaveDataFilename = "AutosortLockerSaveData.json";
 		public static Config config;
 		public static SaveData saveData;
+		public static List<Color> colors = new List<Color>();
 
 		private static string modDirectory;
 		private static ModSaver saveObject;
@@ -65,6 +66,12 @@ namespace AutosortLockers
 		{
 			config = ModUtils.LoadConfig<Config>(GetModInfoPath());
 			ValidateConfig();
+
+			var serializedColors = JsonConvert.DeserializeObject<List<SerializableColor>>(File.ReadAllText(GetAssetPath("colors.json")));
+			foreach (var sColor in serializedColors)
+			{
+				colors.Add(sColor.ToColor());
+			}
 		}
 
 		private static void ValidateConfig()
@@ -101,6 +108,19 @@ namespace AutosortLockers
 			return saveData;
 		}
 
+		public static SaveDataEntry GetSaveData(string id)
+		{
+			var saveData = GetSaveData();
+			foreach (var entry in saveData.Entries)
+			{
+				if (entry.Id == id)
+				{
+					return entry;
+				}
+			}
+			return new SaveDataEntry();
+		}
+
 		public static void Save()
 		{
 			if (!IsSaving())
@@ -109,7 +129,7 @@ namespace AutosortLockers
 				var targets = GameObject.FindObjectsOfType<AutosortTarget>();
 				foreach (var target in targets)
 				{
-					target.SaveFilters(newSaveData);
+					target.Save(newSaveData);
 				}
 				WriteSaveData(newSaveData);
 				saveData = newSaveData;
@@ -156,7 +176,7 @@ namespace AutosortLockers
 			{
 				var saveDir = ModUtils.GetSaveDataDirectory();
 				var saveFile = Path.Combine(saveDir, SaveDataFilename);
-				string saveDataJson = JsonConvert.SerializeObject(newSaveData);
+				string saveDataJson = JsonConvert.SerializeObject(newSaveData, Formatting.Indented);
 				File.WriteAllText(saveFile, saveDataJson);
 			}
 		}
