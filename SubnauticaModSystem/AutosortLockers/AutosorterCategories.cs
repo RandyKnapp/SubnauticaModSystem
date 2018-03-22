@@ -447,10 +447,7 @@ namespace AutosortLockers
 		public string Category;
 		public List<TechType> Types = new List<TechType>();
 
-		public bool IsCategory()
-		{
-			return Category != null && Category.Length > 0;
-		}
+		public bool IsCategory() => !string.IsNullOrEmpty(Category);
 
 		public string GetString()
 		{
@@ -542,20 +539,37 @@ namespace AutosortLockers
 		private static void InitializeFilters()
 		{
 			var path = Mod.GetAssetPath("filters.json");
-			Filters = JsonConvert.DeserializeObject<List<AutosorterFilter>>(File.ReadAllText(path));
-
+			var file = JsonConvert.DeserializeObject<List<AutosorterFilter>>(File.ReadAllText(path));
+			Filters = file.Where((f) => f.IsCategory()).ToList();
+			
 			if (Mod.config.ShowAllItems)
 			{
-				Filters = Filters.Where((f) => f.IsCategory()).ToList();
-
 				var typeRefPath = Mod.GetAssetPath("type_reference.json");
-				List<TypeReference> typeReferences = JsonConvert.DeserializeObject<List<TypeReference>>(File.ReadAllText(typeRefPath));
-				typeReferences.Sort((TypeReference a, TypeReference b) => a.Name.ToLowerInvariant().CompareTo(b.Name.ToLowerInvariant()));
-				
+				List<TypeReference> typeReferences =
+					JsonConvert.DeserializeObject<List<TypeReference>>(File.ReadAllText(typeRefPath));
+				typeReferences.Sort((TypeReference a, TypeReference b) =>
+				{
+					string aName = Language.main.Get(a.Value);
+					string bName = Language.main.Get(b.Value);
+					return String.Compare(aName.ToLowerInvariant(), bName.ToLowerInvariant(), StringComparison.Ordinal);
+				});
+
 				foreach (var typeRef in typeReferences)
 				{
-					Filters.Add(new AutosorterFilter() { Category = "", Types = new List<TechType> { typeRef.Value } });
+					Filters.Add(new AutosorterFilter() {Category = "", Types = new List<TechType> {typeRef.Value}});
 				}
+				return;
+			}
+			var sorted = file.Where(f => !f.IsCategory()).ToList();
+			sorted.Sort((x, y) =>
+			{
+				string xName = Language.main.Get(x.Types.First());
+				string yName = Language.main.Get(y.Types.First());
+				return string.Compare(xName.ToLowerInvariant(), yName.ToLowerInvariant(), StringComparison.Ordinal);
+			});
+			foreach (var filter in sorted)
+			{
+				Filters.Add(filter);
 			}
 		}
 
