@@ -1,0 +1,12 @@
+{
+  "Id": "WhiteLights",
+  "DisplayName": "WhiteLights",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "WhiteLights.dll",
+  "EntryMethod": "WhiteLights.QPatch.Patch",
+  "Config": {
+  }
+}

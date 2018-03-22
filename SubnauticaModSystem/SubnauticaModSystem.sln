@@ -37,8 +37,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomBeacons", "CustomPing
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseTeleporters", "BaseTeleporters\BaseTeleporters.csproj", "{FD7B0BB5-6BCF-45B6-9145-10A8F0FEF277}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteLights", "WhiteLights\WhiteLights.csproj", "{03B89974-4EA6-4CD4-8C9F-C039EB81DE5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorpedoImprovements", "TorpedoImprovements\TorpedoImprovements.csproj", "{B4A7744B-F777-426C-94CD-1470B680B5B7}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Common\Common.projitems*{03b89974-4ea6-4cd4-8c9f-c039eb81de5f}*SharedItemsImports = 4
 		Common\Common.projitems*{0d86304e-0a53-422a-99e6-0c687d9dbbc6}*SharedItemsImports = 4
 		Common\Common.projitems*{2b390daa-56b9-42d9-bad4-8a47736c0563}*SharedItemsImports = 4
 		Common\Common.projitems*{667bf0bb-f5ab-446c-a6b3-3faabb2f49d5}*SharedItemsImports = 4
@@ -47,6 +52,7 @@ Global
 		Common\Common.projitems*{7b7cdbe9-9fac-4e28-a42c-80a21066d7ab}*SharedItemsImports = 4
 		Common\Common.projitems*{7e1de3ec-3325-4f95-b306-616e1fa23b40}*SharedItemsImports = 4
 		Common\Common.projitems*{829b1a80-d3b3-431a-a4b8-284c6b9de226}*SharedItemsImports = 4
+		Common\Common.projitems*{b4a7744b-f777-426c-94cd-1470b680b5b7}*SharedItemsImports = 4
 		Common\Common.projitems*{b7752c03-c7bb-494f-ba52-9cd5ec649aa7}*SharedItemsImports = 4
 		Common\Common.projitems*{cf7e5ea0-ee32-4330-af9c-e720e9a64681}*SharedItemsImports = 4
 		Common\Common.projitems*{d9a802d6-ad51-4543-9903-0b90b1fa65ac}*SharedItemsImports = 4
@@ -156,6 +162,18 @@ Global
 		{FD7B0BB5-6BCF-45B6-9145-10A8F0FEF277}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD7B0BB5-6BCF-45B6-9145-10A8F0FEF277}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD7B0BB5-6BCF-45B6-9145-10A8F0FEF277}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03B89974-4EA6-4CD4-8C9F-C039EB81DE5F}.Debug_Autosort|Any CPU.ActiveCfg = Debug|Any CPU
+		{03B89974-4EA6-4CD4-8C9F-C039EB81DE5F}.Debug_Autosort|Any CPU.Build.0 = Debug|Any CPU
+		{03B89974-4EA6-4CD4-8C9F-C039EB81DE5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03B89974-4EA6-4CD4-8C9F-C039EB81DE5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03B89974-4EA6-4CD4-8C9F-C039EB81DE5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03B89974-4EA6-4CD4-8C9F-C039EB81DE5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4A7744B-F777-426C-94CD-1470B680B5B7}.Debug_Autosort|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4A7744B-F777-426C-94CD-1470B680B5B7}.Debug_Autosort|Any CPU.Build.0 = Debug|Any CPU
+		{B4A7744B-F777-426C-94CD-1470B680B5B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4A7744B-F777-426C-94CD-1470B680B5B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4A7744B-F777-426C-94CD-1470B680B5B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4A7744B-F777-426C-94CD-1470B680B5B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
