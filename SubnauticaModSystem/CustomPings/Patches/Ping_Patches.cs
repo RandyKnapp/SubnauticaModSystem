@@ -41,7 +41,7 @@ namespace CustomBeacons.Patches
 			if (enumType == PingTypeT)
 			{
 				List<PingType> values = new List<PingType>();
-				for (int i = 0; i < (int)PingType.Sunbeam; ++i)
+				for (int i = 0; i <= (int)PingType.Sunbeam; ++i)
 				{
 					values.Add((PingType)i);
 				}
@@ -67,7 +67,7 @@ namespace CustomBeacons.Patches
 			if (enumType == PingTypeT)
 			{
 				List<string> names = new List<string>();
-				for (int i = 0; i < (int)PingType.Sunbeam; ++i)
+				for (int i = 0; i <= (int)PingType.Sunbeam; ++i)
 				{
 					names.Add(((PingType)i).ToString());
 				}
