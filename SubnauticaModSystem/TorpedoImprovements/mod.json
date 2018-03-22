@@ -1,0 +1,12 @@
+{
+  "Id": "TorpedoImprovements",
+  "DisplayName": "TorpedoImprovements",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "TorpedoImprovements.dll",
+  "EntryMethod": "TorpedoImprovements.QPatch.Patch",
+  "Config": {
+  }
+}
