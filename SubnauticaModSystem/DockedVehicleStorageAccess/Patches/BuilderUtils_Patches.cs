@@ -50,7 +50,6 @@ namespace DockedVehicleStorageAccess.Patches
 			var prefab = BuilderUtils.GetPrefab(techType);
 			if (prefab != null)
 			{
-				Logger.Log("Getting prefab for " + techType + " = " + prefab);
 				__result = prefab;
 				return false;
 			}

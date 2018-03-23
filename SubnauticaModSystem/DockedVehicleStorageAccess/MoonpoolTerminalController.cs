@@ -72,13 +72,10 @@ namespace DockedVehicleStorageAccess
 			}
 
 			SetPosition(positionIndex);
-
-			ModUtils.PrintObject(gameObject);
 		}
 
 		private void SetPosition(int index)
 		{
-			Logger.Log("SetPosition " + index);
 			if (index < 0 && index >= Positions.Length)
 			{
 				index = 0;
@@ -99,7 +96,6 @@ namespace DockedVehicleStorageAccess
 
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
-			Logger.Log("Serialize");
 			var saveDataFile = GetSaveDataPath();
 			saveData = CreateSaveData();
 			if (!Directory.Exists(GetSaveDataDir()))
@@ -121,7 +117,6 @@ namespace DockedVehicleStorageAccess
 
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
-			Logger.Log("Deserialize");
 			var saveDataFile = GetSaveDataPath();
 			if (File.Exists(saveDataFile))
 			{

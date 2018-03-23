@@ -35,9 +35,7 @@ namespace CustomBeacons
 
 		public void OnSelect(int index)
 		{
-			Logger.Log("OnSelect: " + index);
 			target.SetColor(index);
-			Logger.Log("    result=" + target.colorIndex);
 			Close();
 		}
 
