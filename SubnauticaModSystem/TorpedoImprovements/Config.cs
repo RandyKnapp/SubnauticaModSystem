@@ -7,5 +7,6 @@ namespace TorpedoImprovements
 	[Serializable]
 	class Config
 	{
+		public float TorpedoShotCooldown = 3;
 	}
 }

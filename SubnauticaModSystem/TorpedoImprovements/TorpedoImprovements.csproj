@@ -90,6 +90,8 @@
     <Compile Include="Mod.cs" />
     <Compile Include="Patches\Exosuit_Patches.cs" />
     <Compile Include="Patches\Seamoth_Patches.cs" />
+    <Compile Include="TorpedoHud.cs" />
+    <Compile Include="TorpedoHudController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />
