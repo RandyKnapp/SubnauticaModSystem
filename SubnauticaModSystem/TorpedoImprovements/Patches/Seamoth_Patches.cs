@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -6,14 +7,14 @@ using UnityEngine;
 
 namespace TorpedoImprovements.Patches
 {
-	static class Seamoth_Patches
+	public static class Seamoth_Patches
 	{
 		private static bool AllowTorpedoRemoval(Pickupable pickupable, bool verbose)
 		{
 			return true;
 		}
 
-		private static void OpenTorpedoStorageEx(this SeaMoth seamoth, int slotID, Transform useTransform)
+		public static void OpenTorpedoStorageEx(this SeaMoth seamoth, int slotID, Transform useTransform)
 		{
 			bool hasTorpedoModules = seamoth.modules.GetCount(TechType.SeamothTorpedoModule) > 0;
 			if (hasTorpedoModules)
@@ -30,7 +31,7 @@ namespace TorpedoImprovements.Patches
 			}
 		}
 
-		private static void OnHoverTorpedoStorageEx(this SeaMoth seamoth, int slotID, Transform useTransform)
+		public static void OnHoverTorpedoStorageEx(this SeaMoth seamoth, int slotID, Transform useTransform)
 		{
 			var torpedoStorage = seamoth.GetStorageInSlot(slotID, TechType.SeamothTorpedoModule);
 			if (torpedoStorage != null)
@@ -111,15 +112,29 @@ namespace TorpedoImprovements.Patches
 		[HarmonyPatch("Update")]
 		class SeaMoth_Update_Patch
 		{
+			private static readonly FieldInfo Vehicle_quickSlotToggled = typeof(Vehicle).GetField("quickSlotToggled", BindingFlags.NonPublic | BindingFlags.Instance);
+
 			private static void Postfix(SeaMoth __instance)
 			{
-				if (__instance.GetPilotingMode())
+				if (__instance.GetPilotingMode() && !Player.main.GetPDA().isInUse)
 				{
-					string key = GameInput.GetBindingName(GameInput.Button.Deconstruct, GameInput.BindingSet.Primary);
-					string button2 = string.Format("Change Torpedo (<color=#ADF8FFFF>{0}</color>)", key);
+					//string key2 = GameInput.GetBindingName(GameInput.Button.Deconstruct, GameInput.BindingSet.Primary);
+					//string button2 = string.Format("Change Torpedo (<color=#ADF8FFFF>{0}</color>)", key2);
+					string button2 = LanguageCache.GetButtonFormat("Change Torpedo (<color=#ADF8FFFF>{0}</color>)", GameInput.Button.Deconstruct);
+
+					string button3 = "";
+					var toggledSlots = (bool[])Vehicle_quickSlotToggled.GetValue(__instance);
+					for (var i = 0; i < toggledSlots.Length; ++i)
+					{
+						if (toggledSlots[i] && __instance.GetSlotItem(i) != null && __instance.GetSlotItem(i).item.GetTechType() == TechType.SeamothTorpedoModule)
+						{
+							button3 = LanguageCache.GetButtonFormat("\nAccess Torpedo Storage (<color=#ADF8FFFF>{0}</color>)", GameInput.Button.AltTool);
+							break;
+						}
+					}
 
 					string buttonFormat = LanguageCache.GetButtonFormat("PressToExit", GameInput.Button.Exit);
-					HandReticle.main.SetUseTextRaw(buttonFormat, button2);
+					HandReticle.main.SetUseTextRaw(buttonFormat, button2 + button3);
 				}
 			}
 		}
@@ -191,9 +206,13 @@ namespace TorpedoImprovements.Patches
 			{
 				if (techType == TechType.SeamothTorpedoModule)
 				{
-					var torpedoStorage = __instance.GetStorageInSlot(slotID, techType);
-					torpedoStorage.SetAllowedTechTypes(__instance.torpedoTypes.Select((t) => t.techType).ToArray());
-					torpedoStorage.Resize(Mod.config.TorpedoStorageWidth, Mod.config.TorpedoStorageHeight);
+					if (added)
+					{
+						var torpedoStorage = __instance.GetStorageInSlot(slotID, techType);
+						torpedoStorage.SetAllowedTechTypes(__instance.torpedoTypes.Select((t) => t.techType).ToArray());
+						torpedoStorage.Resize(Mod.config.TorpedoStorageWidth, Mod.config.TorpedoStorageHeight);
+					}
+					
 					if (slotID == 2 || slotID == 3)
 					{
 						GameObject gameObject = __instance.transform.Find(slotID == 2 ? "TorpedoSiloUpperLeft" : "TorpedoSiloUpperRight")?.gameObject;

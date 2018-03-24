@@ -76,7 +76,9 @@ namespace MoreQuickSlots
 		{
 			if (slotID < Player.quickSlotButtonsCount)
 			{
-				return GameInput.GetBindingName(GameInput.Button.Slot1 + slotID, GameInput.BindingSet.Primary);
+				string inputName = GameInput.GetBindingName(GameInput.Button.Slot1 + slotID, GameInput.BindingSet.Primary);
+				string input = LanguageCache.GetButtonFormat("{0}", GameInput.Button.Slot1 + slotID);
+				return string.IsNullOrEmpty(inputName) ? "" : input;
 			}
 			if (slotID < 0 || slotID >= MaxSlots)
 			{

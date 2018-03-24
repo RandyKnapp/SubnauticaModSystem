@@ -18,9 +18,11 @@ namespace SeaglideMapControls.Patches
 			if (__instance is Seaglide)
 			{
 				var seaglide = __instance as Seaglide;
-				string altKey = GameInput.GetBindingName(GameInput.Button.AltTool, GameInput.BindingSet.Primary);
 				bool mapShowing = seaglide.toggleLights.lightState != 2;
-				__result = string.Format("{0} Map (<color=#ADF8FFFF>{1}</color>)", mapShowing ? "Hide" : "Show", altKey);
+				string command = mapShowing 
+					? "Hide Map (<color=#ADF8FFFF>{0}</color>)"
+					: "Show Map (<color=#ADF8FFFF>{0}</color>)";
+				__result = LanguageCache.GetButtonFormat(command, GameInput.Button.AltTool);
 				return false;
 			}
 			else if (Mod.config.FixScannerToolTextBug && __instance is ScannerTool)
