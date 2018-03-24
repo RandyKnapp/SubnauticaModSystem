@@ -1,5 +1,6 @@
 ﻿using Harmony;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ namespace TorpedoImprovements.Patches
 				{
 					Inventory.main.ClearUsedStorage();
 					storageInSlot.isAllowedToRemove = new IsAllowedToRemove(AllowTorpedoRemoval);
+					storageInSlot.Resize(Mod.config.TorpedoStorageWidth, Mod.config.TorpedoStorageHeight);
 					Inventory.main.SetUsedStorage(storageInSlot, false);
 					Player.main.GetPDA().Open(PDATab.Inventory, useTransform, null, -1f);
 				}
@@ -67,6 +69,12 @@ namespace TorpedoImprovements.Patches
 			private static bool Prefix(SeaMoth __instance)
 			{
 				var seamoth = __instance;
+
+				if (seamoth.GetComponent<PrimaryTorpedo>() == null)
+				{
+					var primary = seamoth.gameObject.AddComponent<PrimaryTorpedo>();
+					primary.Types = seamoth.torpedoTypes.Select((t) => t.techType).ToList();
+				}
 
 				var left = __instance.gameObject.transform.Find("TorpedoSiloLeft").gameObject;
 				var right = __instance.gameObject.transform.Find("TorpedoSiloRight").gameObject;
@@ -109,6 +117,29 @@ namespace TorpedoImprovements.Patches
 				}
 
 				return true;
+			}
+		}
+
+
+		/*if (base.GetPilotingMode())
+		{
+			string buttonFormat = LanguageCache.GetButtonFormat("PressToExit", GameInput.Button.Exit);
+			HandReticle.main.SetUseTextRaw(buttonFormat, string.Empty);
+		}*/
+		[HarmonyPatch(typeof(SeaMoth))]
+		[HarmonyPatch("Update")]
+		class SeaMoth_Update_Patch
+		{
+			private static void Postfix(SeaMoth __instance)
+			{
+				if (__instance.GetPilotingMode())
+				{
+					string key = GameInput.GetBindingName(GameInput.Button.Deconstruct, GameInput.BindingSet.Primary);
+					string button2 = string.Format("Change Torpedo (<color=#ADF8FFFF>{0}</color>)", key);
+
+					string buttonFormat = LanguageCache.GetButtonFormat("PressToExit", GameInput.Button.Exit);
+					HandReticle.main.SetUseTextRaw(buttonFormat, button2);
+				}
 			}
 		}
 
@@ -177,10 +208,16 @@ namespace TorpedoImprovements.Patches
 		{
 			private static bool Prefix(SeaMoth __instance, int slotID, TechType techType, bool added)
 			{
-				if (techType == TechType.SeamothTorpedoModule && (slotID == 2 || slotID == 3))
+				if (techType == TechType.SeamothTorpedoModule)
 				{
-					GameObject gameObject = __instance.transform.Find(slotID == 2 ? "TorpedoSiloUpperLeft" : "TorpedoSiloUpperRight")?.gameObject;
-					gameObject?.SetActive(added);
+					var torpedoStorage = __instance.GetStorageInSlot(slotID, techType);
+					torpedoStorage.SetAllowedTechTypes(__instance.torpedoTypes.Select((t) => t.techType).ToArray());
+					torpedoStorage.Resize(Mod.config.TorpedoStorageWidth, Mod.config.TorpedoStorageHeight);
+					if (slotID == 2 || slotID == 3)
+					{
+						GameObject gameObject = __instance.transform.Find(slotID == 2 ? "TorpedoSiloUpperLeft" : "TorpedoSiloUpperRight")?.gameObject;
+						gameObject?.SetActive(added);
+					}
 				}
 				return true;
 			}
@@ -237,11 +274,16 @@ namespace TorpedoImprovements.Patches
 					}
 
 					TorpedoType torpedoType = null;
-					for (int i = 0; i < __instance.torpedoTypes.Length; i++)
+					var primaryType = __instance.GetComponent<PrimaryTorpedo>().PrimaryTorpedoType;
+					List<TorpedoType> torpedoTypes = __instance.torpedoTypes.ToList();
+					torpedoTypes.Sort((a, b) => {
+						return a.techType == b.techType ? 0 : (a.techType == primaryType ? -1 : 1);
+					});
+					foreach (var t in torpedoTypes)
 					{
-						if (storageInSlot.Contains(__instance.torpedoTypes[i].techType))
+						if (storageInSlot.Contains(t.techType))
 						{
-							torpedoType = __instance.torpedoTypes[i];
+							torpedoType = t;
 							break;
 						}
 					}
@@ -254,6 +296,10 @@ namespace TorpedoImprovements.Patches
 
 					if (firedTorpedo)
 					{
+						if (torpedoType.techType == TechType.CyclopsDecoy)
+						{
+
+						}
 						var quickSlotTimeUsed = (float[])Vehicle_quickSlotTimeUsed.GetValue(__instance);
 						var quickSlotCooldown = (float[])Vehicle_quickSlotCooldown.GetValue(__instance);
 						quickSlotTimeUsed[slotID] = Time.time;
@@ -278,7 +324,6 @@ namespace TorpedoImprovements.Patches
 					Logger.Log("Adding TorpeduHudController");
 					var torpedoRoot = new GameObject("TorpedoHud", typeof(RectTransform)).AddComponent<TorpedoHudController>();
 					RectTransformExtensions.SetParams(torpedoRoot.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), __instance.root.transform.parent);
-					torpedoRoot.rectTransform.anchoredPosition = new Vector2(0, 0);
 				}
 				return true;
 			}

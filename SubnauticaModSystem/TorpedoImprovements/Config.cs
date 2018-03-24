@@ -8,5 +8,7 @@ namespace TorpedoImprovements
 	class Config
 	{
 		public float TorpedoShotCooldown = 3;
+		public int TorpedoStorageWidth = 6;
+		public int TorpedoStorageHeight = 2;
 	}
 }

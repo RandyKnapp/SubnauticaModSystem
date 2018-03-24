@@ -8,6 +8,8 @@
   "AssemblyName": "TorpedoImprovements.dll",
   "EntryMethod": "TorpedoImprovements.QPatch.Patch",
   "Config": {
-    "TorpedoShotCooldown": 3
+    "TorpedoShotCooldown": 3,
+    "TorpedoStorageWidth": 6,
+    "TorpedoStorageHeight": 2
   }
 }
