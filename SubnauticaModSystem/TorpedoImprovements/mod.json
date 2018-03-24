@@ -10,6 +10,12 @@
   "Config": {
     "TorpedoShotCooldown": 3,
     "TorpedoStorageWidth": 6,
-    "TorpedoStorageHeight": 2
+    "TorpedoStorageHeight": 2,
+    "HudXOffset": 200,
+    "HudXSpacing": -30,
+    "HudYOffset": -480,
+    "HudYSpacing": 70,
+    "HudBackgroundAlpha": 0.9,
+    "HudIconYOffset": -60
   }
 }

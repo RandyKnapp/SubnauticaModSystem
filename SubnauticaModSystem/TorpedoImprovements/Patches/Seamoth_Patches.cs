@@ -8,14 +8,6 @@ namespace TorpedoImprovements.Patches
 {
 	static class Seamoth_Patches
 	{
-		private static readonly string[] SlotIDs = new string[]
-		{
-			"SeamothModule1",
-			"SeamothModule2",
-			"SeamothModule3",
-			"SeamothModule4"
-		};
-
 		private static bool AllowTorpedoRemoval(Pickupable pickupable, bool verbose)
 		{
 			return true;
@@ -56,7 +48,7 @@ namespace TorpedoImprovements.Patches
 					}
 				}
 
-				HandReticle.main.SetInteractTextRaw(interactText, countText.Count > 0 ? string.Join(", ", countText.ToArray()) : "empty");
+				HandReticle.main.SetInteractTextRaw(interactText, countText.Count > 0 ? string.Join("\n", countText.ToArray()) : "empty");
 				HandReticle.main.SetIcon(HandReticle.IconType.Hand, 1f);
 			}
 		}
@@ -89,7 +81,6 @@ namespace TorpedoImprovements.Patches
 				upperRight.transform.SetParent(__instance.transform, false);
 				upperRight.transform.localPosition += new Vector3(0, 0.2f, 0);
 
-				//Color[] colors = { Color.red, Color.yellow, Color.magenta, Color.cyan };
 				var torpedoSilos = new GameObject[] { left, right, upperLeft, upperRight };
 				for (var i = 0; i < torpedoSilos.Length; ++i)
 				{
@@ -110,22 +101,12 @@ namespace TorpedoImprovements.Patches
 					collider.height = collider.height / 2;
 					collider.radius = collider.radius / 2;
 					silo.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-
-					/*var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-					capsule.transform.SetParent(silo.transform, false);
-					capsule.GetComponent<MeshRenderer>().material.color = colors[i];*/
 				}
 
 				return true;
 			}
 		}
 
-
-		/*if (base.GetPilotingMode())
-		{
-			string buttonFormat = LanguageCache.GetButtonFormat("PressToExit", GameInput.Button.Exit);
-			HandReticle.main.SetUseTextRaw(buttonFormat, string.Empty);
-		}*/
 		[HarmonyPatch(typeof(SeaMoth))]
 		[HarmonyPatch("Update")]
 		class SeaMoth_Update_Patch
@@ -296,10 +277,6 @@ namespace TorpedoImprovements.Patches
 
 					if (firedTorpedo)
 					{
-						if (torpedoType.techType == TechType.CyclopsDecoy)
-						{
-
-						}
 						var quickSlotTimeUsed = (float[])Vehicle_quickSlotTimeUsed.GetValue(__instance);
 						var quickSlotCooldown = (float[])Vehicle_quickSlotCooldown.GetValue(__instance);
 						quickSlotTimeUsed[slotID] = Time.time;
@@ -321,7 +298,6 @@ namespace TorpedoImprovements.Patches
 				var t = __instance.root.transform.parent.Find("TorpedoHud");
 				if (t == null)
 				{
-					Logger.Log("Adding TorpeduHudController");
 					var torpedoRoot = new GameObject("TorpedoHud", typeof(RectTransform)).AddComponent<TorpedoHudController>();
 					RectTransformExtensions.SetParams(torpedoRoot.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), __instance.root.transform.parent);
 				}

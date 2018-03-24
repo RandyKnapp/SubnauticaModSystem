@@ -26,7 +26,7 @@ namespace TorpedoImprovements
 			hudIcon = new GameObject("HudIcon", typeof(RectTransform)).AddComponent<TorpedoHudIcon>();
 			RectTransformExtensions.SetParams(hudIcon.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), transform);
 			hudIcon.gameObject.SetActive(false);
-			hudIcon.rectTransform.anchoredPosition = new Vector2(0, -60);
+			hudIcon.rectTransform.anchoredPosition = new Vector2(0, Mod.config.HudIconYOffset);
 		}
 
 		private void Update()

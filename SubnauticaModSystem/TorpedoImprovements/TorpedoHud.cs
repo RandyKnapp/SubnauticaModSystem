@@ -32,7 +32,7 @@ namespace TorpedoImprovements
 			RectTransformExtensions.SetParams(background.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), transform);
 			background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("Background.png"), new RectOffset(IconSize, IconSize, 0, 0));
 			background.type = Image.Type.Sliced;
-			background.color = new Color(0, 0, 0, 0.9f);
+			background.color = new Color(0, 0, 0, Mod.config.HudBackgroundAlpha);
 			background.raycastTarget = false;
 
 			activeIndicator = new GameObject("ActiveIndicator").AddComponent<Image>();
@@ -42,7 +42,6 @@ namespace TorpedoImprovements
 			activeIndicator.raycastTarget = false;
 			ModUtils.CopyComponent(textPrefab.GetComponent<Outline>(), activeIndicator.gameObject);
 			ModUtils.CopyComponent(textPrefab.GetComponent<Shadow>(), activeIndicator.gameObject);
-			//activeArrow.rectTransform.anchoredPosition = new Vector2((slotID % 2 == 0 ? 1 : -1) * IconSize, 0);
 			activeIndicator.rectTransform.localScale = new Vector3((slotID % 2 == 0 ? -1 : 1), 1, 1);
 			activeIndicator.gameObject.SetActive(false);
 
@@ -59,10 +58,10 @@ namespace TorpedoImprovements
 			ModUtils.CopyComponent(textPrefab.GetComponent<Outline>(), slotText.gameObject);
 			ModUtils.CopyComponent(textPrefab.GetComponent<Shadow>(), slotText.gameObject);
 
-			const int xOffset = 200;
-			const int xSpacing = -30;
-			const int yOffset = -480;
-			const int ySpacing = 70;
+			int xOffset = Mod.config.HudXOffset;
+			int xSpacing = Mod.config.HudXSpacing;
+			int yOffset = Mod.config.HudYOffset;
+			int ySpacing = Mod.config.HudYSpacing;
 			Vector2[] positions = {
 				new Vector2(-xOffset, yOffset),
 				new Vector2(xOffset, yOffset),
