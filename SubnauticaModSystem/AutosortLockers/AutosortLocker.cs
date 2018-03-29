@@ -34,7 +34,9 @@ namespace AutosortLockers
 		private Text sortingText;
 		[SerializeField]
 		private bool isSorting;
-		
+		[SerializeField]
+		private bool sortedItem;
+
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();
@@ -138,49 +140,44 @@ namespace AutosortLockers
 
 		private IEnumerator Sort()
 		{
-			isSorting = false;
+			Logger.Log("Sort Start (" + isSorting + ")");
+			sortedItem = false;
 			sortableItems = 0;
 			unsortableItems = container.container.count;
 
 			if (!initialized || container.IsEmpty())
 			{
+				isSorting = false;
 				yield break;
 			}
 
 			AccumulateTargets();
 			if (NoTargets())
 			{
+				isSorting = false;
 				yield break;
 			}
 
-			if (SortFilteredTargets(false))
+			isSorting = true;
+			yield return SortFilteredTargets(false);
+			if (sortedItem)
 			{
-				isSorting = true;
-			}
-			else if (SortFilteredTargets(true))
-			{
-				isSorting = true;
-			}
-			else
-			{
-				foreach (AutosortTarget target in anyTargets)
-				{
-					foreach (var item in container.container.ToList())
-					{
-						if (target.CanAddItem(item.item))
-						{
-							SortItem(item.item, target);
-							sortableItems++;
-							unsortableItems--;
-							isSorting = true;
-							yield break;
-						}
-					}
-					yield return null;
-				}
+				yield break;
 			}
 
-			yield break;
+			yield return SortFilteredTargets(true);
+			if (sortedItem)
+			{
+				yield break;
+			}
+
+			yield return SortAnyTargets();
+			if (sortedItem)
+			{
+				yield break;
+			}
+
+			isSorting = false;
 		}
 
 		private bool NoTargets()
@@ -188,7 +185,7 @@ namespace AutosortLockers
 			return singleItemTargets.Count <= 0 && categoryTargets.Count <= 0 && anyTargets.Count <= 0;
 		}
 
-		private bool SortFilteredTargets(bool byCategory)
+		private IEnumerator SortFilteredTargets(bool byCategory)
 		{
 			foreach (AutosortTarget target in byCategory ? categoryTargets : singleItemTargets)
 			{
@@ -204,31 +201,39 @@ namespace AutosortLockers
 								sortableItems += items.Count;
 								unsortableItems -= items.Count;
 								SortItem(items[0].item, target);
-								return true;
+								sortedItem = true;
+								yield break;
 							}
 						}
 					}
 				}
 			}
-			return false;
 		}
 
-		private bool SortAnyTargets()
+		private IEnumerator SortAnyTargets()
 		{
-			foreach (AutosortTarget target in anyTargets)
+			int callsToCanAddItem = 0;
+			const int CanAddItemCallThreshold = 10;
+			foreach (var item in container.container.ToList())
 			{
-				foreach (var item in container.container)
+				foreach (AutosortTarget target in anyTargets)
 				{
+					callsToCanAddItem++;
 					if (target.CanAddItem(item.item))
 					{
 						SortItem(item.item, target);
 						sortableItems++;
 						unsortableItems--;
-						return true;
+						sortedItem = true;
+						yield break;
+					}
+					else if (callsToCanAddItem > CanAddItemCallThreshold)
+					{
+						callsToCanAddItem = 0;
+						yield return null;
 					}
 				}
 			}
-			return false;
 		}
 
 		private void SortItem(Pickupable pickup, AutosortTarget target)
