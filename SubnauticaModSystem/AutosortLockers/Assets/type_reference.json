@@ -1142,5 +1142,65 @@
   {
     "Name": "Poster",
     "Value": 6005
+  },
+  {
+    "Name": "BoneShark",
+    "Value": 2534
+  },
+  {
+    "Name": "CrabSquid",
+    "Value": 2550
+  },
+  {
+    "Name": "Crabsnake",
+    "Value": 2539
+  },
+  {
+    "Name": "Crash",
+    "Value": 2509
+  },
+  {
+    "Name": "Gasopod",
+    "Value": 2523
+  },
+  {
+    "Name": "Jellyray",
+    "Value": 2517
+  },
+  {
+    "Name": "Jumper",
+    "Value": 2502
+  },
+  {
+    "Name": "LavaLizard",
+    "Value": 2551
+  },
+  {
+    "Name": "Mesmer",
+    "Value": 2535
+  },
+  {
+    "Name": "RabbitRay",
+    "Value": 2506
+  },
+  {
+    "Name": "Reefback",
+    "Value": 2518
+  },
+  {
+    "Name": "Sandshark",
+    "Value": 2524
+  },
+  {
+    "Name": "Shocker",
+    "Value": 2545
+  },
+  {
+    "Name": "Stalker",
+    "Value": 2512
+  },
+  {
+    "Name": "Cutefish",
+    "Value": 2538
   }
 ]
