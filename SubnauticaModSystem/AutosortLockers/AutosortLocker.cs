@@ -140,7 +140,6 @@ namespace AutosortLockers
 
 		private IEnumerator Sort()
 		{
-			Logger.Log("Sort Start (" + isSorting + ")");
 			sortedItem = false;
 			sortableItems = 0;
 			unsortableItems = container.container.count;
@@ -187,6 +186,9 @@ namespace AutosortLockers
 
 		private IEnumerator SortFilteredTargets(bool byCategory)
 		{
+			int callsToCanAddItem = 0;
+			const int CanAddItemCallThreshold = 10;
+
 			foreach (AutosortTarget target in byCategory ? categoryTargets : singleItemTargets)
 			{
 				foreach (AutosorterFilter filter in target.GetCurrentFilters())
@@ -195,6 +197,7 @@ namespace AutosortLockers
 					{
 						foreach (var techType in filter.Types)
 						{
+							callsToCanAddItem++;
 							var items = container.container.GetItems(techType);
 							if (items != null && items.Count > 0 && target.CanAddItem(items[0].item))
 							{
@@ -203,6 +206,11 @@ namespace AutosortLockers
 								SortItem(items[0].item, target);
 								sortedItem = true;
 								yield break;
+							}
+							else if (callsToCanAddItem > CanAddItemCallThreshold)
+							{
+								callsToCanAddItem = 0;
+								yield return null;
 							}
 						}
 					}
