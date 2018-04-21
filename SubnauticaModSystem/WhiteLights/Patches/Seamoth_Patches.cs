@@ -4,10 +4,10 @@ using UnityEngine;
 namespace WhiteLights.Patches
 {
 	[HarmonyPatch(typeof(SeaMoth))]
-	[HarmonyPatch("Start")]
-	class Seamoth_Start_Patch
+	[HarmonyPatch("Awake")]
+	class Seamoth_Awake_Patch
 	{
-		private static bool Prefix(SeaMoth __instance)
+		private static void Postfix(SeaMoth __instance)
 		{
 			var lights = __instance.toggleLights.lightsParent.GetComponentsInChildren<Light>();
 			foreach (var light in lights)
@@ -21,7 +21,6 @@ namespace WhiteLights.Patches
 					light.color = Mod.config.SeamothRight.ToColor();
 				}
 			}
-			return true;
 		}
 	}
 }
