@@ -140,8 +140,6 @@ namespace TorpedoImprovements.Patches
 			{
 				if (__instance.GetPilotingMode() && !Player.main.GetPDA().isInUse)
 				{
-					//string key2 = GameInput.GetBindingName(GameInput.Button.Deconstruct, GameInput.BindingSet.Primary);
-					//string button2 = string.Format("Change Torpedo (<color=#ADF8FFFF>{0}</color>)", key2);
 					string button2 = LanguageCache.GetButtonFormat("Change Torpedo (<color=#ADF8FFFF>{0}</color>)", GameInput.Button.Deconstruct);
 
 					string button3 = "";
