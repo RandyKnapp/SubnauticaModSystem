@@ -41,11 +41,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteLights", "WhiteLights\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorpedoImprovements", "TorpedoImprovements\TorpedoImprovements.csproj", "{B4A7744B-F777-426C-94CD-1470B680B5B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HudConfig", "HudConfig\HudConfig.csproj", "{2EBF18DB-437E-4A9A-A03C-06770A3F9CB6}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{03b89974-4ea6-4cd4-8c9f-c039eb81de5f}*SharedItemsImports = 4
 		Common\Common.projitems*{0d86304e-0a53-422a-99e6-0c687d9dbbc6}*SharedItemsImports = 4
 		Common\Common.projitems*{2b390daa-56b9-42d9-bad4-8a47736c0563}*SharedItemsImports = 4
+		Common\Common.projitems*{2ebf18db-437e-4a9a-a03c-06770a3f9cb6}*SharedItemsImports = 4
 		Common\Common.projitems*{667bf0bb-f5ab-446c-a6b3-3faabb2f49d5}*SharedItemsImports = 4
 		Common\Common.projitems*{683a1124-d419-49f6-b602-60a803658315}*SharedItemsImports = 4
 		Common\Common.projitems*{6c883b28-31e6-4c26-b32b-bf5be0d70190}*SharedItemsImports = 4
@@ -174,6 +177,12 @@ Global
 		{B4A7744B-F777-426C-94CD-1470B680B5B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4A7744B-F777-426C-94CD-1470B680B5B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4A7744B-F777-426C-94CD-1470B680B5B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EBF18DB-437E-4A9A-A03C-06770A3F9CB6}.Debug_Autosort|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EBF18DB-437E-4A9A-A03C-06770A3F9CB6}.Debug_Autosort|Any CPU.Build.0 = Debug|Any CPU
+		{2EBF18DB-437E-4A9A-A03C-06770A3F9CB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EBF18DB-437E-4A9A-A03C-06770A3F9CB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EBF18DB-437E-4A9A-A03C-06770A3F9CB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EBF18DB-437E-4A9A-A03C-06770A3F9CB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

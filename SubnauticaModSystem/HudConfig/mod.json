@@ -1,0 +1,12 @@
+{
+  "Id": "HudConfig",
+  "DisplayName": "HudConfig",
+  "Author": "RandyKnapp",
+  "Version": "1.0.0",
+  "Requires": [ "0Harmony.dll" ],
+  "Enable": true,
+  "AssemblyName": "HudConfig.dll",
+  "EntryMethod": "HudConfig.QPatch.Patch",
+  "Config": {
+  }
+}
