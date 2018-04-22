@@ -1,4 +1,5 @@
-﻿using Harmony;
+﻿using Common.Mod;
+using Harmony;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,6 +106,27 @@ namespace TorpedoImprovements.Patches
 				}
 
 				return true;
+			}
+		}
+
+		[HarmonyPatch(typeof(SeaMoth))]
+		[HarmonyPatch("OnDockedChanged")]
+		class SeaMoth_OnDockedChanged_Patch
+		{
+			private static void Postfix(SeaMoth __instance, bool docked, Vehicle.DockType dockType)
+			{
+				Transform[] torpedoSilos = {
+					__instance.transform.Find("TorpedoSiloLeft"),
+					__instance.transform.Find("TorpedoSiloRight"),
+					__instance.transform.Find("TorpedoSiloUpperLeft"),
+					__instance.transform.Find("TorpedoSiloUpperRight"),
+				};
+
+				foreach (var torpedoSilo in torpedoSilos)
+				{
+					var collider = torpedoSilo.GetComponent<Collider>();
+					collider.enabled = dockType != Vehicle.DockType.Cyclops;
+				}
 			}
 		}
 
