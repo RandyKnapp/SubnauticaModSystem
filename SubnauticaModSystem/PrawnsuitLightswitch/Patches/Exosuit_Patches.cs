@@ -52,7 +52,7 @@ namespace PrawnsuitLightswitch.Patches
 					toggleLights.UpdateLightEnergy();
 				}
 
-				if (__instance.GetPilotingMode() && GameInput.GetButtonDown(GameInput.Button.Deconstruct))
+				if (__instance.GetPilotingMode() && GameInput.GetButtonDown(GameInput.Button.Deconstruct) && !(Player.main.GetPDA().isOpen || !AvatarInputHandler.main.IsEnabled()))
 				{
 					toggleLights.SetLightsActive(!toggleLights.lightsActive);
 				}
