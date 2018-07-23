@@ -3,6 +3,7 @@ using Harmony;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -52,7 +53,7 @@ namespace PrawnsuitLightswitch.Patches
 					toggleLights.UpdateLightEnergy();
 				}
 
-				if (__instance.GetPilotingMode() && GameInput.GetButtonDown(GameInput.Button.Deconstruct))
+				if (__instance.GetPilotingMode() && GameInput.GetButtonDown(Exosuit_UpdateUIText_Patch.lightsBinding) && !(Player.main.GetPDA().isOpen || !AvatarInputHandler.main.IsEnabled()))
 				{
 					toggleLights.SetLightsActive(!toggleLights.lightsActive);
 				}
@@ -65,12 +66,28 @@ namespace PrawnsuitLightswitch.Patches
 	class Exosuit_UpdateUIText_Patch
 	{
 		private static readonly FieldInfo Exosuit_uiStringPrimary = typeof(Exosuit).GetField("uiStringPrimary", BindingFlags.NonPublic | BindingFlags.Instance);
+		private static readonly FieldInfo Exosuit_rightArm = typeof(Exosuit).GetField("rightArm", BindingFlags.NonPublic | BindingFlags.Instance);
+        	private static readonly FieldInfo Exosuit_leftArm = typeof(Exosuit).GetField("leftArm", BindingFlags.NonPublic | BindingFlags.Instance);
+        	public static GameInput.Button lightsBinding;
 
 		private static void Postfix(Exosuit __instance)
 		{
-			var primaryString = (string)Exosuit_uiStringPrimary.GetValue(__instance);
-			var keyName = GameInput.GetBindingName(GameInput.Button.Deconstruct, GameInput.BindingSet.Primary);
-			var secondaryString = string.Format("Toggle Lights (<color=#ADF8FFFF>{0}</color>)", keyName);
+            		bool hasPropCannon = Exosuit_rightArm.GetValue(__instance) is ExosuitPropulsionArm || Exosuit_leftArm.GetValue(__instance) is ExosuitPropulsionArm;
+            		var toggleLights = __instance.GetComponent<ToggleLights>();
+			string lightsString = LanguageCache.GetButtonFormat((!toggleLights.lightsActive) ? "Lights On (<color=#ADF8FFFF>{0}</color>)" : "Lights Off (<color=#ADF8FFFF>{0}</color>)", lightsBinding);
+			string exitString = string.Join("\n", ((string)Exosuit_uiStringPrimary.GetValue(__instance)).Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Take(1).ToArray());
+			var primaryString = string.Join("\n", ((string)Exosuit_uiStringPrimary.GetValue(__instance)).Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToArray()) + System.Environment.NewLine + lightsString;
+			var secondaryString = string.Empty;
+			if (hasPropCannon)
+            		{
+                		lightsBinding = GameInput.Button.Deconstruct;
+                		secondaryString = exitString;
+            		}
+            		else
+            		{
+                		lightsBinding = GameInput.Button.AltTool;
+                		primaryString = primaryString + System.Environment.NewLine + exitString;
+            		}
 			HandReticle.main.SetUseTextRaw(primaryString, secondaryString);
 		}
 	}
