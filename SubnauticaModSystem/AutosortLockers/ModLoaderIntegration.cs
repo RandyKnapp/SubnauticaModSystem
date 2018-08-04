@@ -5,7 +5,7 @@
 	{
 		public static void Patch()
 		{
-			Mod.Patch("QMods\\AutosortLockers");
+			Mod.Patch("QMods/AutosortLockers");
 		}
 	}
 }

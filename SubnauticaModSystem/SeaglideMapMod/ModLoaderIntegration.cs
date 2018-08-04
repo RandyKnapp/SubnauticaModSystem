@@ -5,7 +5,7 @@
 	{
 		public static void Patch()
 		{
-			Mod.Patch("QMods\\SeaglideMapControls");
+			Mod.Patch("QMods/SeaglideMapControls");
 		}
 	}
 }

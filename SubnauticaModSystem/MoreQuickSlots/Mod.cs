@@ -19,7 +19,7 @@ namespace MoreQuickSlots
 
 		public static void Patch(string modDirectory = null)
 		{
-			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
+			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
 			LoadConfig();
 
 			keys[5] = config.Slot6Key;
@@ -38,7 +38,7 @@ namespace MoreQuickSlots
 
 		private static string GetModInfoPath()
 		{
-			return Environment.CurrentDirectory + "\\" + modDirectory + "\\mod.json";
+			return Environment.CurrentDirectory + "/" + modDirectory + "/mod.json";
 		}
 
 		private static void LoadConfig()

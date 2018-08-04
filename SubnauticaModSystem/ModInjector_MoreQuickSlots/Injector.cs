@@ -24,7 +24,7 @@ namespace ModInjector_MoreQuickSlots
 	{
 		private const string mainFilename = "Assembly-CSharp.dll";
 		private const string backupFilename = "Assembly-CSharp.rk_original.dll";
-		private const string subnauticaManagedDir = @"\Subnautica_Data\Managed\";
+		private const string subnauticaManagedDir = "/Subnautica_Data/Managed/";
 		private const string mainPatchingClass = "GameInput";
 		private const string mainPatchingMethod = "Awake";
 

@@ -16,7 +16,7 @@ namespace CustomizedStorage
 
 		public static void Patch(string modDirectory = null)
 		{
-			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
+			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
 			LoadConfig();
 
 			HarmonyInstance harmony = HarmonyInstance.Create("com.CustomizedStorage.mod");
@@ -27,17 +27,17 @@ namespace CustomizedStorage
 
 		public static string GetModPath()
 		{
-			return Environment.CurrentDirectory + "\\" + modDirectory;
+			return Environment.CurrentDirectory + "/" + modDirectory;
 		}
 
 		public static string GetAssetPath(string filename)
 		{
-			return GetModPath() + @"\Assets\" + filename;
+			return GetModPath() + "/Assets/" + filename;
 		}
 
 		private static string GetConfigPath()
 		{
-			return GetModPath() + "\\config.json";
+			return GetModPath() + "/config.json";
 		}
 
 		private static void LoadConfig()
