@@ -20,7 +20,7 @@ namespace BetterPowerInfo
 
 		public static void Patch(string modDirectory = null)
 		{
-			Mod.modDirectory = modDirectory ?? "Subnautica_Data\\Managed";
+			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
 			LoadConfig();
 
 			HarmonyInstance harmony = HarmonyInstance.Create("com.betterpowerinfo.mod");
@@ -31,7 +31,7 @@ namespace BetterPowerInfo
 
 		private static string GetModInfoPath()
 		{
-			return Environment.CurrentDirectory + "\\" + modDirectory + "\\mod.json";
+			return Environment.CurrentDirectory + "/" + modDirectory + "/mod.json";
 		}
 
 		private static void LoadConfig()

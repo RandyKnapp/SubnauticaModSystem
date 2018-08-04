@@ -5,7 +5,7 @@
 	{
 		public static void Patch()
 		{
-			Mod.Patch("QMods\\CustomBeacons");
+			Mod.Patch("QMods/CustomBeacons");
 		}
 	}
 }

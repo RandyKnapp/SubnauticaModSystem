@@ -11,7 +11,7 @@ namespace MoreQuickSlots
 	{
 		public static void Patch()
 		{
-			Mod.Patch("Subnautica_Data\\Managed");
+			Mod.Patch("Subnautica_Data/Managed");
 		}
 	}
 
@@ -20,7 +20,7 @@ namespace MoreQuickSlots
 	{
 		public static void Patch()
 		{
-			Mod.Patch("QMods\\MoreQuickSlots");
+			Mod.Patch("QMods/MoreQuickSlots");
 		}
 	}
 
@@ -34,7 +34,7 @@ namespace MoreQuickSlots
 		{
 			Logger.Log("Mod Loaded by Nexus ModLoader (" + obj.path + ")");
 			Controller.entry = obj;
-			Mod.Patch("Subnautica_Data\\Mods\\MoreQuickSlots");
+			Mod.Patch("Subnautica_Data/Mods/MoreQuickSlots");
 		}
 	}*/
 
@@ -55,7 +55,7 @@ namespace MoreQuickSlots
 		public override void Patch()
 		{
 			Logger.Log("Mod Loaded by SubnauticaModLoader by dumbdiscord");
-			Mod.Patch("Mods\\MoreQuickSlots");
+			Mod.Patch("Mods/MoreQuickSlots");
 		}
 	}*/
 }

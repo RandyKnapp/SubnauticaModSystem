@@ -7,7 +7,7 @@ namespace LongLockerNames
 	{
 		public static void Patch()
 		{
-			Mod.Patch("QMods\\LongLockerNames");
+			Mod.Patch("QMods/LongLockerNames");
 		}
 	}
 }

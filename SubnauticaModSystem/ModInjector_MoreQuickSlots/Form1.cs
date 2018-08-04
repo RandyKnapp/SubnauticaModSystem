@@ -13,10 +13,10 @@ namespace ModInjector_MoreQuickSlots
 {
 	public partial class Form1 : Form
 	{
-		private const string steamInstallRegistryPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam";
+		private const string steamInstallRegistryPath = "HKEY_LOCAL_MACHINE/SOFTWARE/Valve/Steam";
 		private const string steamInstallRegistryKey = "InstallPath";
-		private const string steamConfigFile = @"\config\config.vdf";
-		private const string subnauticaDir = @"\steamapps\common\Subnautica";
+		private const string steamConfigFile = "/config/config.vdf";
+		private const string subnauticaDir = "/steamapps/common/Subnautica";
 		private const string steamConfigBaseInstallKey = "BaseInstallFolder_";
 
 		private Injector injector;
@@ -51,7 +51,7 @@ namespace ModInjector_MoreQuickSlots
 					{
 						int start = line.LastIndexOf("\t\t\"") + 3;
 						string dir = line.Substring(start, line.Length - start - 1);
-						dir = dir.Replace("\\\\", "\\");
+						dir = dir.Replace("//", "/");
 						potentialDirectories.Add(dir + subnauticaDir);
 					}
 				}
