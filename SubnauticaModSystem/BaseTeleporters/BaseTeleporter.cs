@@ -16,8 +16,8 @@ namespace BaseTeleporters
 			BuilderUtils.AddBuildable(new CustomTechInfo() {
 				getPrefab = BaseTeleporter.GetPrefab,
 				techType = (TechType)CustomTechType.BaseTeleporter,
-				techGroup = TechGroup.InteriorPieces,
-				techCategory = TechCategory.InteriorPiece,
+				techGroup = TechGroup.InteriorModules,
+				techCategory = TechCategory.InteriorModule,
 				knownAtStart = true,
 				assetPath = "Submarine/Build/BaseTeleporter",
 				displayString = "Teleporter",
@@ -35,27 +35,64 @@ namespace BaseTeleporters
 
 		public static GameObject GetPrefab()
 		{
-			var teleporterPrefab = Resources.Load<GameObject>("WorldEntities/Environment/Precursor/MountainIsland/Precursor_Mountain_Teleporter_ToFloatingIsland");
-			var nuclearReactorPrefab = Resources.Load<GameObject>("Submarine/Build/BaseNuclearReactorModule");
-			var nuclearReactorGhost = Resources.Load<GameObject>("Base/Ghosts/BaseNuclearReactor");
+			var alienTeleporterPrefab = Resources.Load<GameObject>("WorldEntities/Environment/Precursor/MountainIsland/Precursor_Mountain_Teleporter_ToFloatingIsland");
+			var baseTeleporterPrefab = new GameObject("BaseTeleporter");
+			var plantPotPrefab = Resources.Load<GameObject>("Submarine/Build/PlanterPot");
+			var aquariumPrefab = Resources.Load<GameObject>("Submarine/Build/Aquarium");
 
-			ModUtils.PrintObject(nuclearReactorPrefab);
-			ModUtils.PrintObject(nuclearReactorGhost);
+			const float padHeight = 0.1f;
+			const float fieldHeight = 1.5f;
 
-			var constructable = nuclearReactorGhost.GetComponent<ConstructableBase>();
-			Logger.Log("ConstructableBase");
-			ModUtils.PrintObjectFields(constructable);
-			var addModuleGhost = nuclearReactorGhost.GetComponentInChildren<BaseAddModuleGhost>();
-			Logger.Log("BaseAddModuleGhost");
-			ModUtils.PrintObjectFields(addModuleGhost);
-			addModuleGhost.modulePrefab = teleporterPrefab;
+			var warpCollider = ModUtils.GetChildByName(alienTeleporterPrefab, "WarpCollider");
+			Console.WriteLine("BoxCollider--");
+			ModUtils.PrintObjectFields(warpCollider.GetComponent<BoxCollider>());
+			Console.WriteLine("PrecursorTeleporterCollider--");
+			ModUtils.PrintObjectFields(warpCollider.GetComponent<PrecursorTeleporterCollider>());
 
-			foreach (var meshRenderer in addModuleGhost.modulePrefab.GetComponentsInChildren<MeshRenderer>())
-			{
-				meshRenderer.material.color = new Color(0, 1, 0);
-			}
+			var constructable = ModUtils.CopyComponent(plantPotPrefab.GetComponent<Constructable>(), baseTeleporterPrefab);
+			constructable.techType = (TechType)CustomTechType.BaseTeleporter;
 
-			return nuclearReactorGhost;
+			var techTag = ModUtils.CopyComponent(plantPotPrefab.GetComponent<TechTag>(), baseTeleporterPrefab);
+			techTag.type = (TechType)CustomTechType.BaseTeleporter;
+
+			var prefabIdentifier = ModUtils.CopyComponent(plantPotPrefab.GetComponent<PrefabIdentifier>(), baseTeleporterPrefab);
+			prefabIdentifier.ClassId = "Submarine/Build/BaseTeleporter";
+
+			var constructBounds = ModUtils.CopyComponent(plantPotPrefab.GetComponent<ConstructableBounds>(), baseTeleporterPrefab);
+			constructBounds.bounds.extents = new Vector3(0.4f, padHeight, 0.4f);
+			constructBounds.bounds.position = new Vector3(0, padHeight, 0);
+
+			var teleporterPad = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			teleporterPad.name = "Pad";
+			teleporterPad.transform.SetParent(baseTeleporterPrefab.transform);
+			teleporterPad.transform.localScale = new Vector3(1.5f, padHeight, 1.5f);
+			teleporterPad.transform.localPosition = new Vector3(0, padHeight / 2, 0);
+			teleporterPad.GetComponent<MeshRenderer>().material = alienTeleporterPrefab.GetComponentInChildren<MeshRenderer>().material;
+
+			constructable.model = teleporterPad;
+
+			var teleporterField = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			teleporterField.name = "TeleportField";
+			teleporterField.transform.SetParent(baseTeleporterPrefab.transform);
+			teleporterField.transform.localScale = new Vector3(1, fieldHeight, 1);
+			teleporterField.transform.localPosition = new Vector3(0, padHeight + fieldHeight / 2, 0);
+			var fieldRenderer = teleporterField.GetComponent<MeshRenderer>();
+			fieldRenderer.material = alienTeleporterPrefab.GetComponentInChildren<MeshRenderer>().material;
+			fieldRenderer.material.color = new Color(0, 1, 0, 0.5f);
+
+			teleporterField.AddComponent<PrecursorTeleporterCollider>();
+
+			var teleporterCollider = teleporterField.GetComponent<BoxCollider>();
+			teleporterCollider.isTrigger = true;
+
+			baseTeleporterPrefab.SetActive(false);
+			var sky = baseTeleporterPrefab.AddComponent<SkyApplier>();
+			sky.dynamic = true;
+			sky.renderers = baseTeleporterPrefab.GetAllComponentsInChildren<MeshRenderer>();
+			sky.anchorSky = Skies.BaseInterior;
+			baseTeleporterPrefab.SetActive(true);
+
+			return baseTeleporterPrefab;
 		}
 	}
 }

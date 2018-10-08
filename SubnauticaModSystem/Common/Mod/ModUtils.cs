@@ -122,8 +122,25 @@ namespace Common.Mod
 			Console.WriteLine(indent + "}");
 		}
 
+		static List<string> s_gameObjectFields;
+
 		public static void PrintObjectFields(object obj, string indent = "")
 		{
+			if (s_gameObjectFields == null)
+			{
+				s_gameObjectFields = new List<string>();
+				var goFields = typeof(GameObject).GetFields(BindingFlags.Public | BindingFlags.Instance);
+				foreach (var field in goFields)
+				{
+					s_gameObjectFields.Add(field.Name);
+				}
+				var goProps = typeof(GameObject).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
+				foreach (var prop in goProps)
+				{
+					s_gameObjectFields.Add(prop.Name);
+				}
+			}
+
 			if (obj == null)
 			{
 				Console.WriteLine(indent + "  null");
@@ -134,11 +151,19 @@ namespace Common.Mod
 			FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo field in fields)
 			{
+				if (s_gameObjectFields.Contains(field.Name))
+				{
+					continue;
+				}
 				Console.WriteLine(indent + "  " + field.Name + " : " + field.GetValue(obj));
 			}
 			PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
 			foreach (PropertyInfo property in properties)
 			{
+				if (s_gameObjectFields.Contains(property.Name))
+				{
+					continue;
+				}
 				Console.WriteLine(indent + "  " + property.Name + " : " + property.GetValue(obj, new object[] { }));
 			}
 		}
