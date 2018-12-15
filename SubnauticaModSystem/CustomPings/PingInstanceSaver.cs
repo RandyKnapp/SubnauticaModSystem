@@ -39,14 +39,9 @@ namespace CustomBeacons
 			}
 		}
 
-		private string GetSaveDataDir()
-		{
-			return Path.Combine(ModUtils.GetSaveDataDirectory(), "CustomBeacons");
-		}
-
 		private string GetSaveDataPath()
 		{
-			var saveFile = Path.Combine(GetSaveDataDir(), id + ".json");
+			var saveFile = Path.Combine("CustomBeacons", id + ".json");
 			return saveFile;
 		}
 
@@ -61,25 +56,18 @@ namespace CustomBeacons
 
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
+			var userStorage = PlatformUtils.main.GetUserStorage();
+			userStorage.CreateContainerAsync(Path.Combine(Utils.GetSavegameDir(), "CustomBeacons"));
+
 			var saveDataFile = GetSaveDataPath();
 			var saveData = CreateSaveData();
-			if (!Directory.Exists(GetSaveDataDir()))
-			{
-				Directory.CreateDirectory(GetSaveDataDir());
-			}
-			string fileContents = JsonConvert.SerializeObject(saveData, Formatting.Indented);
-			File.WriteAllText(saveDataFile, fileContents);
+			ModUtils.Save(saveData, saveDataFile);
 		}
 
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
 			var saveDataFile = GetSaveDataPath();
-			if (File.Exists(saveDataFile))
-			{
-				string fileContents = File.ReadAllText(saveDataFile);
-				var saveData = JsonConvert.DeserializeObject<PingInstanceSaveData>(fileContents);
-				OnLoadSaveData(saveData);
-			}
+			ModUtils.LoadSaveData<PingInstanceSaveData>(saveDataFile, OnLoadSaveData);
 		}
 
 		private void OnLoadSaveData(PingInstanceSaveData saveData)

@@ -444,14 +444,12 @@ namespace DockedVehicleStorageAccess
 
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
+			var userStorage = PlatformUtils.main.GetUserStorage();
+			userStorage.CreateContainerAsync(Path.Combine(Utils.GetSavegameDir(), "DockedVehicleStorageAccess"));
+
 			var saveDataFile = GetSaveDataPath();
 			saveData = CreateSaveData();
-			if (!Directory.Exists(GetSaveDataDir()))
-			{
-				Directory.CreateDirectory(GetSaveDataDir());
-			}
-			string fileContents = JsonConvert.SerializeObject(saveData, Formatting.Indented);
-			File.WriteAllText(saveDataFile, fileContents);
+			ModUtils.Save(saveData, saveDataFile);
 		}
 
 		private VehicleStorageAccessSaveData CreateSaveData()
@@ -472,20 +470,10 @@ namespace DockedVehicleStorageAccess
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
 			var saveDataFile = GetSaveDataPath();
-			if (File.Exists(saveDataFile))
-			{
-				string fileContents = File.ReadAllText(saveDataFile);
-				saveData = JsonConvert.DeserializeObject<VehicleStorageAccessSaveData>(fileContents);
-			}
-			else
-			{
-				saveData = new VehicleStorageAccessSaveData();
-			}
-		}
-
-		private string GetSaveDataDir()
-		{
-			return Path.Combine(ModUtils.GetSaveDataDirectory(), "DockedVehicleStorageAccess");
+			ModUtils.LoadSaveData<VehicleStorageAccessSaveData>(saveDataFile, (data) => {
+				saveData = data;
+				initialized = false;
+			});
 		}
 
 		public string GetSaveDataPath()
@@ -493,7 +481,7 @@ namespace DockedVehicleStorageAccess
 			var prefabIdentifier = GetComponent<PrefabIdentifier>();
 			var id = prefabIdentifier.Id;
 
-			var saveFile = Path.Combine(GetSaveDataDir(), id + ".json");
+			var saveFile = Path.Combine("DockedVehicleStorageAccess", id + ".json");
 			return saveFile;
 		}
 

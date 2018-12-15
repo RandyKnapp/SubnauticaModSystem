@@ -59,15 +59,12 @@ namespace Common.Mod
 
 		private static IEnumerator LoadInternal<SaveDataT>(string fileName, Action<SaveDataT> onSuccess)
 		{
-			Console.WriteLine("<A>");
 			var userStorage = PlatformUtils.main.GetUserStorage();
 			List<string> files = new List<string> { fileName };
 			UserStorage.LoadOperation loadOperation = userStorage.LoadFilesAsync(Utils.GetSavegameDir(), files);
-			Console.WriteLine("<B>");
 			yield return loadOperation;
 			if (loadOperation.GetSuccessful())
 			{
-				Console.WriteLine("<C>");
 				var stringData = Encoding.ASCII.GetString(loadOperation.files[fileName]);
 				SaveDataT saveData = JsonConvert.DeserializeObject<SaveDataT>(stringData);
 				onSuccess(saveData);
@@ -76,7 +73,6 @@ namespace Common.Mod
 			{
 				Console.WriteLine("Load Failed: " + loadOperation.errorMessage);
 			}
-			Console.WriteLine("<D>");
 		}
 
 		public static void Save<SaveDataT>(SaveDataT newSaveData, string fileName, Action onSaveComplete = null)

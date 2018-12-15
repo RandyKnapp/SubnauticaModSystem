@@ -97,7 +97,6 @@
     <Compile Include="Patches\DockingBay_Patches.cs" />
     <Compile Include="VehicleStorageAccess.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="ModSaver.cs" />
     <Compile Include="Patches\BuilderUtils_Patches.cs" />
     <Compile Include="CheckboxButton.cs" />
     <Compile Include="Logger.cs" />
@@ -131,6 +130,10 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\Subnautica\QMods\DockedVehicleStorageAccess\ /q /y
 xcopy $(ProjectDir)mod.json D:\SteamLibrary\steamapps\common\Subnautica\QMods\DockedVehicleStorageAccess\ /q /y
-xcopy $(ProjectDir)Assets D:\SteamLibrary\steamapps\common\Subnautica\QMods\DockedVehicleStorageAccess\Assets\ /q /y /i</PostBuildEvent>
+xcopy $(ProjectDir)Assets D:\SteamLibrary\steamapps\common\Subnautica\QMods\DockedVehicleStorageAccess\Assets\ /q /y /i
+
+xcopy $(TargetPath) D:\EpicGames\Subnautica\QMods\DockedVehicleStorageAccess\ /q /y
+xcopy $(ProjectDir)mod.json D:\EpicGames\Subnautica\QMods\DockedVehicleStorageAccess\ /q /y
+xcopy $(ProjectDir)Assets D:\EpicGames\Subnautica\QMods\DockedVehicleStorageAccess\Assets\ /q /y /i</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -10,8 +10,6 @@ using UnityEngine.UI;
 
 namespace DockedVehicleStorageAccess
 {
-	//console.transform.localPosition = new Vector3(4.96f, 1.4f, 3.23f);
-	//console.transform.localEulerAngles = new Vector3(0, 42.5f, 0);
 	[Serializable]
 	class MoonpoolTerminalSaveData
 	{
@@ -39,11 +37,9 @@ namespace DockedVehicleStorageAccess
 
 		private void Awake()
 		{
-			OnProtoDeserialize(null);
-
 			var buttonPositionCenter = new Vector2(0, 0);
 			var buttonSpacing = 104;
-			positionIndex = saveData != null ? saveData.Position : 0;
+
 			var parent = GetComponentInChildren<Canvas>().transform;
 			var color = new Color32(189, 255, 255, 255);
 
@@ -62,7 +58,7 @@ namespace DockedVehicleStorageAccess
 			{
 				var button = CheckboxButton.CreateCheckboxNoText(parent, color, 100);
 				button.Initialize();
-				button.toggled = positionIndex == i;
+				button.toggled = false;
 				button.rectTransform.anchoredPosition = buttonPositionCenter + new Vector2((-1.5f + i) * buttonSpacing, 0);
 				var buttonIndex = i;
 				button.onToggled = (bool toggled) => {
@@ -71,6 +67,12 @@ namespace DockedVehicleStorageAccess
 				positionButtons.Add(button);
 			}
 
+			OnProtoDeserialize(null);
+		}
+
+		private void Initialize()
+		{
+			positionIndex = saveData != null ? saveData.Position : 0;
 			SetPosition(positionIndex);
 		}
 
@@ -96,14 +98,12 @@ namespace DockedVehicleStorageAccess
 
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
+			var userStorage = PlatformUtils.main.GetUserStorage();
+			userStorage.CreateContainerAsync(Path.Combine(Utils.GetSavegameDir(), "DockedVehicleStorageAccess"));
+
 			var saveDataFile = GetSaveDataPath();
 			saveData = CreateSaveData();
-			if (!Directory.Exists(GetSaveDataDir()))
-			{
-				Directory.CreateDirectory(GetSaveDataDir());
-			}
-			string fileContents = JsonConvert.SerializeObject(saveData, Formatting.Indented);
-			File.WriteAllText(saveDataFile, fileContents);
+			ModUtils.Save(saveData, saveDataFile);
 		}
 
 		private MoonpoolTerminalSaveData CreateSaveData()
@@ -118,20 +118,10 @@ namespace DockedVehicleStorageAccess
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
 			var saveDataFile = GetSaveDataPath();
-			if (File.Exists(saveDataFile))
-			{
-				string fileContents = File.ReadAllText(saveDataFile);
-				saveData = JsonConvert.DeserializeObject<MoonpoolTerminalSaveData>(fileContents);
-			}
-			else
-			{
-				saveData = new MoonpoolTerminalSaveData();
-			}
-		}
-
-		private string GetSaveDataDir()
-		{
-			return Path.Combine(ModUtils.GetSaveDataDirectory(), "DockedVehicleStorageAccess");
+			ModUtils.LoadSaveData<MoonpoolTerminalSaveData>(saveDataFile, (data) => {
+				saveData = data;
+				Initialize();
+			});
 		}
 
 		public string GetSaveDataPath()
@@ -139,7 +129,7 @@ namespace DockedVehicleStorageAccess
 			var prefabIdentifier = GetComponentInParent<PrefabIdentifier>();
 			var id = prefabIdentifier.Id;
 
-			var saveFile = Path.Combine(GetSaveDataDir(), id + ".json");
+			var saveFile = Path.Combine("DockedVehicleStorageAccess", id + ".json");
 			return saveFile;
 		}
 	}

@@ -39,7 +39,7 @@ namespace HabitatControlPanel
 		private bool initialized;
 		private Constructable constructable;
 		private Equipment equipment;
-		private HabitatControlPanelSaveData saveData;
+		private HabitatControlPanelSaveData saveData = new HabitatControlPanelSaveData();
 		private PowerRelay connectedRelay;
 		private string habitatLabel = InitialHabitatLabel;
 		private int pingType = 0;
@@ -660,14 +660,12 @@ namespace HabitatControlPanel
 
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
+			var userStorage = PlatformUtils.main.GetUserStorage();
+			userStorage.CreateContainerAsync(Path.Combine(Utils.GetSavegameDir(), "HabitatControlPanel"));
+
 			var saveDataFile = GetSaveDataPath();
 			saveData = CreateSaveData();
-			if (!Directory.Exists(GetSaveDataDir()))
-			{
-				Directory.CreateDirectory(GetSaveDataDir());
-			}
-			string fileContents = JsonConvert.SerializeObject(saveData, Formatting.Indented);
-			File.WriteAllText(saveDataFile, fileContents);
+			ModUtils.Save(saveData, saveDataFile);
 		}
 
 		private HabitatControlPanelSaveData CreateSaveData()
@@ -695,28 +693,18 @@ namespace HabitatControlPanel
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
 			var saveDataFile = GetSaveDataPath();
-			if (File.Exists(saveDataFile))
-			{
-				string fileContents = File.ReadAllText(saveDataFile);
-				saveData = JsonConvert.DeserializeObject<HabitatControlPanelSaveData>(fileContents);
-			}
-			else
-			{
-				saveData = new HabitatControlPanelSaveData();
-			}
+			ModUtils.LoadSaveData<HabitatControlPanelSaveData>(saveDataFile, (data) => {
+				saveData = data;
+				initialized = false;
+			});
 		}
-
-		private string GetSaveDataDir()
-		{
-			return Path.Combine(ModUtils.GetSaveDataDirectory(), "HabitatControlPanel");
-		}
-
+		
 		public string GetSaveDataPath()
 		{
 			var prefabIdentifier = GetComponent<PrefabIdentifier>();
 			var id = prefabIdentifier.Id;
 
-			var saveFile = Path.Combine(GetSaveDataDir(), id + ".json");
+			var saveFile = Path.Combine("HabitatControlPanel", id + ".json");
 			return saveFile;
 		}
 
