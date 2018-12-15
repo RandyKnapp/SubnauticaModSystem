@@ -1,5 +1,6 @@
 ﻿using Common.Utility;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using Oculus.Newtonsoft.Json;
 
 namespace Common.Mod
 {
@@ -15,6 +17,7 @@ namespace Common.Mod
 		private static FieldInfo CraftData_techMapping = typeof(CraftData).GetField("techMapping", BindingFlags.NonPublic | BindingFlags.Static);
 
 		private static List<TechType> pickupableTypes;
+		private static MonoBehaviour coroutineObject;
 
 		public static ConfigT LoadConfig<ConfigT>(string modInfoPath) where ConfigT : new()
 		{
@@ -49,30 +52,52 @@ namespace Common.Mod
 			}
 		}
 
-		public static SaveDataT LoadSaveData<SaveDataT>(string fileName) where SaveDataT : new()
+		public static void LoadSaveData<SaveDataT>(string fileName, Action<SaveDataT> onSuccess) where SaveDataT : new()
 		{
-			var saveDir = GetSaveDataDirectory();
-			var saveFile = Path.Combine(saveDir, fileName);
-			if (File.Exists(saveFile))
-			{
-				SaveDataT saveData = JsonUtility.FromJson<SaveDataT>(File.ReadAllText(saveFile));
-				if (saveData != null)
-				{
-					return saveData;
-				}
-			}
-
-			return new SaveDataT();
+			StartCoroutine(LoadInternal<SaveDataT>(fileName, onSuccess));
 		}
 
-		public static void Save<SaveDataT>(SaveDataT newSaveData, string fileName)
+		private static IEnumerator LoadInternal<SaveDataT>(string fileName, Action<SaveDataT> onSuccess)
 		{
+			Console.WriteLine("<A>");
+			var userStorage = PlatformUtils.main.GetUserStorage();
+			List<string> files = new List<string> { fileName };
+			UserStorage.LoadOperation loadOperation = userStorage.LoadFilesAsync(Utils.GetSavegameDir(), files);
+			Console.WriteLine("<B>");
+			yield return loadOperation;
+			if (loadOperation.GetSuccessful())
+			{
+				Console.WriteLine("<C>");
+				var stringData = Encoding.ASCII.GetString(loadOperation.files[fileName]);
+				SaveDataT saveData = JsonConvert.DeserializeObject<SaveDataT>(stringData);
+				onSuccess(saveData);
+			}
+			else
+			{
+				Console.WriteLine("Load Failed: " + loadOperation.errorMessage);
+			}
+			Console.WriteLine("<D>");
+		}
+
+		public static void Save<SaveDataT>(SaveDataT newSaveData, string fileName, Action onSaveComplete = null)
+		{			
 			if (newSaveData != null)
 			{
-				var saveDir = GetSaveDataDirectory();
-				var saveFile = Path.Combine(saveDir, fileName);
-				string saveDataJson = JsonUtility.ToJson(newSaveData);
-				File.WriteAllText(saveFile, saveDataJson);
+				string saveDataJson = JsonConvert.SerializeObject(newSaveData);
+				StartCoroutine(SaveInternal(saveDataJson, fileName, onSaveComplete));
+			}
+		}
+
+		private static IEnumerator SaveInternal(string saveData, string fileName, Action onSaveComplete = null)
+		{
+			var userStorage = PlatformUtils.main.GetUserStorage();
+			var saveFileMap = new Dictionary<string, byte[]>();
+			saveFileMap.Add(fileName, Encoding.ASCII.GetBytes(saveData));
+			var saveOp = userStorage.SaveFilesAsync(Utils.GetSavegameDir(), saveFileMap);
+			yield return saveOp;
+			if (saveOp.GetSuccessful())
+			{
+				onSaveComplete?.Invoke();
 			}
 		}
 
@@ -195,9 +220,9 @@ namespace Common.Mod
 			return text;
 		}
 
-		public static string GetSaveDataDirectory()
+		private static string EpicSaveGamePath()
 		{
-			return Path.Combine(Path.Combine(Path.GetFullPath("SNAppData"), "SavedGames"), Utils.GetSavegameDir());
+			return Path.Combine(Application.persistentDataPath, Utils.GetSavegameDir());
 		}
 
 		public static GameObject GetChildByName(GameObject parent, string name, bool recursive = false)
@@ -261,6 +286,17 @@ namespace Common.Mod
 				field.SetValue(copy, field.GetValue(original));
 			}
 			return copy as T;
+		}
+
+		private static Coroutine StartCoroutine(IEnumerator coroutine)
+		{
+			if (coroutineObject == null)
+			{
+				var go = new GameObject();
+				coroutineObject = go.AddComponent<ModSaver>();
+			}
+
+			return coroutineObject.StartCoroutine(coroutine);
 		}
 	}
 }

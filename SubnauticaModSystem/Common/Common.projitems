@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mod\CallbackOnDestroy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\CustomTechInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\LockerPrefabShared.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mod\ModSaver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\ProtobufSerializerPatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\SerializableColor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ImageUtils.cs" />

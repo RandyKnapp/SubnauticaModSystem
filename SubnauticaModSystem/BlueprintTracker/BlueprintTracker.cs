@@ -177,8 +177,9 @@ namespace BlueprintTracker
 
 		private void Load()
 		{
-			SaveData data = Mod.LoadSaveData();
-			initialTech = data.TrackedTech;
+			Mod.LoadSaveData((data) => {
+				initialTech = data.TrackedTech;
+			});
 		}
 
 		private void AddTracker(TechType techType)

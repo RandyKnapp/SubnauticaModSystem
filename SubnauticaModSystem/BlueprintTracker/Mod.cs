@@ -88,9 +88,9 @@ namespace BlueprintTracker
 			ModUtils.ValidateConfigValue("BackgroundAlpha", 0.0f, 1.0f, ref config, ref defaultConfig);
 		}
 
-		public static SaveData LoadSaveData()
+		public static void LoadSaveData(Action<SaveData> onSuccess)
 		{
-			return ModUtils.LoadSaveData<SaveData>(SaveDataFilename);
+			ModUtils.LoadSaveData<SaveData>(SaveDataFilename, onSuccess);
 		}
 
 		public static void Save(SaveData newSaveData)

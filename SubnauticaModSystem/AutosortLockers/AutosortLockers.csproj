@@ -96,8 +96,8 @@
     <Compile Include="Config.cs" />
     <Compile Include="CustomizeScreen.cs" />
     <Compile Include="LabelController.cs" />
-    <Compile Include="ModSaver.cs" />
     <Compile Include="Patches\BuilderUtils_Patches.cs" />
+    <Compile Include="Patches\Initializer_Patch.cs" />
     <Compile Include="Picker.cs" />
     <Compile Include="PickerPageButton.cs" />
     <Compile Include="PickerCloseButton.cs" />
@@ -129,6 +129,8 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\Subnautica\QMods\AutosortLockers\ /q /y
 xcopy $(ProjectDir)mod.json D:\SteamLibrary\steamapps\common\Subnautica\QMods\AutosortLockers\ /q /y
-xcopy $(ProjectDir)Assets D:\SteamLibrary\steamapps\common\Subnautica\QMods\AutosortLockers\Assets\ /q /y /i</PostBuildEvent>
+xcopy $(ProjectDir)Assets D:\SteamLibrary\steamapps\common\Subnautica\QMods\AutosortLockers\Assets\ /q /y /i
+
+xcopy $(TargetPath) D:\EpicGames\Subnautica\QMods\AutosortLockers\ /q /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

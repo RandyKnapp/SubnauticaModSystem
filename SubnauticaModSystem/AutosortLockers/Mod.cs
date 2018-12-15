@@ -28,6 +28,8 @@ namespace AutosortLockers
 		private static string modDirectory;
 		private static ModSaver saveObject;
 
+		public static event Action<SaveData> OnDataLoaded;
+
 		public static void Patch(string modDirectory = null)
 		{
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
@@ -97,15 +99,7 @@ namespace AutosortLockers
 
 		public static SaveData GetSaveData()
 		{
-			if (saveData == null)
-			{
-				saveData = LoadSaveData();
-				if (saveData == null)
-				{
-					saveData = new SaveData();
-				}
-			}
-			return saveData;
+			return saveData ?? new SaveData();
 		}
 
 		public static SaveDataEntry GetSaveData(string id)
@@ -125,23 +119,22 @@ namespace AutosortLockers
 		{
 			if (!IsSaving())
 			{
+				saveObject = new GameObject().AddComponent<ModSaver>();
+
 				SaveData newSaveData = new SaveData();
 				var targets = GameObject.FindObjectsOfType<AutosortTarget>();
 				foreach (var target in targets)
 				{
 					target.Save(newSaveData);
 				}
-				WriteSaveData(newSaveData);
 				saveData = newSaveData;
-
-				saveObject = new GameObject("AutosortLockersSaveObject").AddComponent<ModSaver>();
-				saveObject.StartCoroutine(SaveCoroutine());
+				ModUtils.Save<SaveData>(saveData, SaveDataFilename, OnSaveComplete);
 			}
 		}
 
-		public static bool IsSaving()
+		public static void OnSaveComplete()
 		{
-			return saveObject != null;
+			saveObject.StartCoroutine(SaveCoroutine());
 		}
 
 		private static IEnumerator SaveCoroutine()
@@ -150,35 +143,23 @@ namespace AutosortLockers
 			{
 				yield return null;
 			}
-			GameObject.Destroy(saveObject.gameObject);
+			GameObject.DestroyImmediate(saveObject.gameObject);
 			saveObject = null;
 		}
 
-		private static SaveData LoadSaveData()
+		public static bool IsSaving()
 		{
-			var saveDir = ModUtils.GetSaveDataDirectory();
-			var saveFile = Path.Combine(saveDir, SaveDataFilename);
-			if (File.Exists(saveFile))
-			{
-				SaveData saveData = JsonConvert.DeserializeObject<SaveData>(File.ReadAllText(saveFile));
-				if (saveData != null)
-				{
-					return saveData;
-				}
-			}
-
-			return new SaveData();
+			return saveObject != null;
 		}
 
-		private static void WriteSaveData(SaveData newSaveData)
+		public static void LoadSaveData()
 		{
-			if (newSaveData != null)
-			{
-				var saveDir = ModUtils.GetSaveDataDirectory();
-				var saveFile = Path.Combine(saveDir, SaveDataFilename);
-				string saveDataJson = JsonConvert.SerializeObject(newSaveData, Formatting.Indented);
-				File.WriteAllText(saveFile, saveDataJson);
-			}
+			Logger.Log("Loading Save Data...");
+			ModUtils.LoadSaveData<SaveData>(SaveDataFilename, (data) => {
+				saveData = data;
+				Logger.Log("Save Data Loaded");
+				OnDataLoaded?.Invoke(saveData);
+			});
 		}
 	}
 }

@@ -52,6 +52,17 @@ namespace AutosortLockers
 		{
 			constructable = GetComponent<Constructable>();
 			container = gameObject.GetComponent<StorageContainer>();
+
+			Mod.OnDataLoaded += OnDataLoaded;
+		}
+
+		private void OnDataLoaded(SaveData allSaveData)
+		{
+			Logger.Log("OnDataLoaded");
+			saveData = GetSaveData();
+			InitializeFromSaveData();
+			InitializeFilters();
+			UpdateText();
 		}
 
 		public void SetPicker(AutosortTypePicker picker)
@@ -342,6 +353,7 @@ namespace AutosortLockers
 
 		private void InitializeFromSaveData()
 		{
+			Logger.Log("Object Initialize from Save Data");
 			label.text = saveData.Label;
 			label.color = saveData.LabelColor.ToColor();
 			icon.color = saveData.IconColor.ToColor();
@@ -364,7 +376,7 @@ namespace AutosortLockers
 		private SaveDataEntry GetSaveData()
 		{
 			var prefabIdentifier = GetComponent<PrefabIdentifier>();
-			var id = prefabIdentifier.Id;
+			var id = prefabIdentifier?.Id ?? string.Empty;
 
 			return Mod.GetSaveData(id);
 		}
@@ -630,6 +642,6 @@ namespace AutosortLockers
 			autosortTarget.customizeButtonImage = autosortTarget.customizeButton.GetComponent<Image>();
 
 			return prefab;
-		}
+		}		
 	}
 }
