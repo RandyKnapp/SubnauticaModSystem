@@ -83,6 +83,11 @@ namespace TorpedoImprovements.Patches
 				upperRight.transform.SetParent(__instance.transform, false);
 				upperRight.transform.localPosition += new Vector3(0, 0.2f, 0);
 
+				SubRoot baseParentComponent = __instance.GetComponentInParent<SubRoot>();
+				bool isDockedInCyclops = __instance.docked && baseParentComponent != null & !baseParentComponent.isBase;
+				string isBaseText = (baseParentComponent != null ? baseParentComponent.isBase.ToString() : "null");
+				//Logger.Log($"Seamoth.Start: Docked in Cyclops: {isDockedInCyclops} (docked: {__instance.docked}, isBase: {isBaseText})");
+
 				var torpedoSilos = new GameObject[] { left, right, upperLeft, upperRight };
 				for (var i = 0; i < torpedoSilos.Length; ++i)
 				{
@@ -103,6 +108,15 @@ namespace TorpedoImprovements.Patches
 					collider.height = collider.height / 2;
 					collider.radius = collider.radius / 2;
 					silo.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+				}
+
+				if (isDockedInCyclops)
+				{
+					var colliders = __instance.GetComponentsInChildren<Collider>();
+					foreach (var collider in colliders)
+					{
+						collider.enabled = false;
+					}
 				}
 
 				return true;
@@ -127,6 +141,8 @@ namespace TorpedoImprovements.Patches
 					var collider = torpedoSilo.GetComponent<Collider>();
 					collider.enabled = dockType != Vehicle.DockType.Cyclops;
 				}
+
+				Logger.Log($"Seamoth.OnDockedChanged: Docked: {docked}, Type: {dockType}");
 			}
 		}
 
