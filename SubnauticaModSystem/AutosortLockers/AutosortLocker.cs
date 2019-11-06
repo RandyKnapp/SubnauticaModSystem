@@ -37,6 +37,8 @@ namespace AutosortLockers
 		[SerializeField]
 		private bool sortedItem;
 
+		public bool IsSorting => isSorting;
+
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();

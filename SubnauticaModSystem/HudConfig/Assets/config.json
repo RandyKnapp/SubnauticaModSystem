@@ -2,17 +2,12 @@
   "HudElements": [
     {
       "Name": "QuickSlots",
-      "Scale": 0.8
     },
     {
       "Name": "BarsPanel",
-      "Scale": 0.8,
-      "XOffset": -100,
-      "YOffset": -100
     },
     {
       "Name": "PowerIndicator",
-      "Scale": 0.8
     },
     {
       "Name": "RadiationWarning"
@@ -34,19 +29,12 @@
     },
     {
       "Name": "Seamoth",
-      "Scale": 0.8,
-      "XOffset": 100,
-      "YOffset": -100
     },
     {
       "Name": "Exosuit",
-      "Scale": 0.8,
-      "XOffset": 100,
-      "YOffset": -100
     },
     {
       "Name": "DepthCompass",
-      "Scale": 0.8
     },
     {
       "Name": "ItemSelector"

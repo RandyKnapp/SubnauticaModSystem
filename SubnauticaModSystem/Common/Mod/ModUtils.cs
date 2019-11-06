@@ -61,7 +61,7 @@ namespace Common.Mod
 		{
 			var userStorage = PlatformUtils.main.GetUserStorage();
 			List<string> files = new List<string> { fileName };
-			UserStorage.LoadOperation loadOperation = userStorage.LoadFilesAsync(Utils.GetSavegameDir(), files);
+			UserStorageUtils.LoadOperation loadOperation = userStorage.LoadFilesAsync(SaveLoadManager.main.GetCurrentSlot(), files);
 			yield return loadOperation;
 			if (loadOperation.GetSuccessful())
 			{
@@ -89,7 +89,8 @@ namespace Common.Mod
 			var userStorage = PlatformUtils.main.GetUserStorage();
 			var saveFileMap = new Dictionary<string, byte[]>();
 			saveFileMap.Add(fileName, Encoding.ASCII.GetBytes(saveData));
-			var saveOp = userStorage.SaveFilesAsync(Utils.GetSavegameDir(), saveFileMap);
+			SaveLoadManager.main.GetCurrentSlot();
+			var saveOp = userStorage.SaveFilesAsync(SaveLoadManager.main.GetCurrentSlot(), saveFileMap);
 			yield return saveOp;
 			if (saveOp.GetSuccessful())
 			{
@@ -214,11 +215,6 @@ namespace Common.Mod
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 100);
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100);
 			return text;
-		}
-
-		private static string EpicSaveGamePath()
-		{
-			return Path.Combine(Application.persistentDataPath, Utils.GetSavegameDir());
 		}
 
 		public static GameObject GetChildByName(GameObject parent, string name, bool recursive = false)

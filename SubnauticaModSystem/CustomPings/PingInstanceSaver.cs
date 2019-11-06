@@ -57,7 +57,7 @@ namespace CustomBeacons
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
 			var userStorage = PlatformUtils.main.GetUserStorage();
-			userStorage.CreateContainerAsync(Path.Combine(Utils.GetSavegameDir(), "CustomBeacons"));
+			userStorage.CreateContainerAsync(Path.Combine(SaveLoadManager.main.GetCurrentSlot(), "CustomBeacons"));
 
 			var saveDataFile = GetSaveDataPath();
 			var saveData = CreateSaveData();

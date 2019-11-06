@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using Oculus.Newtonsoft.Json;
 using System;
 
 namespace AutosortLockers
@@ -85,6 +84,10 @@ namespace AutosortLockers
 			{
 				return;
 			}
+			if (AnAutosorterIsSorting())
+			{
+				return;
+			}
 
 			currentFilters.Add(filter);
 			UpdateText();
@@ -105,6 +108,10 @@ namespace AutosortLockers
 
 		public void RemoveFilter(AutosorterFilter filter)
 		{
+			if (AnAutosorterIsSorting())
+			{
+				return;
+			}
 			foreach (var f in currentFilters)
 			{
 				if (f.IsSame(filter))
@@ -271,6 +278,23 @@ namespace AutosortLockers
 			}
 
 			UpdateQuantityText();
+		}
+		
+		private bool AnAutosorterIsSorting()
+		{
+			var root = GetComponentInParent<SubRoot>();
+			if (root != null && root.isBase)
+			{
+				var autosorters = root.GetComponentsInChildren<AutosortLocker>();
+				foreach (var autosorter in autosorters)
+				{
+					if (autosorter.IsSorting)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		private bool ShouldEnableContainer()

@@ -445,7 +445,7 @@ namespace DockedVehicleStorageAccess
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
 			var userStorage = PlatformUtils.main.GetUserStorage();
-			userStorage.CreateContainerAsync(Path.Combine(Utils.GetSavegameDir(), "DockedVehicleStorageAccess"));
+			userStorage.CreateContainerAsync(Path.Combine(SaveLoadManager.main.GetCurrentSlot(), "DockedVehicleStorageAccess"));
 
 			var saveDataFile = GetSaveDataPath();
 			saveData = CreateSaveData();

@@ -2,8 +2,8 @@
   "Id": "BlueprintTracker",
   "DisplayName": "BlueprintTracker",
   "Author": "RandyKnapp",
-  "Version": "1.0.0",
-  "Requires": [ "0Harmony.dll" ],
+  "Version": "1.1.2",
+  "Requires": [ "0Harmony-1.2.0.1.dll" ],
   "Enable": true,
   "AssemblyName": "BlueprintTracker.dll",
   "EntryMethod": "BlueprintTracker.QPatch.Patch",
@@ -15,7 +15,7 @@
     "TrackerScale": 1.0,
     "FontSize": 16,
     "BackgroundAlpha": 0.5,
-    "ShowWhilePiloting": false,
+    "ShowWhilePiloting": true,
     "ColorblindMode": false
   }
 }

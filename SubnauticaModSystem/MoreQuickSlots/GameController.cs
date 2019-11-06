@@ -1,9 +1,5 @@
-﻿using MoreQuickSlots.Patches;
-using System;
-using System.Collections;
-using System.Reflection;
+﻿using System.Reflection;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace MoreQuickSlots

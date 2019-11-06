@@ -661,7 +661,7 @@ namespace HabitatControlPanel
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
 			var userStorage = PlatformUtils.main.GetUserStorage();
-			userStorage.CreateContainerAsync(Path.Combine(Utils.GetSavegameDir(), "HabitatControlPanel"));
+			userStorage.CreateContainerAsync(Path.Combine(SaveLoadManager.main.GetCurrentSlot(), "HabitatControlPanel"));
 
 			var saveDataFile = GetSaveDataPath();
 			saveData = CreateSaveData();
