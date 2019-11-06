@@ -7,6 +7,7 @@
   "Enable": true,
   "AssemblyName": "MoreQuickSlots.dll",
   "EntryMethod": "MoreQuickSlots.QPatch.Patch",
+  "Game": "BelowZero",
   "Config": {
     "SlotCount": 12,
     "ShowInputText": true,

@@ -106,7 +106,7 @@ namespace MoreQuickSlots
 				return null;
 			}
 
-			Text prefab = prefabObject.interactPrimaryText;
+			Text prefab = prefabObject.compTextHand;
 			if (prefab == null)
 			{
 				return null;

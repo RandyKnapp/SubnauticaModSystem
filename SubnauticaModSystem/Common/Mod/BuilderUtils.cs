@@ -253,7 +253,7 @@ namespace Common.Mod
 			return null;
 		}
 
-		public static ITechData GetTechData(TechType techType)
+		public static TechData GetTechData(TechType techType)
 		{
 			return GetCustomTechData(techType);
 		}

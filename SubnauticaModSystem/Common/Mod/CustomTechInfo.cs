@@ -7,16 +7,16 @@ namespace Common.Mod
 {
 	public delegate GameObject GetPrefabDelegate();
 
-	public class CustomIngredient : IIngredient
+	public class CustomIngredient : Ingredient
 	{
 		public TechType techType;
 		public int amount;
 
-		TechType IIngredient.techType => techType;
-		int IIngredient.amount => amount;
+		TechType Ingredient.techType => techType;
+		int Ingredient.amount => amount;
 	}
 
-	public class CustomTechInfo : ITechData
+	public class CustomTechInfo : TechData
 	{
 		public GetPrefabDelegate getPrefab;
 
@@ -37,7 +37,7 @@ namespace Common.Mod
 		public int ingredientCount => recipe.Count;
 		public int linkedItemCount => linkedItems.Count;
 
-		public IIngredient GetIngredient(int index)
+		public Ingredient GetIngredient(int index)
 		{
 			return recipe[index];
 		}
