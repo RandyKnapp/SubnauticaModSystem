@@ -100,10 +100,6 @@
 xcopy $(ProjectDir)mod.json D:\SteamLibrary\steamapps\common\Subnautica\QMods\$(ProjectName)\ /q /y
 
 xcopy $(TargetPath) D:\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)mod.json D:\\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y
-
-xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\SubnauticaZero\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)mod.json D:\SteamLibrary\steamapps\common\SubnauticaZero\QMods\$(ProjectName)\ /q /y
-</PostBuildEvent>
+xcopy $(ProjectDir)mod.json D:\\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -125,7 +125,10 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\Subnautica\QMods\MoreQuickSlots\ /q /y
-xcopy $(ProjectDir)mod.json D:\SteamLibrary\steamapps\common\Subnautica\QMods\MoreQuickSlots\ /q /y</PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetPath) D:\SteamLibrary\steamapps\common\Subnautica\QMods\$(ProjectName)\ /q /y
+xcopy $(ProjectDir)mod.json D:\SteamLibrary\steamapps\common\Subnautica\QMods\$(ProjectName)\ /q /y
+
+xcopy $(TargetPath) D:\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y
+xcopy $(ProjectDir)mod.json D:\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y</PostBuildEvent>
   </PropertyGroup>
 </Project>
