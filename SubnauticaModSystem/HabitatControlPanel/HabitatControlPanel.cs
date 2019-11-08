@@ -1,7 +1,6 @@
 ﻿using Common.Mod;
 using Common.Utility;
 using HabitatControlPanel.Secret;
-using Oculus.Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,15 +25,15 @@ namespace HabitatControlPanel
 
 	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener, IPowerInterface, IObstacle
 	{
-		private static readonly HashSet<TechType> CompatibleTech = new HashSet<TechType>
+		public static HashSet<TechType> CompatibleTech = new HashSet<TechType>
 		{
 			TechType.PowerCell,
 			TechType.PrecursorIonPowerCell
 		};
-		private const string SlotName = "PowerCellCharger1";
-		public static readonly Color ScreenContentColor = new Color32(188, 254, 254, 255);
-		private const string InitialHabitatLabel = "Habitat";
-		private const int MaxDistance = 3;
+		public static string SlotName = "PowerCellCharger1";
+		public static Color ScreenContentColor = new Color32(188, 254, 254, 255);
+		public static string InitialHabitatLabel = "Habitat";
+		public static int MaxDistance = 3;
 
 		private bool initialized;
 		private Constructable constructable;
@@ -183,7 +182,7 @@ namespace HabitatControlPanel
 			constructable.allowedInSub = false;
 			constructable.allowedInBase = true;
 
-			if (ping != null)
+			/*if (ping != null)
 			{
 				DestroyImmediate(ping);
 				ping = null;
@@ -193,7 +192,7 @@ namespace HabitatControlPanel
 			{
 				DestroyImmediate(ping);
 				ping = null;
-			}
+			}*/
 		}
 
 		private void Update()
@@ -327,7 +326,16 @@ namespace HabitatControlPanel
 			equipment.onUnequip += OnEquipmentChanged;
 			equipment.AddSlot(SlotName);
 
-			ping = gameObject.AddComponent<PingInstance>();
+			ping = gameObject.GetComponent<PingInstance>();
+			if (ping == null)
+			{
+				ping = gameObject.AddComponent<PingInstance>();
+				Logger.Log("Adding new Ping");
+			}
+			else
+			{
+				Logger.Log("Ping already exists");
+			}
 			ping.enabled = false;
 			ping.SetLabel(InitialHabitatLabel);
 			ping.pingType = PingType.Beacon;
