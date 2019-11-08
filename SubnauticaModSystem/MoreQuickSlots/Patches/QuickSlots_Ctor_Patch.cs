@@ -1,5 +1,6 @@
 ﻿using Harmony;
 using System;
+using System.Reflection;
 using UnityEngine;
 
 namespace MoreQuickSlots.Patches
@@ -10,8 +11,15 @@ namespace MoreQuickSlots.Patches
 	{
 		static bool Prefix(ref int slotCount)
 		{
-			//Logger.Log("QuickSlots Ctor override");
 			slotCount = Mod.config.SlotCount;
+
+			string[] newSlotNames = new string[slotCount];
+			for (int i = 0; i < slotCount; ++i)
+			{
+				newSlotNames[i] = "QuickSlot" + i;
+			}
+			typeof(QuickSlots).GetField("slotNames", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, newSlotNames);
+
 			return true;
 		}
 	}
