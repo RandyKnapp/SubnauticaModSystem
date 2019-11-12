@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,11 +26,9 @@ namespace HabitatControlPanel
 
 	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener, IPowerInterface, IObstacle
 	{
-		public static HashSet<TechType> CompatibleTech = new HashSet<TechType>
-		{
-			TechType.PowerCell,
-			TechType.PrecursorIonPowerCell
-		};
+		private static FieldInfo s_compatibleTechFieldInfo = typeof(PowerCellCharger).GetField("compatibleTech", BindingFlags.Static | BindingFlags.NonPublic);
+		private static HashSet<TechType> s_compatibleTech;
+
 		public static string SlotName = "PowerCellCharger1";
 		public static Color ScreenContentColor = new Color32(188, 254, 254, 255);
 		public static string InitialHabitatLabel = "Habitat";
@@ -173,6 +172,19 @@ namespace HabitatControlPanel
 				ping.pingType = value;
 				beaconIconSettings.SetValue(value, BeaconColorIndex);
 				PingManager.NotifyVisible(ping);
+			}
+		}
+
+		public HashSet<TechType> CompatibleTech
+		{
+			get
+			{
+				if (s_compatibleTech == null)
+				{
+					s_compatibleTech = (HashSet<TechType>)s_compatibleTechFieldInfo.GetValue(null);
+				}
+
+				return s_compatibleTech;
 			}
 		}
 
