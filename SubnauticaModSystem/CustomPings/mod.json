@@ -2,7 +2,7 @@
   "Id": "CustomBeacons",
   "DisplayName": "CustomBeacons",
   "Author": "RandyKnapp",
-  "Version": "1.1.1",
+  "Version": "1.1.2",
   "Requires": [ "0Harmony.dll" ],
   "Enable": true,
   "AssemblyName": "CustomBeacons.dll",

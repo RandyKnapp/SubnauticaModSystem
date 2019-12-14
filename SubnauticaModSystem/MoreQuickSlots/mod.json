@@ -2,7 +2,7 @@
   "Id": "MoreQuickSlots",
   "DisplayName": "More Quick Slots",
   "Author": "RandyKnapp",
-  "Version": "1.1.6",
+  "Version": "1.1.7",
   "Requires": [ "0Harmony-1.2.0.1.dll" ],
   "Enable": true,
   "AssemblyName": "MoreQuickSlots.dll",

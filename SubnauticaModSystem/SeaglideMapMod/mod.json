@@ -2,7 +2,7 @@
   "Id": "SeaglideMapControls",
   "DisplayName": "SeaglideMapControls",
   "Author": "RandyKnapp",
-  "Version": "1.0.3",
+  "Version": "1.0.4",
   "Requires": [ "0Harmony.dll" ],
   "Enable": true,
   "AssemblyName": "SeaglideMapControls.dll",

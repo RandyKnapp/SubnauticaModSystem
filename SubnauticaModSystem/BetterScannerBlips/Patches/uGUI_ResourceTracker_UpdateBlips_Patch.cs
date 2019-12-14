@@ -44,7 +44,7 @@ namespace BetterScannerBlips.Patches
 			if (Input.GetKeyDown(Mod.config.ToggleKey))
 			{
 				hide = !hide;
-				Logger.Log("Toggle " + (hide ? "Hide" : "Show"));
+				ErrorMessage.AddDebug(string.Format("Scanner Blips Toggled: {0}", hide ? $"OFF (Press {Mod.config.ToggleKey} to show)" : "ON"));
 			}
 
 			HashSet<ResourceTracker.ResourceInfo> nodes = (HashSet<ResourceTracker.ResourceInfo>)uGUI_ResourceTracker_nodes.GetValue(__instance);

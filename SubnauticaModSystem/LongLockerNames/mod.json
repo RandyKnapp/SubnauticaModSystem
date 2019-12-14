@@ -2,7 +2,7 @@
   "Id": "LongLockerNames",
   "DisplayName": "LongLockerNames",
   "Author": "RandyKnapp",
-  "Version": "1.1.1",
+  "Version": "1.1.2",
   "Requires": [ "0Harmony-1.2.0.1.dll" ],
   "Enable": true,
   "AssemblyName": "LongLockerNames.dll",

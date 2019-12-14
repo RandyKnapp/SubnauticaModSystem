@@ -2,7 +2,7 @@
   "Id": "BlueprintTracker",
   "DisplayName": "BlueprintTracker",
   "Author": "RandyKnapp",
-  "Version": "1.1.2",
+  "Version": "1.1.3",
   "Requires": [ "0Harmony-1.2.0.1.dll" ],
   "Enable": true,
   "AssemblyName": "BlueprintTracker.dll",

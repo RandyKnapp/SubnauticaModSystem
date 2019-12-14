@@ -1,11 +1,7 @@
 ﻿using Harmony;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace QuitToDesktop.Patches
@@ -31,7 +27,7 @@ namespace QuitToDesktop.Patches
 				quitButton.onClick.RemoveAllListeners();
 				quitButton.onClick.AddListener(() => { __instance.QuitGame(true); });
 
-				var texts = quitButton.GetComponents<Text>().Concat(quitButton.GetComponentsInChildren<Text>());
+				IEnumerable<Text> texts = quitButton.GetComponents<Text>().Concat(quitButton.GetComponentsInChildren<Text>());
 				foreach (Text text in texts)
 				{
 					text.text = "Quit to Desktop";

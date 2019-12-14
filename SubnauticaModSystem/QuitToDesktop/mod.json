@@ -2,7 +2,7 @@
   "Id": "QuitToDesktop",
   "DisplayName": "QuitToDesktop",
   "Author": "RandyKnapp",
-  "Version": "1.0.2",
+  "Version": "1.0.3",
   "Requires": [ "0Harmony-1.2.0.1.dll" ],
   "Enable": true,
   "AssemblyName": "QuitToDesktop.dll",

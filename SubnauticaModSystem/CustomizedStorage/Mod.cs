@@ -84,6 +84,7 @@ namespace CustomizedStorage
 			ModUtils.ValidateConfigValue("baseHeight", min.height, max.height, ref config.Exosuit, ref defaultConfig.Exosuit);
 
 			int exoMaxHeight = config.Exosuit.baseHeight + (config.Exosuit.heightPerStorageModule * 4);
+			exoMaxHeight = Mathf.Min(max.height, exoMaxHeight);
 			if (exoMaxHeight > max.height)
 			{
 				Console.WriteLine("Config values for 'Exosuit' were not valid. Max height is {0} but the exosuit might exceed that. ({1})",

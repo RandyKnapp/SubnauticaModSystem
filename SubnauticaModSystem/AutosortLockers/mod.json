@@ -2,7 +2,7 @@
   "Id": "AutosortLockers",
   "DisplayName": "AutosortLockers",
   "Author": "RandyKnapp",
-  "Version": "1.2.1",
+  "Version": "1.2.2",
   "Requires": [ "0Harmony-1.2.0.1.dll" ],
   "Enable": true,
   "AssemblyName": "AutosortLockers.dll",

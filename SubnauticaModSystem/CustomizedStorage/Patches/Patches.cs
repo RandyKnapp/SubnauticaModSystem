@@ -47,8 +47,7 @@ namespace CustomizedStorage.Patches
 
 		private static void SetSize(StorageContainer __instance, Size size)
 		{
-			__instance.width = size.width;
-			__instance.height = size.height;
+			__instance.Resize(size.width, size.height);
 		}
 
 		private static bool IsSmallLocker(StorageContainer __instance)
