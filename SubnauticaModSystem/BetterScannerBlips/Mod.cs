@@ -8,6 +8,8 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 using Oculus.Newtonsoft.Json;
+using System.Threading;
+using System.Globalization;
 
 namespace BetterScannerBlips
 {
@@ -47,6 +49,7 @@ namespace BetterScannerBlips
 
 		private static void LoadConfig()
 		{
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			config = ModUtils.LoadConfig<Config>(GetModInfoPath());
 			ValidateConfig();
 		}
