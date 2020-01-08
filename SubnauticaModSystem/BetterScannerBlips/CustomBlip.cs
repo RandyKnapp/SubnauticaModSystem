@@ -39,7 +39,7 @@ namespace BetterScannerBlips
 			text = gameObject.GetComponentInChildren<Text>();
 		}
 
-		public void Refresh(ResourceTracker.ResourceInfo target)
+		public void Refresh(ResourceTrackerDatabase.ResourceInfo target)
 		{
 			if (target != null)
 			{

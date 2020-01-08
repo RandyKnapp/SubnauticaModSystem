@@ -192,7 +192,7 @@ namespace Common.Mod
 
 		public static Text GetTextPrefab()
 		{
-			Text prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
+			Text prefab = GameObject.FindObjectOfType<HandReticle>().compTextHand;
 			if (prefab == null)
 			{
 				return null;

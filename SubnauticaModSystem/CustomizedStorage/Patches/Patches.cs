@@ -25,22 +25,6 @@ namespace CustomizedStorage.Patches
 			{
 				SetSize(__instance, Mod.config.Locker);
 			}
-			else if (IsEscapePodLocker(__instance))
-			{
-				SetSize(__instance, Mod.config.EscapePodLocker);
-			}
-			else if (IsCyclopsLocker(__instance))
-			{
-				SetSize(__instance, Mod.config.CyclopsLocker);
-			}
-			else if (IsWaterproofLocker(__instance))
-			{
-				SetSize(__instance, Mod.config.WaterproofLocker);
-			}
-			else if (IsCarryAll(__instance))
-			{
-				SetSize(__instance, Mod.config.CarryAll);
-			}
 
 			return true;
 		}
@@ -59,26 +43,6 @@ namespace CustomizedStorage.Patches
 		private static bool IsLargeLocker(StorageContainer __instance)
 		{
 			return __instance.gameObject.name.StartsWith("Locker");
-		}
-
-		private static bool IsEscapePodLocker(StorageContainer __instance)
-		{
-			return __instance.gameObject.GetComponent<SpawnEscapePodSupplies>() != null;
-		}
-
-		private static bool IsCyclopsLocker(StorageContainer __instance)
-		{
-			return __instance.gameObject.name.StartsWith("submarine_locker_01_door");
-		}
-
-		private static bool IsWaterproofLocker(StorageContainer __instance)
-		{
-			return __instance.gameObject.GetComponent<SmallStorage>() != null;
-		}
-
-		private static bool IsCarryAll(StorageContainer __instance)
-		{
-			return __instance.transform.parent != null && __instance.transform.parent.gameObject.name.StartsWith("docking_luggage_01_bag4");
 		}
 	}
 

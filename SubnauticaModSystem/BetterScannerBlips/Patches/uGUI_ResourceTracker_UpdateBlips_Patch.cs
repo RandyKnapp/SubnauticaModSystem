@@ -47,14 +47,14 @@ namespace BetterScannerBlips.Patches
 				Logger.Log("Toggle " + (hide ? "Hide" : "Show"));
 			}
 
-			HashSet<ResourceTracker.ResourceInfo> nodes = (HashSet<ResourceTracker.ResourceInfo>)uGUI_ResourceTracker_nodes.GetValue(__instance);
+			HashSet<ResourceTrackerDatabase.ResourceInfo> nodes = (HashSet<ResourceTrackerDatabase.ResourceInfo>)uGUI_ResourceTracker_nodes.GetValue(__instance);
 			IList blips = (IList)uGUI_ResourceTracker_blips.GetValue(__instance);
 
 			Camera camera = MainCamera.camera;
 			Vector3 position = camera.transform.position;
 			Vector3 forward = camera.transform.forward;
 			int i = 0;
-			foreach (ResourceTracker.ResourceInfo resourceInfo in nodes)
+			foreach (ResourceTrackerDatabase.ResourceInfo resourceInfo in nodes)
 			{
 				Vector3 lhs = resourceInfo.position - position;
 				if (Vector3.Dot(lhs, forward) > 0f)

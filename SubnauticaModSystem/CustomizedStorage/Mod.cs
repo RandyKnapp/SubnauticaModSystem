@@ -72,12 +72,7 @@ namespace CustomizedStorage
 			var max = new Size(8, 10);
 
 			ModUtils.ValidateConfigValue("Inventory", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("SmallLocker", min, max, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("Locker", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("EscapePodLocker", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("CyclopsLocker", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("WaterproofLocker", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("CarryAll", min, max, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("SeamothStorage", min, max, ref config, ref defaultConfig);
 
 			ModUtils.ValidateConfigValue("width", min.width, max.width, ref config.Exosuit, ref defaultConfig.Exosuit);
