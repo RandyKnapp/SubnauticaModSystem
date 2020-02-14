@@ -1,49 +1,33 @@
 {
-  "Inventory": {
-    "width": 6,
-    "height": 8
-  },
-  "SmallLocker": {
-    "width": 5,
-    "height": 6
-  },
-  "Locker": {
-    "width": 6,
-    "height": 8
-  },
-  "EscapePodLocker": {
-    "width": 4,
-    "height": 8
-  },
-  "CyclopsLocker": {
-    "width": 3,
-    "height": 6
-  },
-  "WaterproofLocker": {
-    "width": 4,
-    "height": 4
-  },
-  "CarryAll": {
-    "width": 3,
-    "height": 3
-  },
-  "Exosuit": {
-    "width": 6,
-    "baseHeight": 4,
-    "heightPerStorageModule": 1
-  },
-  "SeamothStorage": {
-    "width": 6,
-    "height": 6
-  },
-  "BioReactor": {
-    "width": 4,
-    "height": 4
-  },
-  "FiltrationMachine": {
-    "width": 4,
-    "height": 4,
-    "maxSalt": 8,
-    "maxWater": 8
-  }
+    "Inventory": {
+        "width": 6,
+        "height": 8
+    },
+    "SmallLocker": {
+        "width": 5,
+        "height": 6
+    },
+    "Locker": {
+        "width": 6,
+        "height": 8
+    },
+    "Exosuit": {
+        "width": 6,
+        "baseHeight": 4,
+        "heightPerStorageModule": 1
+    },
+    "SeamothStorage": {
+        "width": 6,
+        "height": 6
+    },
+    "BioReactor": {
+        "width": 4,
+        "height": 4
+    },
+    "FiltrationMachine": {
+        "width": 4,
+        "height": 4,
+        "maxSalt": 8,
+        "maxWater": 8
+    }
 }

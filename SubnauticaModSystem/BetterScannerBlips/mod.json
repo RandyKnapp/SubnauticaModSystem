@@ -5,6 +5,7 @@
   "Version": "1.0.2",
   "Requires": [ "0Harmony-1.2.0.1.dll" ],
   "Enable": true,
+  "Game": "BelowZero",
   "AssemblyName": "BetterScannerBlips.dll",
   "EntryMethod": "BetterScannerBlips.QPatch.Patch",
   "Config": {

@@ -56,12 +56,8 @@ namespace CustomizedStorage
 	class Config
 	{
 		public Size Inventory = new Size(6, 8);
-		public Size SmallLocker = new Size(5, 6);
-		public Size Locker = new Size(6, 8);
-		public Size EscapePodLocker = new Size(4, 8);
-		public Size CyclopsLocker = new Size(3, 6);
-		public Size WaterproofLocker = new Size(4, 4);
-		public Size CarryAll = new Size(3, 3);
+        public Size SmallLocker = new Size(5, 6);
+        public Size Locker = new Size(6, 8);
 		public ExosuitConfig Exosuit = new ExosuitConfig();
 		public Size SeamothStorage = new Size(4, 4);
 		public Size BioReactor = new Size(4, 4);
