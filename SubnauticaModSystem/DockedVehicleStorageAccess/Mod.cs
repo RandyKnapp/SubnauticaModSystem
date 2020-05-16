@@ -21,7 +21,7 @@ namespace DockedVehicleStorageAccess
 
 			AddBuildables();
 
-			var harmony = HarmonyInstance.Create("com.DockedVehicleStorageAccessSML.mod");
+			HarmonyInstance harmony = HarmonyInstance.Create("com.DockedVehicleStorageAccessSML.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");

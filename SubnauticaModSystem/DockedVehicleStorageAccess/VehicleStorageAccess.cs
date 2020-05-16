@@ -33,12 +33,11 @@ namespace DockedVehicleStorageAccess
 		private Constructable constructable;
 		private StorageContainer container;
 		private SubRoot subRoot;
-		private List<VehicleDockingBay> dockingBays = new List<VehicleDockingBay>();
+		private VehicleDockingBay[] dockingBays = new VehicleDockingBay[0];
 		private List<Vehicle> vehicles = new List<Vehicle>();
 
 		private bool transferringToAutosorter;
-		private List<Component> autosorters = new List<Component>();
-
+		private Component[] autosorters = new Component[0];
 
 		[SerializeField]
 		private Text textPrefab;
@@ -66,8 +65,8 @@ namespace DockedVehicleStorageAccess
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();
-			container = this.gameObject.GetComponent<StorageContainer>();
-			subRoot = this.gameObject.GetComponentInParent<SubRoot>();
+			container = gameObject.GetComponent<StorageContainer>();
+			subRoot = gameObject.GetComponentInParent<SubRoot>();
 		}
 
 		private IEnumerator Start()
@@ -101,20 +100,20 @@ namespace DockedVehicleStorageAccess
 		private void GetDockingBays()
 		{
 			RemoveDockingBayListeners();
-			dockingBays = subRoot.GetComponentsInChildren<VehicleDockingBay>().ToList();
+			dockingBays = subRoot.GetComponentsInChildren<VehicleDockingBay>();
 			AddDockingBayListeners();
 
 			UpdateDockedVehicles();
 
 			if (Mod.config.UseAutosortMod)
 			{
-				autosorters = subRoot.GetComponentsInChildren(AutosortLockerType).ToList();
+				autosorters = subRoot.GetComponentsInChildren(AutosortLockerType);
 			}
 		}
 
 		private void AddDockingBayListeners()
 		{
-			foreach (VehicleDockingBay dockingBay in dockingBays)
+			foreach (var dockingBay in dockingBays)
 			{
 				dockingBay.onDockedChanged += OnDockedVehicleChanged;
 			}
@@ -122,7 +121,7 @@ namespace DockedVehicleStorageAccess
 
 		private void RemoveDockingBayListeners()
 		{
-			foreach (VehicleDockingBay dockingBay in dockingBays)
+			foreach (var dockingBay in dockingBays)
 			{
 				dockingBay.onDockedChanged -= OnDockedVehicleChanged;
 			}
@@ -131,9 +130,9 @@ namespace DockedVehicleStorageAccess
 		private void UpdateDockedVehicles()
 		{
 			vehicles.Clear();
-			foreach (VehicleDockingBay dockingBay in dockingBays)
+			foreach (var dockingBay in dockingBays)
 			{
-				Vehicle vehicle = dockingBay.GetDockedVehicle();
+				var vehicle = dockingBay.GetDockedVehicle();
 				if (vehicle != null)
 				{
 					vehicles.Add(vehicle);
@@ -159,19 +158,19 @@ namespace DockedVehicleStorageAccess
 			}
 
 			bool extractedAnything = false;
-			var extractionResults = new Dictionary<string, int>();
+			Dictionary<string, int> extractionResults = new Dictionary<string, int>();
 
-			var localVehicles = vehicles.ToList();
-			foreach (Vehicle vehicle in localVehicles)
+			var localVehicles = vehicles;
+			foreach (var vehicle in localVehicles)
 			{
-				string vehicleName = vehicle.GetName();
+				var vehicleName = vehicle.GetName();
 				extractionResults[vehicleName] = 0;
 				var vehicleContainers = vehicle.gameObject.GetComponentsInChildren<StorageContainer>().Select((x) => x.container).ToList();
 				vehicleContainers.AddRange(GetSeamothStorage(vehicle));
 				bool couldNotAdd = false;
-				foreach (ItemsContainer vehicleContainer in vehicleContainers)
+				foreach (var vehicleContainer in vehicleContainers)
 				{
-					foreach (InventoryItem item in vehicleContainer.ToList())
+					foreach (var item in vehicleContainer)
 					{
 						if (!enableCheckbox.toggled)
 						{
@@ -180,7 +179,7 @@ namespace DockedVehicleStorageAccess
 
 						if (container.container.HasRoomFor(item.item))
 						{
-							InventoryItem success = container.container.AddItem(item.item);
+							var success = container.container.AddItem(item.item);
 							if (success != null)
 							{
 								extractionResults[vehicleName]++;
@@ -224,17 +223,17 @@ namespace DockedVehicleStorageAccess
 			var results = new List<ItemsContainer>();
 			if (seamoth is SeaMoth && seamoth.modules != null)
 			{
-				using (Dictionary<string, InventoryItem>.Enumerator e = seamoth.modules.GetEquipment())
+				using (var e = seamoth.modules.GetEquipment())
 				{
 					while (e.MoveNext())
 					{
-						InventoryItem module = e.Current.Value;
+						var module = e.Current.Value;
 						if (module == null || module.item == null)
 						{
 							continue;
 						}
 
-						SeamothStorageContainer container = module.item.GetComponent<SeamothStorageContainer>();
+						var container = module.item.GetComponent<SeamothStorageContainer>();
 						if (container != null && !container.gameObject.name.Contains("Torpedo"))
 						{
 							results.Add(container.container);
@@ -247,9 +246,9 @@ namespace DockedVehicleStorageAccess
 
 		private void NotifyExtraction(Dictionary<string, int> extractionResults)
 		{
-			var messageEntries = new List<string>();
+			List<string> messageEntries = new List<string>();
 
-			foreach (KeyValuePair<string, int> entry in extractionResults)
+			foreach (var entry in extractionResults)
 			{
 				messageEntries.Add(entry.Key + " x" + entry.Value);
 			}
@@ -261,7 +260,7 @@ namespace DockedVehicleStorageAccess
 		// Exclusive for Autosort integration
 		private IEnumerator TryMoveToAutosorter()
 		{
-			if (autosorters.Count == 0)
+			if (autosorters.Length == 0)
 			{
 				yield break;
 			}
@@ -274,12 +273,12 @@ namespace DockedVehicleStorageAccess
 				yield break;
 			}
 
-			var items = container.container.ToList();
+			var items = container.container;
 			bool couldNotAdd = false;
 			int itemsTransferred = 0;
-			foreach (InventoryItem item in items)
+			foreach (var item in items)
 			{
-				foreach (Component autosorter in autosorters)
+				foreach (var autosorter in autosorters)
 				{
 					if (!enableCheckbox.toggled || !autosortCheckbox.toggled)
 					{
@@ -290,7 +289,7 @@ namespace DockedVehicleStorageAccess
 
 					if (aContainer.container.HasRoomFor(item.item))
 					{
-						InventoryItem success = aContainer.container.AddItem(item.item);
+						var success = aContainer.container.AddItem(item.item);
 						if (success != null)
 						{
 							itemsTransferred++;
@@ -329,7 +328,7 @@ namespace DockedVehicleStorageAccess
 
 		private void UpdateText()
 		{
-			int dockingBayCount = dockingBays.Count;
+			var dockingBayCount = dockingBays.Length;
 			if (subRoot is BaseRoot)
 			{
 				text.text = dockingBayCount > 0 ? ("Moonpools: " + dockingBayCount) : "No Moonpools";
@@ -341,13 +340,13 @@ namespace DockedVehicleStorageAccess
 
 			if (Mod.config.UseAutosortMod)
 			{
-				autosortCheckbox.isEnabled = autosorters.Count > 0;
-				text.text += autosorters.Count == 0 ? "\nNo Autosorters" : "";
+				autosortCheckbox.isEnabled = autosorters.Length > 0;
+				text.text += autosorters.Length == 0 ? "\nNo Autosorters" : "";
 			}
 
 			int seamothCount = 0;
 			int exosuitCount = 0;
-			foreach (Vehicle vehicle in vehicles)
+			foreach (var vehicle in vehicles)
 			{
 				seamothCount += (vehicle is SeaMoth ? 1 : 0);
 				exosuitCount += (vehicle is Exosuit ? 1 : 0);
@@ -367,7 +366,7 @@ namespace DockedVehicleStorageAccess
 			{
 				text.text += "\n\n<color=lime>EXTRACTING...</color>";
 			}
-			else if (Mod.config.UseAutosortMod && autosorters.Count == 0 && transferringToAutosorter)
+			else if (Mod.config.UseAutosortMod && autosorters.Length == 0 && transferringToAutosorter)
 			{
 				text.text += "\n\n<color=lime>TRANSFERRING...</color>";
 			}
@@ -379,7 +378,7 @@ namespace DockedVehicleStorageAccess
 
 		private void Update()
 		{
-			if (!initialized && constructable._constructed && this.transform.parent != null)
+			if (!initialized && constructable._constructed && transform.parent != null)
 			{
 				Initialize();
 			}
@@ -423,7 +422,7 @@ namespace DockedVehicleStorageAccess
 				autosortCheckbox.Initialize();
 			}
 
-			subRoot = this.gameObject.GetComponentInParent<SubRoot>();
+			subRoot = gameObject.GetComponentInParent<SubRoot>();
 			GetDockingBays();
 			UpdateDockedVehicles();
 			UpdateText();
@@ -433,10 +432,10 @@ namespace DockedVehicleStorageAccess
 
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
-			UserStorage userStorage = PlatformUtils.main.GetUserStorage();
+			var userStorage = PlatformUtils.main.GetUserStorage();
 			userStorage.CreateContainerAsync(Path.Combine(SaveLoadManager.main.GetCurrentSlot(), "DockedVehicleStorageAccess"));
 
-			string saveDataFile = GetSaveDataPath();
+			var saveDataFile = GetSaveDataPath();
 			saveData = CreateSaveData();
 			ModUtils.Save(saveData, saveDataFile);
 		}
@@ -454,7 +453,7 @@ namespace DockedVehicleStorageAccess
 
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
-			string saveDataFile = GetSaveDataPath();
+			var saveDataFile = GetSaveDataPath();
 			ModUtils.LoadSaveData<VehicleStorageAccessSaveData>(saveDataFile, (data) =>
 			{
 				saveData = data;
@@ -464,10 +463,10 @@ namespace DockedVehicleStorageAccess
 
 		public string GetSaveDataPath()
 		{
-			PrefabIdentifier prefabIdentifier = GetComponent<PrefabIdentifier>();
-			string id = prefabIdentifier.Id;
+			var prefabIdentifier = GetComponent<PrefabIdentifier>();
+			var id = prefabIdentifier.Id;
 
-			string saveFile = Path.Combine("DockedVehicleStorageAccess", id + ".json");
+			var saveFile = Path.Combine("DockedVehicleStorageAccess", id + ".json");
 			return saveFile;
 		}
 
@@ -487,28 +486,28 @@ namespace DockedVehicleStorageAccess
 			public override GameObject GetGameObject()
 			{
 				GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
-				var prefab = GameObject.Instantiate(originalPrefab);
+				GameObject prefab = GameObject.Instantiate(originalPrefab);
 
 				prefab.name = "VehicleStorageAccess";
 
-				StorageContainer container = prefab.GetComponent<StorageContainer>();
+				var container = prefab.GetComponent<StorageContainer>();
 				container.width = Mod.config.LockerWidth;
 				container.height = Mod.config.LockerHeight;
 				container.container.Resize(Mod.config.LockerWidth, Mod.config.LockerHeight);
 
-				MeshRenderer[] meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
-				foreach (MeshRenderer meshRenderer in meshRenderers)
+				var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
+				foreach (var meshRenderer in meshRenderers)
 				{
 					meshRenderer.material.color = new Color(0, 0, 1);
 				}
 
-				VehicleStorageAccess storageAccess = prefab.AddComponent<VehicleStorageAccess>();
+				var storageAccess = prefab.AddComponent<VehicleStorageAccess>();
 
 				storageAccess.textPrefab = GameObject.Instantiate(prefab.GetComponentInChildren<Text>());
-				GameObject label = prefab.FindChild("Label");
+				var label = prefab.FindChild("Label");
 				DestroyImmediate(label);
 
-				Canvas canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
+				var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
 				storageAccess.background = LockerPrefabShared.CreateBackground(canvas.transform);
 				storageAccess.icon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 15);
 				storageAccess.text = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, -40, 10, "");

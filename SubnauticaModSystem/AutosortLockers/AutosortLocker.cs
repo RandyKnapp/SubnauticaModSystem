@@ -310,28 +310,28 @@ namespace AutosortLockers
             public override GameObject GetGameObject()
             {
                 GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
-                var prefab = GameObject.Instantiate(originalPrefab);
+                GameObject prefab = GameObject.Instantiate(originalPrefab);
 
                 prefab.name = "Autosorter";
 
-                StorageContainer container = prefab.GetComponent<StorageContainer>();
+                var container = prefab.GetComponent<StorageContainer>();
                 container.width = Mod.config.AutosorterWidth;
                 container.height = Mod.config.AutosorterHeight;
                 container.container.Resize(Mod.config.AutosorterWidth, Mod.config.AutosorterHeight);
 
-                MeshRenderer[] meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
-                foreach (MeshRenderer meshRenderer in meshRenderers)
+                var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
+                foreach (var meshRenderer in meshRenderers)
                 {
                     meshRenderer.material.color = new Color(1, 0, 0);
                 }
 
-                Text prefabText = prefab.GetComponentInChildren<Text>();
-                GameObject label = prefab.FindChild("Label");
+                var prefabText = prefab.GetComponentInChildren<Text>();
+                var label = prefab.FindChild("Label");
                 DestroyImmediate(label);
 
-                AutosortLocker autoSorter = prefab.AddComponent<AutosortLocker>();
+                var autoSorter = prefab.AddComponent<AutosortLocker>();
 
-                Canvas canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
+                var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
                 autoSorter.background = LockerPrefabShared.CreateBackground(canvas.transform);
                 autoSorter.icon = LockerPrefabShared.CreateIcon(autoSorter.background.transform, MainColor, 40);
                 autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, 0, 14, "Autosorter");
@@ -379,6 +379,4 @@ namespace AutosortLockers
             autosorter.Patch();
         }
     }
-
-
 }

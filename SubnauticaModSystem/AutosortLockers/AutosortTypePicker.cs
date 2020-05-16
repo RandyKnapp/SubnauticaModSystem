@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.Mod;
+using Common.Utility;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -54,7 +55,7 @@ namespace AutosortLockers
 		{
 			List<AutosorterFilter> filters = locker.GetCurrentFilters();
 			int i = 0;
-			foreach (AutosorterFilter filter in filters)
+			foreach (var filter in filters)
 			{
 				currentList[i].SetFilter(filter);
 				i++;
@@ -84,7 +85,7 @@ namespace AutosortLockers
 			int start = GetCurrentPage() * AutosortTarget.MaxTypes;
 			for (int i = 0; i < AutosortTarget.MaxTypes; ++i)
 			{
-				AutosorterFilter filter = (start + i) >= availableTypes.Count ? null : availableTypes[start + i];
+				var filter = (start + i) >= availableTypes.Count ? null : availableTypes[start + i];
 				availableList[i].SetFilter(filter);
 			}
 			pageText.text = string.Format("{0}/{1}", GetCurrentPage() + 1, GetCurrentPageCount());
@@ -119,7 +120,7 @@ namespace AutosortLockers
 
 		internal void ChangePage(int pageOffset)
 		{
-			int pageCount = GetCurrentPageCount();
+			var pageCount = GetCurrentPageCount();
 			SetCurrentPage(Mathf.Clamp(GetCurrentPage() + pageOffset, 0, pageCount - 1));
 			UpdateAvailableTypes();
 		}
@@ -168,11 +169,11 @@ namespace AutosortLockers
 
 		public static AutosortTypePicker Create(Transform parent, Text textPrefab)
 		{
-			AutosortTypePicker picker = LockerPrefabShared.CreateCanvas(parent).gameObject.AddComponent<AutosortTypePicker>();
+			var picker = LockerPrefabShared.CreateCanvas(parent).gameObject.AddComponent<AutosortTypePicker>();
 			picker.GetComponent<Canvas>().sortingLayerID = 0;
 			picker.gameObject.SetActive(false);
 
-			Transform t = picker.transform;
+			var t = picker.transform;
 			t.localEulerAngles = new Vector3(0, 180, 0);
 			t.localPosition = new Vector3(0, 0, 0.4f);
 
@@ -188,7 +189,7 @@ namespace AutosortLockers
 			picker.underlines[0] = CreateUnderline(picker.background.transform, x);
 			picker.underlines[1] = CreateUnderline(picker.background.transform, -x);
 
-			Text currentText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 12, "Current");
+			var currentText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 90, 12, "Current");
 			currentText.rectTransform.anchoredPosition = new Vector2(-x, 90);
 
 			picker.categoriesTabButton = CreatePickerButton(picker.background.transform, x - 23 + 2, 90, textPrefab, picker.OnCategoriesButtonClick, 60);
@@ -216,12 +217,12 @@ namespace AutosortLockers
 
 		private static PickerPageButton AddPageButton(Transform parent, AutosortTypePicker target, int pageOffset, int x, int y)
 		{
-			Image pageButton = LockerPrefabShared.CreateIcon(parent, Color.white, y);
-			pageButton.sprite = Common.Utility.ImageUtils.LoadSprite(Mod.GetAssetPath(pageOffset < 0 ? "ArrowLeft.png" : "ArrowRight.png"));
+			var pageButton = LockerPrefabShared.CreateIcon(parent, Color.white, y);
+			pageButton.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath(pageOffset < 0 ? "ArrowLeft.png" : "ArrowRight.png"));
 			pageButton.rectTransform.anchoredPosition = new Vector2(x, y);
 			RectTransformExtensions.SetSize(pageButton.rectTransform, 44 / 4.0f, 73 / 4.0f);
 
-			PickerPageButton controller = pageButton.gameObject.AddComponent<PickerPageButton>();
+			var controller = pageButton.gameObject.AddComponent<PickerPageButton>();
 			controller.target = target;
 			controller.pageOffset = pageOffset;
 
@@ -230,10 +231,10 @@ namespace AutosortLockers
 
 		private static Image CreateUnderline(Transform parent, int x)
 		{
-			Image underline = new GameObject("Underline", typeof(RectTransform)).AddComponent<Image>();
+			var underline = new GameObject("Underline", typeof(RectTransform)).AddComponent<Image>();
 			RectTransformExtensions.SetParams(underline.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(underline.rectTransform, 272 / 3, 78 / 3);
-			underline.sprite = Common.Utility.ImageUtils.LoadSprite(Mod.GetAssetPath("TitleUnderline.png"));
+			underline.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("TitleUnderline.png"));
 			underline.rectTransform.anchoredPosition = new Vector2(x, 90);
 
 			return underline;
@@ -241,13 +242,13 @@ namespace AutosortLockers
 
 		public static PickerCloseButton AddCloseButton(Transform parent)
 		{
-			Image closeImage = new GameObject("CloseButton", typeof(RectTransform)).AddComponent<Image>();
+			var closeImage = new GameObject("CloseButton", typeof(RectTransform)).AddComponent<Image>();
 			RectTransformExtensions.SetParams(closeImage.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(closeImage.rectTransform, 20, 20);
-			closeImage.sprite = Common.Utility.ImageUtils.LoadSprite(Mod.GetAssetPath("Close.png"));
+			closeImage.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Close.png"));
 			closeImage.rectTransform.anchoredPosition = new Vector2(0, -90);
 
-			PickerCloseButton closeButton = closeImage.gameObject.AddComponent<PickerCloseButton>();
+			var closeButton = closeImage.gameObject.AddComponent<PickerCloseButton>();
 
 			return closeButton;
 		}

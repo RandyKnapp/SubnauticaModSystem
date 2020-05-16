@@ -4,7 +4,7 @@ using System.Reflection;
 using Harmony;
 using ProtoBuf;
 
-internal class ProtobufSerializerPatcher
+public class ProtobufSerializerPatcher
 {
 	public static bool Prefix_Serialize(ProtobufSerializerPrecompiled __instance, int num, object obj, ProtoWriter writer)
 	{
@@ -37,14 +37,14 @@ internal class ProtobufSerializerPatcher
 	}
 }
 
-internal static class AlternativeSerializer
+public static class AlternativeSerializer
 {
 	public static readonly Dictionary<int, ICustomSerializer> customSerializers = new Dictionary<int, ICustomSerializer>();
 	public static readonly Dictionary<Type, int> types = new Dictionary<Type, int>();
-	private static readonly Dictionary<Type, int> existingTypes;
-	private static MethodInfo SerializeFunc;
-	private static MethodInfo DeserializeFunc;
-	private static MethodInfo GetKeyFunc;
+	static readonly Dictionary<Type, int> existingTypes;
+	static MethodInfo SerializeFunc;
+	static MethodInfo DeserializeFunc;
+	static MethodInfo GetKeyFunc;
 
 	static AlternativeSerializer()
 	{
@@ -118,7 +118,7 @@ internal static class AlternativeSerializer
 	}
 }
 
-internal interface ICustomSerializer
+public interface ICustomSerializer
 {
 	object Deserialize(object obj, ProtoReader reader, ProtobufSerializerPrecompiled model);
 	void Serialize(object obj, ProtoWriter writer, ProtobufSerializerPrecompiled model);

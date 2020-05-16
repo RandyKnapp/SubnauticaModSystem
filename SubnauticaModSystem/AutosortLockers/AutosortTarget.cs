@@ -51,7 +51,7 @@ namespace AutosortLockers
 		private void Awake()
 		{
 			constructable = GetComponent<Constructable>();
-			container = this.gameObject.GetComponent<StorageContainer>();
+			container = gameObject.GetComponent<StorageContainer>();
 
 			Mod.OnDataLoaded += OnDataLoaded;
 		}
@@ -96,7 +96,7 @@ namespace AutosortLockers
 
 		private bool ContainsFilter(AutosorterFilter filter)
 		{
-			foreach (AutosorterFilter f in currentFilters)
+			foreach (var f in currentFilters)
 			{
 				if (f.IsSame(filter))
 				{
@@ -113,7 +113,7 @@ namespace AutosortLockers
 			{
 				return;
 			}
-			foreach (AutosorterFilter f in currentFilters)
+			foreach (var f in currentFilters)
 			{
 				if (f.IsSame(filter))
 				{
@@ -181,7 +181,7 @@ namespace AutosortLockers
 
 		internal bool HasCategoryFilters()
 		{
-			foreach (AutosorterFilter filter in currentFilters)
+			foreach (var filter in currentFilters)
 			{
 				if (filter.IsCategory())
 				{
@@ -193,7 +193,7 @@ namespace AutosortLockers
 
 		internal bool HasItemFilters()
 		{
-			foreach (AutosorterFilter filter in currentFilters)
+			foreach (var filter in currentFilters)
 			{
 				if (!filter.IsCategory())
 				{
@@ -205,7 +205,7 @@ namespace AutosortLockers
 
 		private bool IsTypeAllowedByCategoryFilter(TechType techType)
 		{
-			foreach (AutosorterFilter filter in currentFilters)
+			foreach (var filter in currentFilters)
 			{
 				if (filter.IsCategory() && filter.IsTechTypeAllowed(techType))
 				{
@@ -218,7 +218,7 @@ namespace AutosortLockers
 
 		private bool IsTypeAllowedByItemFilter(TechType techType)
 		{
-			foreach (AutosorterFilter filter in currentFilters)
+			foreach (var filter in currentFilters)
 			{
 				if (!filter.IsCategory() && filter.IsTechTypeAllowed(techType))
 				{
@@ -231,7 +231,7 @@ namespace AutosortLockers
 
 		private bool IsTypeAllowed(TechType techType)
 		{
-			foreach (AutosorterFilter filter in currentFilters)
+			foreach (var filter in currentFilters)
 			{
 				if (filter.IsTechTypeAllowed(techType))
 				{
@@ -244,7 +244,7 @@ namespace AutosortLockers
 
 		private void Update()
 		{
-			if (!initialized && constructable._constructed && this.transform.parent != null)
+			if (!initialized && constructable._constructed && transform.parent != null)
 			{
 				Initialize();
 			}
@@ -256,7 +256,7 @@ namespace AutosortLockers
 
 			if (Player.main != null)
 			{
-				float distSq = (Player.main.transform.position - this.transform.position).sqrMagnitude;
+				float distSq = (Player.main.transform.position - transform.position).sqrMagnitude;
 				bool playerInRange = distSq <= (MaxDistance * MaxDistance);
 				configureButton.enabled = playerInRange;
 				customizeButton.enabled = playerInRange;
@@ -283,11 +283,11 @@ namespace AutosortLockers
 
 		private bool AnAutosorterIsSorting()
 		{
-			SubRoot root = GetComponentInParent<SubRoot>();
+			var root = GetComponentInParent<SubRoot>();
 			if (root != null && root.isBase)
 			{
-				AutosortLocker[] autosorters = root.GetComponentsInChildren<AutosortLocker>();
-				foreach (AutosortLocker autosorter in autosorters)
+				var autosorters = root.GetComponentsInChildren<AutosortLocker>();
+				foreach (var autosorter in autosorters)
 				{
 					if (autosorter.IsSorting)
 					{
@@ -308,7 +308,7 @@ namespace AutosortLockers
 
 		internal void ShowConfigureMenu()
 		{
-			foreach (AutosortTarget otherPicker in GameObject.FindObjectsOfType<AutosortTarget>())
+			foreach (var otherPicker in GameObject.FindObjectsOfType<AutosortTarget>())
 			{
 				otherPicker.HideAllMenus();
 			}
@@ -317,7 +317,7 @@ namespace AutosortLockers
 
 		internal void ShowCustomizeMenu()
 		{
-			foreach (AutosortTarget otherPicker in GameObject.FindObjectsOfType<AutosortTarget>())
+			foreach (var otherPicker in GameObject.FindObjectsOfType<AutosortTarget>())
 			{
 				otherPicker.HideAllMenus();
 			}
@@ -391,8 +391,8 @@ namespace AutosortLockers
 
 		private void SetLockerColor(Color color)
 		{
-			MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
-			foreach (MeshRenderer meshRenderer in meshRenderers)
+			var meshRenderers = GetComponentsInChildren<MeshRenderer>();
+			foreach (var meshRenderer in meshRenderers)
 			{
 				meshRenderer.material.color = color;
 			}
@@ -400,8 +400,8 @@ namespace AutosortLockers
 
 		private SaveDataEntry GetSaveData()
 		{
-			PrefabIdentifier prefabIdentifier = GetComponent<PrefabIdentifier>();
-			string id = prefabIdentifier?.Id ?? string.Empty;
+			var prefabIdentifier = GetComponent<PrefabIdentifier>();
+			var id = prefabIdentifier?.Id ?? string.Empty;
 
 			return Mod.GetSaveData(id);
 		}
@@ -419,10 +419,10 @@ namespace AutosortLockers
 
 		private List<AutosorterFilter> GetNewVersion(List<AutosorterFilter> filterData)
 		{
-			var validItems = new Dictionary<TechType, AutosorterFilter>();
-			var validCategories = new Dictionary<string, AutosorterFilter>();
-			List<AutosorterFilter> filterList = AutosorterList.GetFilters();
-			foreach (AutosorterFilter filter in filterList)
+			Dictionary<TechType, AutosorterFilter> validItems = new Dictionary<TechType, AutosorterFilter>();
+			Dictionary<string, AutosorterFilter> validCategories = new Dictionary<string, AutosorterFilter>();
+			var filterList = AutosorterList.GetFilters();
+			foreach (var filter in filterList)
 			{
 				if (filter.IsCategory())
 				{
@@ -435,7 +435,7 @@ namespace AutosortLockers
 			}
 
 			var newData = new List<AutosorterFilter>();
-			foreach (AutosorterFilter filter in filterData)
+			foreach (var filter in filterData)
 			{
 				if (validCategories.ContainsKey(filter.Category) || filter.Category == "")
 				{
@@ -450,7 +450,7 @@ namespace AutosortLockers
 					continue;
 				}
 
-				List<TechType> newTypes = AutosorterList.GetOldFilter(filter.Category, out bool success, out string newCategory);
+				var newTypes = AutosorterList.GetOldFilter(filter.Category, out bool success, out string newCategory);
 				if (success)
 				{
 					newData.Add(new AutosorterFilter() { Category = newCategory, Types = newTypes });
@@ -464,7 +464,7 @@ namespace AutosortLockers
 
 		private void CreatePicker()
 		{
-			SetPicker(AutosortTypePicker.Create(this.transform, textPrefab));
+			SetPicker(AutosortTypePicker.Create(transform, textPrefab));
 			picker.transform.localPosition = background.canvas.transform.localPosition + new Vector3(0, 0, 0.04f);
 			picker.Initialize(this);
 			picker.gameObject.SetActive(false);
@@ -480,8 +480,8 @@ namespace AutosortLockers
 
 		public void Save(SaveData saveDataList)
 		{
-			PrefabIdentifier prefabIdentifier = GetComponent<PrefabIdentifier>();
-			string id = prefabIdentifier.Id;
+			var prefabIdentifier = GetComponent<PrefabIdentifier>();
+			var id = prefabIdentifier.Id;
 
 			if (saveData == null)
 			{
@@ -496,7 +496,7 @@ namespace AutosortLockers
 			saveData.OtherTextColor = text.color;
 			saveData.ButtonsColor = configureButtonImage.color;
 
-			MeshRenderer meshRenderer = GetComponentInChildren<MeshRenderer>();
+			var meshRenderer = GetComponentInChildren<MeshRenderer>();
 			saveData.LockerColor = meshRenderer.material.color;
 
 			saveDataList.Entries.Add(saveData);
@@ -517,7 +517,7 @@ namespace AutosortLockers
 
 		private void UpdateQuantityText()
 		{
-			int count = container.container.count;
+			var count = container.container.count;
 			quantityText.text = count == 0 ? "empty" : count.ToString();
 		}
 
@@ -585,14 +585,14 @@ namespace AutosortLockers
 
 			public override GameObject GetGameObject()
 			{
-				GameObject prefab = GetPrefab("StandingAutosortReceptacle", "Submarine/Build/Locker");
-				AutosortTarget autosortTarget = prefab.GetComponent<AutosortTarget>();
+			var prefab = GetPrefab("StandingAutosortReceptacle", "Submarine/Build/Locker");
+			var autosortTarget = prefab.GetComponent<AutosortTarget>();
 
-				Canvas canvas = prefab.GetComponentInChildren<Canvas>();
-				Transform t = canvas.transform;
-				t.localPosition = new Vector3(0, 1.1f, 0.25f);
+			var canvas = prefab.GetComponentInChildren<Canvas>();
+			var t = canvas.transform;
+			t.localPosition = new Vector3(0, 1.1f, 0.25f);
 
-				StorageContainer container = prefab.GetComponent<StorageContainer>();
+			var container = prefab.GetComponent<StorageContainer>();
 				container.width = Mod.config.StandingReceptacleWidth;
 				container.height = Mod.config.StandingReceptacleHeight;
 				container.container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
@@ -639,24 +639,24 @@ namespace AutosortLockers
 		public static GameObject GetPrefab(string name, string basePrefab)
 		{
 			GameObject originalPrefab = Resources.Load<GameObject>(basePrefab);
-			var prefab = GameObject.Instantiate(originalPrefab);
+			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
 			prefab.name = name;
 
-			MeshRenderer[] meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
-			foreach (MeshRenderer meshRenderer in meshRenderers)
+			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
+			foreach (var meshRenderer in meshRenderers)
 			{
 				meshRenderer.material.color = new Color(0.3f, 0.3f, 0.3f);
 			}
 
-			AutosortTarget autosortTarget = prefab.AddComponent<AutosortTarget>();
+			var autosortTarget = prefab.AddComponent<AutosortTarget>();
 
-			GameObject smallLockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+			var smallLockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			autosortTarget.textPrefab = GameObject.Instantiate(smallLockerPrefab.GetComponentInChildren<Text>());
-			GameObject label = prefab.FindChild("Label");
+			var label = prefab.FindChild("Label");
 			DestroyImmediate(label);
 
-			Canvas canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
+			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
 			autosortTarget.background = LockerPrefabShared.CreateBackground(canvas.transform);
 			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, autosortTarget.textPrefab.color, 70);
 			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, -20, 12, "Any");

@@ -31,7 +31,7 @@ namespace AutosortLockers
 
 			AddBuildables();
 
-			var harmony = HarmonyInstance.Create("com.AutosortLockersSML.mod");
+			HarmonyInstance harmony = HarmonyInstance.Create("com.AutosortLockersSML.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");
@@ -58,8 +58,8 @@ namespace AutosortLockers
 			config = ModUtils.LoadConfig<Config>(GetModPath() + "/config.json");
 			ValidateConfig();
 
-			List<SerializableColor> serializedColors = JsonConvert.DeserializeObject<List<SerializableColor>>(File.ReadAllText(GetAssetPath("colors.json")));
-			foreach (SerializableColor sColor in serializedColors)
+			var serializedColors = JsonConvert.DeserializeObject<List<SerializableColor>>(File.ReadAllText(GetAssetPath("colors.json")));
+			foreach (var sColor in serializedColors)
 			{
 				colors.Add(sColor.ToColor());
 			}
@@ -67,12 +67,7 @@ namespace AutosortLockers
 
 		private static void ValidateConfig()
 		{
-			var defaultConfig = new Config();
-			if (config == null)
-			{
-				config = defaultConfig;
-				return;
-			}
+			Config defaultConfig = new Config();
 
 			ModUtils.ValidateConfigValue("SortInterval", 0.1f, 10.0f, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("AutosorterWidth", 1, 8, ref config, ref defaultConfig);
@@ -88,8 +83,8 @@ namespace AutosortLockers
 
 		public static SaveDataEntry GetSaveData(string id)
 		{
-			SaveData saveData = GetSaveData();
-			foreach (SaveDataEntry entry in saveData.Entries)
+			var saveData = GetSaveData();
+			foreach (var entry in saveData.Entries)
 			{
 				if (entry.Id == id)
 				{
@@ -105,9 +100,9 @@ namespace AutosortLockers
 			{
 				saveObject = new GameObject().AddComponent<ModSaver>();
 
-				var newSaveData = new SaveData();
-				AutosortTarget[] targets = GameObject.FindObjectsOfType<AutosortTarget>();
-				foreach (AutosortTarget target in targets)
+				SaveData newSaveData = new SaveData();
+				var targets = GameObject.FindObjectsOfType<AutosortTarget>();
+				foreach (var target in targets)
 				{
 					target.Save(newSaveData);
 				}
