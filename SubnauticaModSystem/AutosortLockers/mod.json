@@ -1,21 +1,9 @@
 {
-  "Id": "AutosortLockers",
-  "DisplayName": "AutosortLockers",
+  "Id": "AutosortLockersSML",
+  "DisplayName": "Autosort Lockers SML",
   "Author": "RandyKnapp",
-  "Version": "1.2.2",
-  "Requires": [ "0Harmony-1.2.0.1.dll" ],
+  "Version": "2.0.0",
+  "Requires": [ "SMLHelper" ],
   "Enable": true,
-  "AssemblyName": "AutosortLockers.dll",
-  "EntryMethod": "AutosortLockers.QPatch.Patch",
-  "Config": {
-    "EasyBuild": false,
-    "SortInterval": 1.0,
-    "ShowAllItems": false,
-    "AutosorterWidth": 5,
-    "AutosorterHeight": 6,
-    "ReceptacleWidth": 6,
-    "ReceptacleHeight": 8,
-    "StandingReceptacleWidth": 6,
-    "StandingReceptacleHeight": 8
-  }
+  "AssemblyName": "AutosortLockersSML.dll"
 }

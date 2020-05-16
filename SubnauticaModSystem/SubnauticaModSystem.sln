@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreQuickSlots", "MoreQuickSlots\MoreQuickSlots.csproj", "{2B390DAA-56B9-42D9-BAD4-8A47736C0563}"
 EndProject
@@ -45,23 +45,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HudConfig", "HudConfig\HudC
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Common\Common.projitems*{03b89974-4ea6-4cd4-8c9f-c039eb81de5f}*SharedItemsImports = 4
-		Common\Common.projitems*{0d86304e-0a53-422a-99e6-0c687d9dbbc6}*SharedItemsImports = 4
-		Common\Common.projitems*{2b390daa-56b9-42d9-bad4-8a47736c0563}*SharedItemsImports = 4
-		Common\Common.projitems*{2ebf18db-437e-4a9a-a03c-06770a3f9cb6}*SharedItemsImports = 4
-		Common\Common.projitems*{667bf0bb-f5ab-446c-a6b3-3faabb2f49d5}*SharedItemsImports = 4
 		Common\Common.projitems*{683a1124-d419-49f6-b602-60a803658315}*SharedItemsImports = 4
 		Common\Common.projitems*{6c883b28-31e6-4c26-b32b-bf5be0d70190}*SharedItemsImports = 4
-		Common\Common.projitems*{7b7cdbe9-9fac-4e28-a42c-80a21066d7ab}*SharedItemsImports = 4
-		Common\Common.projitems*{7e1de3ec-3325-4f95-b306-616e1fa23b40}*SharedItemsImports = 4
-		Common\Common.projitems*{829b1a80-d3b3-431a-a4b8-284c6b9de226}*SharedItemsImports = 4
-		Common\Common.projitems*{b4a7744b-f777-426c-94cd-1470b680b5b7}*SharedItemsImports = 4
-		Common\Common.projitems*{b7752c03-c7bb-494f-ba52-9cd5ec649aa7}*SharedItemsImports = 4
-		Common\Common.projitems*{cf7e5ea0-ee32-4330-af9c-e720e9a64681}*SharedItemsImports = 4
-		Common\Common.projitems*{d9a802d6-ad51-4543-9903-0b90b1fa65ac}*SharedItemsImports = 4
 		Common\Common.projitems*{dd1d2dc7-3bdc-4dc1-99c8-2d0ccbf2b171}*SharedItemsImports = 13
-		Common\Common.projitems*{f8a529a2-4cf8-4651-b0e8-b43b26c66753}*SharedItemsImports = 4
-		Common\Common.projitems*{fd7b0bb5-6bcf-45b6-9145-10a8f0fef277}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Autosort|Any CPU = Debug_Autosort|Any CPU
@@ -105,8 +91,8 @@ Global
 		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B7CDBE9-9FAC-4E28-A42C-80A21066D7AB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Debug_Autosort|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Debug_Autosort|Any CPU.Build.0 = Debug|Any CPU
+		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Debug_Autosort|Any CPU.ActiveCfg = Release|Any CPU
+		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Debug_Autosort|Any CPU.Build.0 = Release|Any CPU
 		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C883B28-31E6-4C26-B32B-BF5BE0D70190}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -147,8 +133,8 @@ Global
 		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CC2A3A8-342F-4C3F-83C7-249882920D71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{683A1124-D419-49F6-B602-60A803658315}.Debug_Autosort|Any CPU.ActiveCfg = Debug_Autosort|Any CPU
-		{683A1124-D419-49F6-B602-60A803658315}.Debug_Autosort|Any CPU.Build.0 = Debug_Autosort|Any CPU
+		{683A1124-D419-49F6-B602-60A803658315}.Debug_Autosort|Any CPU.ActiveCfg = Debug|Any CPU
+		{683A1124-D419-49F6-B602-60A803658315}.Debug_Autosort|Any CPU.Build.0 = Debug|Any CPU
 		{683A1124-D419-49F6-B602-60A803658315}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{683A1124-D419-49F6-B602-60A803658315}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{683A1124-D419-49F6-B602-60A803658315}.Release|Any CPU.ActiveCfg = Release|Any CPU

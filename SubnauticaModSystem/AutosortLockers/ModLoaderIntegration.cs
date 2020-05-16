@@ -1,11 +1,15 @@
-﻿namespace AutosortLockers
+﻿using QModManager.API.ModLoading;
+
+namespace AutosortLockers
 {
-	// QMods by qwiso https://github.com/Qwiso/QModManager
+	// https://github.com/Qwiso/QModManager
+	[QModCore]
 	public static class QPatch
 	{
+		[QModPatch]
 		public static void Patch()
 		{
-			Mod.Patch("QMods/AutosortLockers");
+			Mod.Patch("QMods/AutosortLockersSML");
 		}
 	}
 }

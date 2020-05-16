@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using ProtoBuf;
 using System.Reflection;
 using Harmony;
+using ProtoBuf;
 
-public class ProtobufSerializerPatcher
+internal class ProtobufSerializerPatcher
 {
 	public static bool Prefix_Serialize(ProtobufSerializerPrecompiled __instance, int num, object obj, ProtoWriter writer)
 	{
@@ -37,14 +37,14 @@ public class ProtobufSerializerPatcher
 	}
 }
 
-public static class AlternativeSerializer
+internal static class AlternativeSerializer
 {
 	public static readonly Dictionary<int, ICustomSerializer> customSerializers = new Dictionary<int, ICustomSerializer>();
 	public static readonly Dictionary<Type, int> types = new Dictionary<Type, int>();
-	static readonly Dictionary<Type, int> existingTypes;
-	static MethodInfo SerializeFunc;
-	static MethodInfo DeserializeFunc;
-	static MethodInfo GetKeyFunc;
+	private static readonly Dictionary<Type, int> existingTypes;
+	private static MethodInfo SerializeFunc;
+	private static MethodInfo DeserializeFunc;
+	private static MethodInfo GetKeyFunc;
 
 	static AlternativeSerializer()
 	{
@@ -118,7 +118,7 @@ public static class AlternativeSerializer
 	}
 }
 
-public interface ICustomSerializer
+internal interface ICustomSerializer
 {
 	object Deserialize(object obj, ProtoReader reader, ProtobufSerializerPrecompiled model);
 	void Serialize(object obj, ProtoWriter writer, ProtobufSerializerPrecompiled model);

@@ -1,45 +1,67 @@
-﻿using Common.Utility;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Oculus.Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
-using Oculus.Newtonsoft.Json;
 
 namespace Common.Mod
 {
-    public static class ModUtils
-    {
-		private static FieldInfo CraftData_techMapping = typeof(CraftData).GetField("techMapping", BindingFlags.NonPublic | BindingFlags.Static);
+	internal static class ModUtils
+	{
+		//private static FieldInfo CraftData_techMapping = typeof(CraftData).GetField("techMapping", BindingFlags.NonPublic | BindingFlags.Static);
 
-		private static List<TechType> pickupableTypes;
+		//private static List<TechType> pickupableTypes;
 		private static MonoBehaviour coroutineObject;
 
-		public static ConfigT LoadConfig<ConfigT>(string modInfoPath) where ConfigT : new()
+		public static ConfigT LoadConfig<ConfigT>(string configFilePath) where ConfigT : class, new()
 		{
-			if (!File.Exists(modInfoPath))
+			if (!File.Exists(configFilePath))
 			{
-				return new ConfigT();
+				return WriteDefaultConfig<ConfigT>(configFilePath);
 			}
 
-			var modInfoObject = JSON.Parse(File.ReadAllText(modInfoPath));
-			string configJson = modInfoObject["Config"].ToString();
-			var config = JsonUtility.FromJson<ConfigT>(configJson);
-			if (config == null)
+			try
 			{
-				config = new ConfigT();
+				string serialilzedConfig = File.ReadAllText(configFilePath);
+
+				if (string.IsNullOrEmpty(serialilzedConfig))
+				{
+					return new ConfigT();
+				}
+
+				ConfigT config = JsonConvert.DeserializeObject<ConfigT>(serialilzedConfig);
+
+				if (config == null)
+				{
+					config = new ConfigT();
+				}
+
+				return config;
 			}
-			return config;
+			catch
+			{
+				return WriteDefaultConfig<ConfigT>(configFilePath);
+			}
+		}
+
+		private static ConfigT WriteDefaultConfig<ConfigT>(string configFilePath)
+			 where ConfigT : class, new()
+		{
+			var defaultConfig = new ConfigT();
+			string serialilzedConfig = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
+			File.WriteAllText(configFilePath, serialilzedConfig);
+			return defaultConfig;
 		}
 
 		public static void ValidateConfigValue<T, ConfigT>(string field, T min, T max, ref ConfigT config, ref ConfigT defaultConfig) where T : IComparable
 		{
-			var fieldInfo = typeof(ConfigT).GetField(field, BindingFlags.Public | BindingFlags.Instance);
-			T value = (T)fieldInfo.GetValue(config);
+			PropertyInfo fieldInfo = typeof(ConfigT).GetProperty(field, BindingFlags.Public | BindingFlags.Instance);
+			var value = (T)fieldInfo.GetValue(config, null);
 			if (value.CompareTo(min) < 0 || value.CompareTo(max) > 0)
 			{
 				Console.WriteLine("Config value for '{0}' ({1}) was not valid. Must be between {2} and {3}",
@@ -48,7 +70,7 @@ namespace Common.Mod
 					min,
 					max
 				);
-				fieldInfo.SetValue(config, fieldInfo.GetValue(defaultConfig));
+				fieldInfo.SetValue(config, fieldInfo.GetValue(defaultConfig, null), null);
 			}
 		}
 
@@ -59,13 +81,13 @@ namespace Common.Mod
 
 		private static IEnumerator LoadInternal<SaveDataT>(string fileName, Action<SaveDataT> onSuccess)
 		{
-			var userStorage = PlatformUtils.main.GetUserStorage();
-			List<string> files = new List<string> { fileName };
+			UserStorage userStorage = PlatformUtils.main.GetUserStorage();
+			var files = new List<string> { fileName };
 			UserStorageUtils.LoadOperation loadOperation = userStorage.LoadFilesAsync(SaveLoadManager.main.GetCurrentSlot(), files);
 			yield return loadOperation;
 			if (loadOperation.GetSuccessful())
 			{
-				var stringData = Encoding.ASCII.GetString(loadOperation.files[fileName]);
+				string stringData = Encoding.ASCII.GetString(loadOperation.files[fileName]);
 				SaveDataT saveData = JsonConvert.DeserializeObject<SaveDataT>(stringData);
 				onSuccess(saveData);
 			}
@@ -76,7 +98,7 @@ namespace Common.Mod
 		}
 
 		public static void Save<SaveDataT>(SaveDataT newSaveData, string fileName, Action onSaveComplete = null)
-		{			
+		{
 			if (newSaveData != null)
 			{
 				string saveDataJson = JsonConvert.SerializeObject(newSaveData);
@@ -86,11 +108,13 @@ namespace Common.Mod
 
 		private static IEnumerator SaveInternal(string saveData, string fileName, Action onSaveComplete = null)
 		{
-			var userStorage = PlatformUtils.main.GetUserStorage();
-			var saveFileMap = new Dictionary<string, byte[]>();
-			saveFileMap.Add(fileName, Encoding.ASCII.GetBytes(saveData));
+			UserStorage userStorage = PlatformUtils.main.GetUserStorage();
+			var saveFileMap = new Dictionary<string, byte[]>
+			{
+				{ fileName, Encoding.ASCII.GetBytes(saveData) }
+			};
 			SaveLoadManager.main.GetCurrentSlot();
-			var saveOp = userStorage.SaveFilesAsync(SaveLoadManager.main.GetCurrentSlot(), saveFileMap);
+			UserStorageUtils.SaveOperation saveOp = userStorage.SaveFilesAsync(SaveLoadManager.main.GetCurrentSlot(), saveFileMap);
 			yield return saveOp;
 			if (saveOp.GetSuccessful())
 			{
@@ -109,8 +133,8 @@ namespace Common.Mod
 			Console.WriteLine(indent + "{");
 			Console.WriteLine(indent + "  Components:");
 			Console.WriteLine(indent + "  {");
-			var lastC = obj.GetComponents<Component>().Last();
-			foreach (var c in obj.GetComponents<Component>())
+			Component lastC = obj.GetComponents<Component>().Last();
+			foreach (Component c in obj.GetComponents<Component>())
 			{
 				Console.WriteLine(indent + "    (" + c.GetType().ToString() + ")");
 				if (includeMaterials)
@@ -119,13 +143,13 @@ namespace Common.Mod
 					{
 						var renderer = c as Renderer;
 						Console.WriteLine(indent + "    {");
-						foreach (var material in renderer.materials)
+						foreach (Material material in renderer.materials)
 						{
 							Console.WriteLine(indent + $"      {material}");
 						}
 						Console.WriteLine(indent + "    }");
 						Console.WriteLine(indent + "    {");
-						foreach (var material in renderer.sharedMaterials)
+						foreach (Material material in renderer.sharedMaterials)
 						{
 							Console.WriteLine(indent + $"      {material}");
 						}
@@ -144,20 +168,20 @@ namespace Common.Mod
 			Console.WriteLine(indent + "}");
 		}
 
-		static List<string> s_gameObjectFields;
+		private static List<string> s_gameObjectFields;
 
 		public static void PrintObjectFields(object obj, string indent = "")
 		{
 			if (s_gameObjectFields == null)
 			{
 				s_gameObjectFields = new List<string>();
-				var goFields = typeof(GameObject).GetFields(BindingFlags.Public | BindingFlags.Instance);
-				foreach (var field in goFields)
+				FieldInfo[] goFields = typeof(GameObject).GetFields(BindingFlags.Public | BindingFlags.Instance);
+				foreach (FieldInfo field in goFields)
 				{
 					s_gameObjectFields.Add(field.Name);
 				}
-				var goProps = typeof(GameObject).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
-				foreach (var prop in goProps)
+				PropertyInfo[] goProps = typeof(GameObject).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
+				foreach (PropertyInfo prop in goProps)
 				{
 					s_gameObjectFields.Add(prop.Name);
 				}
@@ -203,7 +227,7 @@ namespace Common.Mod
 
 		public static Text InstantiateNewText(string name, Transform parent)
 		{
-			var text = GameObject.Instantiate(GetTextPrefab());
+			Text text = GameObject.Instantiate(GetTextPrefab());
 			text.gameObject.layer = parent.gameObject.layer;
 			text.gameObject.name = name;
 			text.transform.SetParent(parent, false);
@@ -240,6 +264,7 @@ namespace Common.Mod
 			return found;
 		}
 
+		/*
 		public static List<TechType> GetPickupableTechTypes()
 		{
 			if (pickupableTypes != null)
@@ -267,6 +292,7 @@ namespace Common.Mod
 			
 			return pickupableTypes;
 		}
+		*/
 
 		public static T CopyComponent<T>(T original, GameObject destination) where T : Component
 		{

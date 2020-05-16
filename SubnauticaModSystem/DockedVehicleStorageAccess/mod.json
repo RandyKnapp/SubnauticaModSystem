@@ -1,17 +1,9 @@
 {
-  "Id": "DockedVehicleStorageAccess",
-  "DisplayName": "DockedVehicleStorageAccess",
+  "Id": "DockedVehicleStorageAccessSML",
+  "DisplayName": "Docked Vehicle Storage Access",
   "Author": "RandyKnapp",
-  "Version": "1.1.2",
-  "Requires": [ "0Harmony-1.2.0.1.dll" ],
+  "Version": "2.0.0",
+  "Requires": [ "SMLHelper" ],
   "Enable": true,
-  "AssemblyName": "DockedVehicleStorageAccess.dll",
-  "EntryMethod": "DockedVehicleStorageAccess.QPatch.Patch",
-  "Config": {
-    "LockerWidth": 6,
-    "LockerHeight": 8,
-    "CheckVehiclesInterval": 2.0,
-    "ExtractInterval": 0.25,
-    "AutosortTransferInterval": 0.25
-  }
+  "AssemblyName": "DockedVehicleStorageAccessSML.dll"
 }

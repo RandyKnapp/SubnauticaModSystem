@@ -1,26 +1,18 @@
-﻿using Common.Mod;
-using Common.Utility;
-using Harmony;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using UnityEngine;
+using Common.Mod;
+using Harmony;
 using Oculus.Newtonsoft.Json;
+using UnityEngine;
 
 namespace AutosortLockers
 {
-	public enum CustomTechType
+	internal static class Mod
 	{
-		AutosortLocker = 11110,
-		AutosortTarget,
-		AutosortTargetStanding
-	}
-
-	static class Mod
-	{
-		public const string SaveDataFilename = "AutosortLockerSaveData.json";
+		public const string SaveDataFilename = "AutosortLockerSMLSaveData.json";
 		public static Config config;
 		public static SaveData saveData;
 		public static List<Color> colors = new List<Color>();
@@ -32,12 +24,14 @@ namespace AutosortLockers
 
 		public static void Patch(string modDirectory = null)
 		{
+			Logger.Log("Starting patching");
+
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
 			LoadConfig();
 
 			AddBuildables();
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.AutosortLockers.mod");
+			var harmony = HarmonyInstance.Create("com.AutosortLockersSML.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");
@@ -59,18 +53,13 @@ namespace AutosortLockers
 			return GetModPath() + "/Assets/" + filename;
 		}
 
-		private static string GetModInfoPath()
-		{
-			return GetModPath() + "/mod.json";
-		}
-
 		private static void LoadConfig()
 		{
-			config = ModUtils.LoadConfig<Config>(GetModInfoPath());
+			config = ModUtils.LoadConfig<Config>(GetModPath() + "/config.json");
 			ValidateConfig();
 
-			var serializedColors = JsonConvert.DeserializeObject<List<SerializableColor>>(File.ReadAllText(GetAssetPath("colors.json")));
-			foreach (var sColor in serializedColors)
+			List<SerializableColor> serializedColors = JsonConvert.DeserializeObject<List<SerializableColor>>(File.ReadAllText(GetAssetPath("colors.json")));
+			foreach (SerializableColor sColor in serializedColors)
 			{
 				colors.Add(sColor.ToColor());
 			}
@@ -78,7 +67,7 @@ namespace AutosortLockers
 
 		private static void ValidateConfig()
 		{
-			Config defaultConfig = new Config();
+			var defaultConfig = new Config();
 			if (config == null)
 			{
 				config = defaultConfig;
@@ -92,11 +81,6 @@ namespace AutosortLockers
 			ModUtils.ValidateConfigValue("ReceptacleHeight", 1, 10, ref config, ref defaultConfig);
 		}
 
-		public static TechType GetTechType(CustomTechType customTechType)
-		{
-			return (TechType)customTechType;
-		}
-
 		public static SaveData GetSaveData()
 		{
 			return saveData ?? new SaveData();
@@ -104,8 +88,8 @@ namespace AutosortLockers
 
 		public static SaveDataEntry GetSaveData(string id)
 		{
-			var saveData = GetSaveData();
-			foreach (var entry in saveData.Entries)
+			SaveData saveData = GetSaveData();
+			foreach (SaveDataEntry entry in saveData.Entries)
 			{
 				if (entry.Id == id)
 				{
@@ -121,9 +105,9 @@ namespace AutosortLockers
 			{
 				saveObject = new GameObject().AddComponent<ModSaver>();
 
-				SaveData newSaveData = new SaveData();
-				var targets = GameObject.FindObjectsOfType<AutosortTarget>();
-				foreach (var target in targets)
+				var newSaveData = new SaveData();
+				AutosortTarget[] targets = GameObject.FindObjectsOfType<AutosortTarget>();
+				foreach (AutosortTarget target in targets)
 				{
 					target.Save(newSaveData);
 				}
@@ -155,7 +139,8 @@ namespace AutosortLockers
 		public static void LoadSaveData()
 		{
 			Logger.Log("Loading Save Data...");
-			ModUtils.LoadSaveData<SaveData>(SaveDataFilename, (data) => {
+			ModUtils.LoadSaveData<SaveData>(SaveDataFilename, (data) =>
+			{
 				saveData = data;
 				Logger.Log("Save Data Loaded");
 				OnDataLoaded?.Invoke(saveData);

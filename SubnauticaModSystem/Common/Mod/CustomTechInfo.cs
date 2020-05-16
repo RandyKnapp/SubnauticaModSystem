@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Common.Mod
@@ -18,8 +16,6 @@ namespace Common.Mod
 
 	public class CustomTechInfo : ITechData
 	{
-		public GetPrefabDelegate getPrefab;
-
 		public TechType techType;
 		public string classID;
 		public TechGroup techGroup;
