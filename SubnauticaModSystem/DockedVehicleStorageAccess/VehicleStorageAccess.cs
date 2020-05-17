@@ -414,11 +414,13 @@ namespace DockedVehicleStorageAccess
 			exosuitIcon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Exosuit.png"));
 
 			enableCheckbox.toggled = saveData != null ? saveData.Enabled : true;
+			enableCheckbox.transform.localPosition = new Vector3(0, -104);
 			enableCheckbox.Initialize();
 
 			if (Mod.config.UseAutosortMod)
 			{
 				autosortCheckbox.toggled = saveData != null ? saveData.Autosort : true;
+				autosortCheckbox.transform.localPosition = new Vector3(0, -104 + 19);
 				autosortCheckbox.Initialize();
 			}
 
@@ -485,10 +487,8 @@ namespace DockedVehicleStorageAccess
 
 			public override GameObject GetGameObject()
 			{
-				GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+				GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
 				GameObject prefab = GameObject.Instantiate(originalPrefab);
-
-				prefab.name = "VehicleStorageAccess";
 
 				var container = prefab.GetComponent<StorageContainer>();
 				container.width = Mod.config.LockerWidth;
