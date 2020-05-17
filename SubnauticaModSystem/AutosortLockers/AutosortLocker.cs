@@ -309,10 +309,8 @@ namespace AutosortLockers
 
             public override GameObject GetGameObject()
             {
-                GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+                GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
                 GameObject prefab = GameObject.Instantiate(originalPrefab);
-
-                prefab.name = "Autosorter";
 
                 var container = prefab.GetComponent<StorageContainer>();
                 container.width = Mod.config.AutosorterWidth;

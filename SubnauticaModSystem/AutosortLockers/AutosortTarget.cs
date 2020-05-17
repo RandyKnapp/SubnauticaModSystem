@@ -536,7 +536,7 @@ namespace AutosortLockers
 
 			public override GameObject GetGameObject()
 			{
-				GameObject prefab = GetPrefab("AutosortReceptacle", "Submarine/Build/SmallLocker");
+				GameObject prefab = GetPrefab(TechType.SmallLocker);
 
 				StorageContainer container = prefab.GetComponent<StorageContainer>();
 				container.width = Mod.config.ReceptacleWidth;
@@ -585,14 +585,9 @@ namespace AutosortLockers
 
 			public override GameObject GetGameObject()
 			{
-			var prefab = GetPrefab("StandingAutosortReceptacle", "Submarine/Build/Locker");
-			var autosortTarget = prefab.GetComponent<AutosortTarget>();
+				var prefab = GetPrefab(TechType.Locker);
 
-			var canvas = prefab.GetComponentInChildren<Canvas>();
-			var t = canvas.transform;
-			t.localPosition = new Vector3(0, 1.1f, 0.25f);
-
-			var container = prefab.GetComponent<StorageContainer>();
+				var container = prefab.GetComponent<StorageContainer>();
 				container.width = Mod.config.StandingReceptacleWidth;
 				container.height = Mod.config.StandingReceptacleHeight;
 				container.container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
@@ -636,12 +631,10 @@ namespace AutosortLockers
 			sorterStandingTarget.Patch();
 		}
 
-		public static GameObject GetPrefab(string name, string basePrefab)
+		public static GameObject GetPrefab(TechType basePrefab)
 		{
-			GameObject originalPrefab = Resources.Load<GameObject>(basePrefab);
+			GameObject originalPrefab = CraftData.GetPrefabForTechType(basePrefab);
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
-
-			prefab.name = name;
 
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
 			foreach (var meshRenderer in meshRenderers)
@@ -651,12 +644,17 @@ namespace AutosortLockers
 
 			var autosortTarget = prefab.AddComponent<AutosortTarget>();
 
-			var smallLockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+			var smallLockerPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
 			autosortTarget.textPrefab = GameObject.Instantiate(smallLockerPrefab.GetComponentInChildren<Text>());
 			var label = prefab.FindChild("Label");
 			DestroyImmediate(label);
 
 			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
+			if (basePrefab == TechType.Locker)
+			{
+				canvas.transform.localPosition = new Vector3(0, 1.1f, 0.25f);
+			}
+
 			autosortTarget.background = LockerPrefabShared.CreateBackground(canvas.transform);
 			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, autosortTarget.textPrefab.color, 70);
 			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, -20, 12, "Any");
