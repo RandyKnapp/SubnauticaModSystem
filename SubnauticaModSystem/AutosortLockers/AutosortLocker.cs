@@ -22,7 +22,6 @@ namespace AutosortLockers
         private List<AutosortTarget> categoryTargets = new List<AutosortTarget>();
         private List<AutosortTarget> anyTargets = new List<AutosortTarget>();
 
-        //private int sortableItems = 0;
         private int unsortableItems = 0;
 
         [SerializeField]
@@ -50,7 +49,7 @@ namespace AutosortLockers
 
         private void Update()
         {
-            if (!initialized && constructable._constructed && this.transform.parent != null)
+            if (!initialized && constructable._constructed && transform.parent != null)
             {
                 Initialize();
             }
@@ -111,14 +110,14 @@ namespace AutosortLockers
             categoryTargets.Clear();
             anyTargets.Clear();
 
-            SubRoot subRoot = this.gameObject.GetComponentInParent<SubRoot>();
+            SubRoot subRoot = gameObject.GetComponentInParent<SubRoot>();
             if (subRoot == null)
             {
                 return;
             }
 
             var allTargets = subRoot.GetComponentsInChildren<AutosortTarget>().ToList();
-            foreach (AutosortTarget target in allTargets)
+            foreach (var target in allTargets)
             {
                 if (target.isActiveAndEnabled && target.CanAddItems())
                 {
@@ -144,7 +143,6 @@ namespace AutosortLockers
         private IEnumerator Sort()
         {
             sortedItem = false;
-            //sortableItems = 0;
             unsortableItems = container.container.count;
 
             if (!initialized || container.IsEmpty())
@@ -198,13 +196,12 @@ namespace AutosortLockers
                 {
                     if (filter.IsCategory() == byCategory)
                     {
-                        foreach (TechType techType in filter.Types)
+                        foreach (var techType in filter.Types)
                         {
                             callsToCanAddItem++;
-                            IList<InventoryItem> items = container.container.GetItems(techType);
+                            var items = container.container.GetItems(techType);
                             if (items != null && items.Count > 0 && target.CanAddItem(items[0].item))
                             {
-                                //sortableItems += items.Count;
                                 unsortableItems -= items.Count;
                                 SortItem(items[0].item, target);
                                 sortedItem = true;
@@ -225,7 +222,7 @@ namespace AutosortLockers
         {
             int callsToCanAddItem = 0;
             const int CanAddItemCallThreshold = 10;
-            foreach (InventoryItem item in container.container.ToList())
+            foreach (var item in container.container.ToList())
             {
                 foreach (AutosortTarget target in anyTargets)
                 {
@@ -233,7 +230,6 @@ namespace AutosortLockers
                     if (target.CanAddItem(item.item))
                     {
                         SortItem(item.item, target);
-                        //sortableItems++;
                         unsortableItems--;
                         sortedItem = true;
                         yield break;
@@ -251,7 +247,6 @@ namespace AutosortLockers
         {
             container.container.RemoveItem(pickup, true);
             target.AddItem(pickup);
-            //sortableItems++;
 
             StartCoroutine(PulseIcon());
         }
