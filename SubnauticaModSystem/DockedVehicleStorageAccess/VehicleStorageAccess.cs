@@ -37,7 +37,7 @@ namespace DockedVehicleStorageAccess
 		private List<Vehicle> vehicles = new List<Vehicle>();
 
 		private bool transferringToAutosorter;
-		private Component[] autosorters = new Component[0];
+		private List<Component> autosorters = new List<Component>();
 
 		[SerializeField]
 		private Text textPrefab;
@@ -107,7 +107,7 @@ namespace DockedVehicleStorageAccess
 
 			if (Mod.config.UseAutosortMod)
 			{
-				autosorters = subRoot.GetComponentsInChildren(AutosortLockerType);
+				autosorters = subRoot.GetComponentsInChildren(AutosortLockerType).ToList();
 			}
 		}
 
@@ -160,7 +160,7 @@ namespace DockedVehicleStorageAccess
 			bool extractedAnything = false;
 			Dictionary<string, int> extractionResults = new Dictionary<string, int>();
 
-			var localVehicles = vehicles;
+			List<Vehicle> localVehicles = vehicles.ToList();
 			foreach (var vehicle in localVehicles)
 			{
 				var vehicleName = vehicle.GetName();
@@ -170,7 +170,7 @@ namespace DockedVehicleStorageAccess
 				bool couldNotAdd = false;
 				foreach (var vehicleContainer in vehicleContainers)
 				{
-					foreach (var item in vehicleContainer)
+					foreach (var item in vehicleContainer.ToList())
 					{
 						if (!enableCheckbox.toggled)
 						{
@@ -260,7 +260,7 @@ namespace DockedVehicleStorageAccess
 		// Exclusive for Autosort integration
 		private IEnumerator TryMoveToAutosorter()
 		{
-			if (autosorters.Length == 0)
+			if (autosorters.Count == 0)
 			{
 				yield break;
 			}
@@ -273,7 +273,7 @@ namespace DockedVehicleStorageAccess
 				yield break;
 			}
 
-			var items = container.container;
+			var items = container.container.ToList();
 			bool couldNotAdd = false;
 			int itemsTransferred = 0;
 			foreach (var item in items)
@@ -340,8 +340,8 @@ namespace DockedVehicleStorageAccess
 
 			if (Mod.config.UseAutosortMod)
 			{
-				autosortCheckbox.isEnabled = autosorters.Length > 0;
-				text.text += autosorters.Length == 0 ? "\nNo Autosorters" : "";
+				autosortCheckbox.isEnabled = autosorters.Count > 0;
+				text.text += autosorters.Count == 0 ? "\nNo Autosorters" : "";
 			}
 
 			int seamothCount = 0;
@@ -366,7 +366,7 @@ namespace DockedVehicleStorageAccess
 			{
 				text.text += "\n\n<color=lime>EXTRACTING...</color>";
 			}
-			else if (Mod.config.UseAutosortMod && autosorters.Length == 0 && transferringToAutosorter)
+			else if (Mod.config.UseAutosortMod && autosorters.Count == 0 && transferringToAutosorter)
 			{
 				text.text += "\n\n<color=lime>TRANSFERRING...</color>";
 			}
