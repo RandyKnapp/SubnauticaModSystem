@@ -1,26 +1,18 @@
-﻿using Common.Mod;
-using Common.Utility;
-using Harmony;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using UnityEngine;
+using Common.Mod;
+using Harmony;
 using Oculus.Newtonsoft.Json;
+using UnityEngine;
 
 namespace AutosortLockers
 {
-	public enum CustomTechType
+	internal static class Mod
 	{
-		AutosortLocker = 11110,
-		AutosortTarget,
-		AutosortTargetStanding
-	}
-
-	static class Mod
-	{
-		public const string SaveDataFilename = "AutosortLockerSaveData.json";
+		public const string SaveDataFilename = "AutosortLockerSMLSaveData.json";
 		public static Config config;
 		public static SaveData saveData;
 		public static List<Color> colors = new List<Color>();
@@ -32,12 +24,14 @@ namespace AutosortLockers
 
 		public static void Patch(string modDirectory = null)
 		{
+			Logger.Log("Starting patching");
+
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
 			LoadConfig();
 
 			AddBuildables();
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.AutosortLockers.mod");
+			HarmonyInstance harmony = HarmonyInstance.Create("com.AutosortLockersSML.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");
@@ -59,14 +53,9 @@ namespace AutosortLockers
 			return GetModPath() + "/Assets/" + filename;
 		}
 
-		private static string GetModInfoPath()
-		{
-			return GetModPath() + "/mod.json";
-		}
-
 		private static void LoadConfig()
 		{
-			config = ModUtils.LoadConfig<Config>(GetModInfoPath());
+			config = ModUtils.LoadConfig<Config>(GetModPath() + "/config.json");
 			ValidateConfig();
 
 			var serializedColors = JsonConvert.DeserializeObject<List<SerializableColor>>(File.ReadAllText(GetAssetPath("colors.json")));
@@ -79,22 +68,12 @@ namespace AutosortLockers
 		private static void ValidateConfig()
 		{
 			Config defaultConfig = new Config();
-			if (config == null)
-			{
-				config = defaultConfig;
-				return;
-			}
 
 			ModUtils.ValidateConfigValue("SortInterval", 0.1f, 10.0f, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("AutosorterWidth", 1, 8, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("AutosorterHeight", 1, 10, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("ReceptacleWidth", 1, 8, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("ReceptacleHeight", 1, 10, ref config, ref defaultConfig);
-		}
-
-		public static TechType GetTechType(CustomTechType customTechType)
-		{
-			return (TechType)customTechType;
 		}
 
 		public static SaveData GetSaveData()
@@ -155,7 +134,8 @@ namespace AutosortLockers
 		public static void LoadSaveData()
 		{
 			Logger.Log("Loading Save Data...");
-			ModUtils.LoadSaveData<SaveData>(SaveDataFilename, (data) => {
+			ModUtils.LoadSaveData<SaveData>(SaveDataFilename, (data) =>
+			{
 				saveData = data;
 				Logger.Log("Save Data Loaded");
 				OnDataLoaded?.Invoke(saveData);

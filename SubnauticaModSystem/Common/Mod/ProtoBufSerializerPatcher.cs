@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ProtoBuf;
 using System.Reflection;
 using Harmony;
+using ProtoBuf;
 
 public class ProtobufSerializerPatcher
 {

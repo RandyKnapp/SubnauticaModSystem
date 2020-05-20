@@ -6,7 +6,7 @@ namespace DockedVehicleStorageAccess
 	{
 		public static void Log(string message)
 		{
-			Console.WriteLine("[DockedVehicleStorageAccess] " + message);
+			Console.WriteLine("[DockedVehicleStorageAccessSML] " + message);
 		}
 
 		public static void Log(string format, params object[] args)
@@ -16,7 +16,7 @@ namespace DockedVehicleStorageAccess
 
 		public static void Error(string message)
 		{
-			Console.WriteLine("[DockedVehicleStorageAccess:ERROR] " + message);
+			Console.WriteLine("[DockedVehicleStorageAccessSML:ERROR] " + message);
 		}
 
 		public static void Error(string format, params object[] args)

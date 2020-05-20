@@ -1,22 +1,12 @@
-﻿using Common.Mod;
-using Common.Utility;
-using Harmony;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System;
 using System.Reflection;
-using UnityEngine;
-using Oculus.Newtonsoft.Json;
+using Common.Mod;
+using Harmony;
+using QModManager.API;
 
 namespace DockedVehicleStorageAccess
 {
-	public enum CustomTechType
-	{
-		DockedVehicleStorageAccess = 11130
-	}
-
-	static class Mod
+	internal static class Mod
 	{
 		public static Config config;
 
@@ -24,12 +14,14 @@ namespace DockedVehicleStorageAccess
 
 		public static void Patch(string modDirectory = null)
 		{
+			Logger.Log("Starting patching");
+
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
 			LoadConfig();
 
 			AddBuildables();
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.DockedVehicleStorageAccess.mod");
+			HarmonyInstance harmony = HarmonyInstance.Create("com.DockedVehicleStorageAccessSML.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");
@@ -50,25 +42,15 @@ namespace DockedVehicleStorageAccess
 			return GetModPath() + "/Assets/" + filename;
 		}
 
-		private static string GetModInfoPath()
-		{
-			return GetModPath() + "/mod.json";
-		}
-
 		private static void LoadConfig()
 		{
-			config = ModUtils.LoadConfig<Config>(GetModInfoPath());
-			ValidateConfig();
-		}
+			config = ModUtils.LoadConfig<Config>(GetModPath() + "/config.json");
+			config.UseAutosortMod = QModServices.Main.ModPresent("AutosortLockersSML");
 
-		private static void ValidateConfig()
-		{
-			Config defaultConfig = new Config();
-			if (config == null)
-			{
-				config = defaultConfig;
-				return;
-			}
+			if (config.UseAutosortMod)
+				Logger.Log("AutosortLockersSML detected. Cross-mod features enabled.");
+			else
+				Logger.Log("Running in standalone mode.");
 		}
 	}
 }

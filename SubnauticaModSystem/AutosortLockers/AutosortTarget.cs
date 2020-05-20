@@ -1,11 +1,12 @@
-﻿using Common.Mod;
-using Common.Utility;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Mod;
+using Common.Utility;
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Crafting;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 namespace AutosortLockers
 {
@@ -279,7 +280,7 @@ namespace AutosortLockers
 
 			UpdateQuantityText();
 		}
-		
+
 		private bool AnAutosorterIsSorting()
 		{
 			var root = GetComponentInParent<SubRoot>();
@@ -513,121 +514,127 @@ namespace AutosortLockers
 				yield return null;
 			}
 		}
-		
+
 		private void UpdateQuantityText()
 		{
 			var count = container.container.count;
 			quantityText.text = count == 0 ? "empty" : count.ToString();
 		}
 
+		internal class AutosortTargetBuildable : Buildable
+		{
+			public AutosortTargetBuildable()
+				: base("AutosortTarget",
+					  "Autosort Receptacle",
+					  "Wall locker linked to an Autosorter that receives sorted items.")
+			{
+			}
 
+			public override TechGroup GroupForPDA => TechGroup.InteriorModules;
 
+			public override TechCategory CategoryForPDA => TechCategory.InteriorModule;
+
+			public override GameObject GetGameObject()
+			{
+				GameObject prefab = GetPrefab(TechType.SmallLocker);
+
+				StorageContainer container = prefab.GetComponent<StorageContainer>();
+				container.width = Mod.config.ReceptacleWidth;
+				container.height = Mod.config.ReceptacleHeight;
+				container.container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
+
+				return prefab;
+			}
+
+			protected override TechData GetBlueprintRecipe()
+			{
+				return new TechData
+				{
+					craftAmount = 1,
+					Ingredients = Mod.config.EasyBuild
+					? new List<Ingredient>
+					{
+						new Ingredient(TechType.Titanium, 2)
+					}
+					: new List<Ingredient>
+					{
+						new Ingredient(TechType.Titanium, 2),
+						new Ingredient(TechType.Magnetite, 1)
+					}
+				};
+			}
+
+			protected override Atlas.Sprite GetItemSprite()
+			{
+				return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("AutosortTarget.png"));
+			}
+		}
+
+		internal class AutosortStandingTargetBuildable : Buildable
+		{
+			public AutosortStandingTargetBuildable()
+				: base("AutosortTargetStanding",
+					  "Standing Autosort Receptacle",
+					  "Large locker linked to an Autosorter that receives sorted items.")
+			{
+			}
+
+			public override TechGroup GroupForPDA => TechGroup.InteriorModules;
+
+			public override TechCategory CategoryForPDA => TechCategory.InteriorModule;
+
+			public override GameObject GetGameObject()
+			{
+				var prefab = GetPrefab(TechType.Locker);
+
+				var container = prefab.GetComponent<StorageContainer>();
+				container.width = Mod.config.StandingReceptacleWidth;
+				container.height = Mod.config.StandingReceptacleHeight;
+				container.container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
+
+				return prefab;
+			}
+
+			protected override TechData GetBlueprintRecipe()
+			{
+				return new TechData
+				{
+					craftAmount = 1,
+					Ingredients = Mod.config.EasyBuild
+					? new List<Ingredient>
+					{
+						new Ingredient(TechType.Titanium, 2),
+						new Ingredient(TechType.Quartz, 1)
+					}
+					: new List<Ingredient>
+					{
+						new Ingredient(TechType.Titanium, 2),
+						new Ingredient(TechType.Quartz, 1),
+						new Ingredient(TechType.Magnetite, 1)
+					}
+				};
+			}
+
+			protected override Atlas.Sprite GetItemSprite()
+			{
+				return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("AutosortTargetStanding.png"));
+			}
+		}
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 		public static void AddBuildable()
 		{
-			BuilderUtils.AddBuildable(new CustomTechInfo() {
-				getPrefab = AutosortTarget.GetSmallPrefab,
-				techType = Mod.GetTechType(CustomTechType.AutosortTarget),
-				techGroup = TechGroup.InteriorModules,
-				techCategory = TechCategory.InteriorModule,
-				knownAtStart = true,
-				assetPath = "Submarine/Build/AutosortTarget",
-				displayString = "Autosort Receptacle",
-				tooltip = "Wall locker linked to an Autosorter that receives sorted items.",
-				techTypeKey = CustomTechType.AutosortTarget.ToString(),
-				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(Mod.GetAssetPath("AutosortTarget.png"))),
-				recipe = Mod.config.EasyBuild
-				? new List<CustomIngredient> {
-					new CustomIngredient() {
-						techType = TechType.Titanium,
-						amount = 2
-					}
-				}
-				: new List<CustomIngredient>
-				{
-					new CustomIngredient() {
-						techType = TechType.Titanium,
-						amount = 2
-					},
-					new CustomIngredient() {
-						techType = TechType.Magnetite,
-						amount = 1
-					}
-				}
-			});
+			var sorterTarget = new AutosortTargetBuildable();
+			sorterTarget.Patch();
 
-			BuilderUtils.AddBuildable(new CustomTechInfo() {
-				getPrefab = AutosortTarget.GetStandingPrefab,
-				techType = Mod.GetTechType(CustomTechType.AutosortTargetStanding),
-				techGroup = TechGroup.InteriorModules,
-				techCategory = TechCategory.InteriorModule,
-				knownAtStart = true,
-				assetPath = "Submarine/Build/AutosortTargetStanding",
-				displayString = "Standing Autosort Receptacle",
-				tooltip = "Large locker linked to an Autosorter that receives sorted items.",
-				techTypeKey = CustomTechType.AutosortTargetStanding.ToString(),
-				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(Mod.GetAssetPath("AutosortTargetStanding.png"))),
-				recipe = Mod.config.EasyBuild
-				? new List<CustomIngredient> {
-					new CustomIngredient() {
-						techType = TechType.Titanium,
-						amount = 2
-					},
-					new CustomIngredient() {
-						techType = TechType.Quartz,
-						amount = 1
-					}
-				}
-				: new List<CustomIngredient>
-				{
-					new CustomIngredient() {
-						techType = TechType.Titanium,
-						amount = 2
-					},
-					new CustomIngredient() {
-						techType = TechType.Magnetite,
-						amount = 1
-					}
-				}
-			});
+			var sorterStandingTarget = new AutosortStandingTargetBuildable();
+			sorterStandingTarget.Patch();
 		}
 
-		public static GameObject GetStandingPrefab()
+		public static GameObject GetPrefab(TechType basePrefab)
 		{
-			var prefab = GetPrefab("StandingAutosortReceptacle", "Submarine/Build/Locker");
-			var autosortTarget = prefab.GetComponent<AutosortTarget>();
-
-			var canvas = prefab.GetComponentInChildren<Canvas>();
-			var t = canvas.transform;
-			t.localPosition = new Vector3(0, 1.1f, 0.25f);
-
-			var container = prefab.GetComponent<StorageContainer>();
-			container.width = Mod.config.StandingReceptacleWidth;
-			container.height = Mod.config.StandingReceptacleHeight;
-			container.container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
-
-			return prefab;
-		}
-
-		public static GameObject GetSmallPrefab()
-		{
-			var prefab = GetPrefab("AutosortReceptacle", "Submarine/Build/SmallLocker");
-
-			var container = prefab.GetComponent<StorageContainer>();
-			container.width = Mod.config.ReceptacleWidth;
-			container.height = Mod.config.ReceptacleHeight;
-			container.container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
-
-			return prefab;
-		}
-
-		public static GameObject GetPrefab(string name, string basePrefab)
-		{
-			GameObject originalPrefab = Resources.Load<GameObject>(basePrefab);
+			GameObject originalPrefab = CraftData.GetPrefabForTechType(basePrefab);
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
-
-			prefab.name = name;
 
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
 			foreach (var meshRenderer in meshRenderers)
@@ -637,12 +644,17 @@ namespace AutosortLockers
 
 			var autosortTarget = prefab.AddComponent<AutosortTarget>();
 
-			var smallLockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+			var smallLockerPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
 			autosortTarget.textPrefab = GameObject.Instantiate(smallLockerPrefab.GetComponentInChildren<Text>());
 			var label = prefab.FindChild("Label");
 			DestroyImmediate(label);
 
 			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
+			if (basePrefab == TechType.Locker)
+			{
+				canvas.transform.localPosition = new Vector3(0, 1.1f, 0.25f);
+			}
+
 			autosortTarget.background = LockerPrefabShared.CreateBackground(canvas.transform);
 			autosortTarget.icon = LockerPrefabShared.CreateIcon(autosortTarget.background.transform, autosortTarget.textPrefab.color, 70);
 			autosortTarget.text = LockerPrefabShared.CreateText(autosortTarget.background.transform, autosortTarget.textPrefab, autosortTarget.textPrefab.color, -20, 12, "Any");
@@ -666,6 +678,6 @@ namespace AutosortLockers
 			autosortTarget.customizeButtonImage = autosortTarget.customizeButton.GetComponent<Image>();
 
 			return prefab;
-		}		
+		}
 	}
 }

@@ -1,18 +1,15 @@
-﻿using Common.Mod;
-using Common.Utility;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using Common.Mod;
+using Common.Utility;
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Crafting;
 using UnityEngine;
 using UnityEngine.UI;
-using Oculus.Newtonsoft.Json;
-using System;
-using System.Reflection;
-using System.IO;
-
-#if USE_AUTOSORT
-using AutosortLockers;
-#endif
 
 namespace DockedVehicleStorageAccess
 {
@@ -27,23 +24,20 @@ namespace DockedVehicleStorageAccess
 	{
 		private static readonly Color PrimaryColor = new Color32(66, 134, 244, 255);
 		private static readonly Color HiddenColor = new Color32(66, 134, 244, 20);
-#if USE_AUTOSORT
-		private static readonly FieldInfo AutosortLocker_container = typeof(AutosortLocker).GetField("container", BindingFlags.NonPublic | BindingFlags.Instance);
-#endif
+		private static readonly Type AutosortLockerType = Type.GetType("AutosortLockers.AutosortLocker, AutosortLockersSML", false, false);
+		private static readonly FieldInfo AutosortLocker_container = AutosortLockerType?.GetField("container", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		private bool initialized;
-		VehicleStorageAccessSaveData saveData;
+		private VehicleStorageAccessSaveData saveData;
 		private bool extractingItems;
 		private Constructable constructable;
 		private StorageContainer container;
 		private SubRoot subRoot;
-		private List<VehicleDockingBay> dockingBays = new List<VehicleDockingBay>();
+		private VehicleDockingBay[] dockingBays = new VehicleDockingBay[0];
 		private List<Vehicle> vehicles = new List<Vehicle>();
 
-#if USE_AUTOSORT
 		private bool transferringToAutosorter;
-		private List<AutosortLocker> autosorters = new List<AutosortLocker>();
-#endif
+		private List<Component> autosorters = new List<Component>();
 
 		[SerializeField]
 		private Text textPrefab;
@@ -64,10 +58,9 @@ namespace DockedVehicleStorageAccess
 		[SerializeField]
 		private CheckboxButton enableCheckbox;
 
-#if USE_AUTOSORT
 		[SerializeField]
 		private CheckboxButton autosortCheckbox;
-#endif
+
 
 		private void Awake()
 		{
@@ -84,13 +77,15 @@ namespace DockedVehicleStorageAccess
 				{
 					GetDockingBays();
 					yield return TryExtractItems();
-#if USE_AUTOSORT
-					if (!extractingItems)
+
+					if (Mod.config.UseAutosortMod)
 					{
-						yield return new WaitForSeconds(Mod.config.AutosortTransferInterval);
-						yield return TryMoveToAutosorter();
+						if (!extractingItems)
+						{
+							yield return new WaitForSeconds(Mod.config.AutosortTransferInterval);
+							yield return TryMoveToAutosorter();
+						}
 					}
-#endif
 				}
 				yield return new WaitForSeconds(Mod.config.CheckVehiclesInterval);
 			}
@@ -105,14 +100,15 @@ namespace DockedVehicleStorageAccess
 		private void GetDockingBays()
 		{
 			RemoveDockingBayListeners();
-			dockingBays = subRoot.GetComponentsInChildren<VehicleDockingBay>().ToList();
+			dockingBays = subRoot.GetComponentsInChildren<VehicleDockingBay>();
 			AddDockingBayListeners();
 
 			UpdateDockedVehicles();
 
-#if USE_AUTOSORT
-			autosorters = subRoot.GetComponentsInChildren<AutosortLocker>().ToList();
-#endif
+			if (Mod.config.UseAutosortMod)
+			{
+				autosorters = subRoot.GetComponentsInChildren(AutosortLockerType).ToList();
+			}
 		}
 
 		private void AddDockingBayListeners()
@@ -214,7 +210,7 @@ namespace DockedVehicleStorageAccess
 					}
 				}
 			}
-			
+
 			if (extractedAnything)
 			{
 				NotifyExtraction(extractionResults);
@@ -261,7 +257,7 @@ namespace DockedVehicleStorageAccess
 			ErrorMessage.AddDebug(message);
 		}
 
-#if USE_AUTOSORT
+		// Exclusive for Autosort integration
 		private IEnumerator TryMoveToAutosorter()
 		{
 			if (autosorters.Count == 0)
@@ -289,7 +285,8 @@ namespace DockedVehicleStorageAccess
 						break;
 					}
 
-					var aContainer = GetAutosorterContainer(autosorter);
+					var aContainer = (StorageContainer)AutosortLocker_container.GetValue(autosorter);
+
 					if (aContainer.container.HasRoomFor(item.item))
 					{
 						var success = aContainer.container.AddItem(item.item);
@@ -328,11 +325,10 @@ namespace DockedVehicleStorageAccess
 			}
 			transferringToAutosorter = false;
 		}
-#endif
 
 		private void UpdateText()
 		{
-			var dockingBayCount = dockingBays.Count;
+			var dockingBayCount = dockingBays.Length;
 			if (subRoot is BaseRoot)
 			{
 				text.text = dockingBayCount > 0 ? ("Moonpools: " + dockingBayCount) : "No Moonpools";
@@ -342,10 +338,11 @@ namespace DockedVehicleStorageAccess
 				text.text = "Cyclops Docking Bay";
 			}
 
-#if USE_AUTOSORT
-			autosortCheckbox.isEnabled = autosorters.Count > 0;
-			text.text += autosorters.Count == 0 ? "\nNo Autosorters" : "";
-#endif
+			if (Mod.config.UseAutosortMod)
+			{
+				autosortCheckbox.isEnabled = autosorters.Count > 0;
+				text.text += autosorters.Count == 0 ? "\nNo Autosorters" : "";
+			}
 
 			int seamothCount = 0;
 			int exosuitCount = 0;
@@ -369,24 +366,15 @@ namespace DockedVehicleStorageAccess
 			{
 				text.text += "\n\n<color=lime>EXTRACTING...</color>";
 			}
-#if USE_AUTOSORT
-			else if (autosorters.Count == 0 && transferringToAutosorter)
+			else if (Mod.config.UseAutosortMod && autosorters.Count == 0 && transferringToAutosorter)
 			{
 				text.text += "\n\n<color=lime>TRANSFERRING...</color>";
 			}
-#endif
 			else
 			{
 				text.text += "\n\n<color=lime>READY</color>";
 			}
 		}
-
-#if USE_AUTOSORT
-		private StorageContainer GetAutosorterContainer(AutosortLocker autosorter)
-		{
-			return (StorageContainer)AutosortLocker_container.GetValue(autosorter);
-		}
-#endif
 
 		private void Update()
 		{
@@ -407,11 +395,10 @@ namespace DockedVehicleStorageAccess
 
 		private bool ShouldEnableContainer()
 		{
-#if USE_AUTOSORT
-			return !enableCheckbox.pointerOver && !autosortCheckbox.pointerOver;
-#else
-			return !enableCheckbox.pointerOver;
-#endif
+			if (Mod.config.UseAutosortMod)
+				return !enableCheckbox.pointerOver && !autosortCheckbox.pointerOver;
+			else
+				return !enableCheckbox.pointerOver;
 		}
 
 		private void Initialize()
@@ -427,12 +414,15 @@ namespace DockedVehicleStorageAccess
 			exosuitIcon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Exosuit.png"));
 
 			enableCheckbox.toggled = saveData != null ? saveData.Enabled : true;
+			enableCheckbox.transform.localPosition = new Vector3(0, -104);
 			enableCheckbox.Initialize();
 
-#if USE_AUTOSORT
-			autosortCheckbox.toggled = saveData != null ? saveData.Autosort : true;
-			autosortCheckbox.Initialize();
-#endif
+			if (Mod.config.UseAutosortMod)
+			{
+				autosortCheckbox.toggled = saveData != null ? saveData.Autosort : true;
+				autosortCheckbox.transform.localPosition = new Vector3(0, -104 + 19);
+				autosortCheckbox.Initialize();
+			}
 
 			subRoot = gameObject.GetComponentInParent<SubRoot>();
 			GetDockingBays();
@@ -454,15 +444,11 @@ namespace DockedVehicleStorageAccess
 
 		private VehicleStorageAccessSaveData CreateSaveData()
 		{
-			VehicleStorageAccessSaveData saveData = new VehicleStorageAccessSaveData();
-
-			saveData.Enabled = enableCheckbox.toggled;
-
-#if USE_AUTOSORT
-			saveData.Autosort = autosortCheckbox.toggled;
-#else
-			saveData.Autosort = true;
-#endif
+			var saveData = new VehicleStorageAccessSaveData
+			{
+				Enabled = enableCheckbox.toggled,
+				Autosort = Mod.config.UseAutosortMod && autosortCheckbox.toggled
+			};
 
 			return saveData;
 		}
@@ -470,7 +456,8 @@ namespace DockedVehicleStorageAccess
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
 			var saveDataFile = GetSaveDataPath();
-			ModUtils.LoadSaveData<VehicleStorageAccessSaveData>(saveDataFile, (data) => {
+			ModUtils.LoadSaveData<VehicleStorageAccessSaveData>(saveDataFile, (data) =>
+			{
 				saveData = data;
 				initialized = false;
 			});
@@ -485,84 +472,93 @@ namespace DockedVehicleStorageAccess
 			return saveFile;
 		}
 
+		internal class VehicleStorageAccessBuildable : Buildable
+		{
+			public VehicleStorageAccessBuildable()
+				: base("DockedVehicleStorageAccess",
+					  "Docked Vehicle Storage Access",
+					  "Wall locker that extracts items from any docked vehicle in the moonpool or cyclops.")
+			{
+			}
 
+			public override TechGroup GroupForPDA => TechGroup.InteriorModules;
+
+			public override TechCategory CategoryForPDA => TechCategory.InteriorModule;
+
+			public override GameObject GetGameObject()
+			{
+				GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
+				GameObject prefab = GameObject.Instantiate(originalPrefab);
+
+				var container = prefab.GetComponent<StorageContainer>();
+				container.width = Mod.config.LockerWidth;
+				container.height = Mod.config.LockerHeight;
+				container.container.Resize(Mod.config.LockerWidth, Mod.config.LockerHeight);
+
+				var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
+				foreach (var meshRenderer in meshRenderers)
+				{
+					meshRenderer.material.color = new Color(0, 0, 1);
+				}
+
+				var storageAccess = prefab.AddComponent<VehicleStorageAccess>();
+
+				storageAccess.textPrefab = GameObject.Instantiate(prefab.GetComponentInChildren<Text>());
+				var label = prefab.FindChild("Label");
+				DestroyImmediate(label);
+
+				var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
+				storageAccess.background = LockerPrefabShared.CreateBackground(canvas.transform);
+				storageAccess.icon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 15);
+				storageAccess.text = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, -40, 10, "");
+				storageAccess.seamothIcon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 80);
+				storageAccess.seamothCountText = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, 55, 10, "none");
+				storageAccess.exosuitIcon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 80);
+				storageAccess.exosuitCountText = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, 55, 10, "none");
+
+				storageAccess.seamothIcon.rectTransform.anchoredPosition += new Vector2(-23, 0);
+				storageAccess.seamothCountText.rectTransform.anchoredPosition += new Vector2(-23, 0);
+				storageAccess.exosuitIcon.rectTransform.anchoredPosition += new Vector2(23, 0);
+				storageAccess.exosuitCountText.rectTransform.anchoredPosition += new Vector2(23, 0);
+
+				if (Mod.config.UseAutosortMod)
+				{
+					storageAccess.autosortCheckbox = CheckboxButton.CreateCheckbox(storageAccess.background.transform, PrimaryColor, storageAccess.textPrefab, "Autosort");
+					storageAccess.autosortCheckbox.transform.localPosition = new Vector3(0, -104 + 19);
+				}
+
+				storageAccess.enableCheckbox = CheckboxButton.CreateCheckbox(storageAccess.background.transform, PrimaryColor, storageAccess.textPrefab, "Enabled");
+				storageAccess.enableCheckbox.transform.localPosition = new Vector3(0, -104);
+
+				storageAccess.background.gameObject.SetActive(false);
+
+				return prefab;
+			}
+
+			protected override TechData GetBlueprintRecipe()
+			{
+				return new TechData
+				{
+					craftAmount = 1,
+					Ingredients =
+					{
+						new Ingredient(TechType.Titanium, 1),
+						new Ingredient(TechType.WiringKit, 1)
+					}
+				};
+			}
+
+			protected override Atlas.Sprite GetItemSprite()
+			{
+				return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("StorageAccess.png"));
+			}
+		}
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 		public static void AddBuildable()
 		{
-			BuilderUtils.AddBuildable(new CustomTechInfo() {
-				getPrefab = VehicleStorageAccess.GetPrefab,
-				techType = (TechType)CustomTechType.DockedVehicleStorageAccess,
-				techGroup = TechGroup.InteriorModules,
-				techCategory = TechCategory.InteriorModule,
-				knownAtStart = true,
-				assetPath = "Submarine/Build/DockedVehicleStorageAccess",
-				displayString = "Docked Vehicle Storage Access",
-				tooltip = "Wall locker that extracts items from any docked vehicle in the moonpool.",
-				techTypeKey = CustomTechType.DockedVehicleStorageAccess.ToString(),
-				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(Mod.GetAssetPath("StorageAccess.png"))),
-				recipe = new List<CustomIngredient> {
-					new CustomIngredient() {
-						techType = TechType.Titanium,
-						amount = 2
-					},
-					new CustomIngredient() {
-						techType = TechType.WiringKit,
-						amount = 1
-					}
-				}
-			});
-		}
-
-		public static GameObject GetPrefab()
-		{
-			GameObject originalPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
-			GameObject prefab = GameObject.Instantiate(originalPrefab);
-
-			prefab.name = "VehicleStorageAccess";
-
-			var container = prefab.GetComponent<StorageContainer>();
-			container.width = Mod.config.LockerWidth;
-			container.height = Mod.config.LockerHeight;
-			container.container.Resize(Mod.config.LockerWidth, Mod.config.LockerHeight);
-
-			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
-			foreach (var meshRenderer in meshRenderers)
-			{
-				meshRenderer.material.color = new Color(0, 0, 1);
-			}
-
-			var storageAccess = prefab.AddComponent<VehicleStorageAccess>();
-
-			storageAccess.textPrefab = GameObject.Instantiate(prefab.GetComponentInChildren<Text>());
-			var label = prefab.FindChild("Label");
-			DestroyImmediate(label);
-
-			var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
-			storageAccess.background = LockerPrefabShared.CreateBackground(canvas.transform);
-			storageAccess.icon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 15);
-			storageAccess.text = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, -40, 10, "");
-			storageAccess.seamothIcon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 80);
-			storageAccess.seamothCountText = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, 55, 10, "none");
-			storageAccess.exosuitIcon = LockerPrefabShared.CreateIcon(storageAccess.background.transform, PrimaryColor, 80);
-			storageAccess.exosuitCountText = LockerPrefabShared.CreateText(storageAccess.background.transform, storageAccess.textPrefab, PrimaryColor, 55, 10, "none");
-
-			storageAccess.seamothIcon.rectTransform.anchoredPosition += new Vector2(-23, 0);
-			storageAccess.seamothCountText.rectTransform.anchoredPosition += new Vector2(-23, 0);
-			storageAccess.exosuitIcon.rectTransform.anchoredPosition += new Vector2(23, 0);
-			storageAccess.exosuitCountText.rectTransform.anchoredPosition += new Vector2(23, 0);
-
-#if USE_AUTOSORT
-			storageAccess.autosortCheckbox = CheckboxButton.CreateCheckbox(storageAccess.background.transform, PrimaryColor, storageAccess.textPrefab, "Autosort");
-			storageAccess.autosortCheckbox.transform.localPosition = new Vector3(0, -104 + 19);
-#endif
-
-			storageAccess.enableCheckbox = CheckboxButton.CreateCheckbox(storageAccess.background.transform, PrimaryColor, storageAccess.textPrefab, "Enabled");
-			storageAccess.enableCheckbox.transform.localPosition = new Vector3(0, -104);
-
-			storageAccess.background.gameObject.SetActive(false);
-
-			return prefab;
+			var dvsa = new VehicleStorageAccessBuildable();
+			dvsa.Patch();
 		}
 	}
 }

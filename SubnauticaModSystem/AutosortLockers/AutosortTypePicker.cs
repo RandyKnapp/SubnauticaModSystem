@@ -1,10 +1,8 @@
-﻿using Common.Mod;
-using Common.Utility;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Common.Mod;
+using Common.Utility;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -46,7 +44,7 @@ namespace AutosortLockers
 		{
 			this.locker = locker;
 			closeButton.target = locker;
-			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
+			background.sprite = Common.Utility.ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
 			background.color = new Color(1, 1, 1);
 
 			RefreshCurrentFilters();
