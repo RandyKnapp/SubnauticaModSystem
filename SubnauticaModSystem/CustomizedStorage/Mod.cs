@@ -69,7 +69,7 @@ namespace CustomizedStorage
 				return;
 			}
 			var min = new Size(1, 1);
-			var max = new Size(8, 10);
+			var max = new Size(10000, 10000);
 
 			ModUtils.ValidateConfigValue("Inventory", min, max, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("SmallLocker", min, max, ref config, ref defaultConfig);
@@ -83,7 +83,7 @@ namespace CustomizedStorage
 			ModUtils.ValidateConfigValue("width", min.width, max.width, ref config.Exosuit, ref defaultConfig.Exosuit);
 			ModUtils.ValidateConfigValue("baseHeight", min.height, max.height, ref config.Exosuit, ref defaultConfig.Exosuit);
 
-			int exoMaxHeight = config.Exosuit.baseHeight + (config.Exosuit.heightPerStorageModule * 4);
+			/*int exoMaxHeight = config.Exosuit.baseHeight + (config.Exosuit.heightPerStorageModule * 4);
 			exoMaxHeight = Mathf.Min(max.height, exoMaxHeight);
 			if (exoMaxHeight > max.height)
 			{
@@ -92,7 +92,7 @@ namespace CustomizedStorage
 					"MaxHeight = baseHeight + (heightPerStorageModule * 4)"
 				);
 				config.Exosuit = defaultConfig.Exosuit;
-			}
+			}*/
 
 			ModUtils.ValidateConfigValue("width", min.width, max.width, ref config.FiltrationMachine, ref defaultConfig.FiltrationMachine);
 			ModUtils.ValidateConfigValue("height", min.height, max.height, ref config.FiltrationMachine, ref defaultConfig.FiltrationMachine);
