@@ -71,31 +71,20 @@ namespace CustomizedStorage
 			var min = new Size(1, 1);
 			var max = new Size(10000, 10000);
 
-			ModUtils.ValidateConfigValue("Inventory", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("SmallLocker", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("Locker", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("EscapePodLocker", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("CyclopsLocker", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("WaterproofLocker", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("CarryAll", min, max, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("SeamothStorage", min, max, ref config, ref defaultConfig);
+            config.Inventory = ValidateConfigValue("Inventory", min, max, config.Inventory, defaultConfig.Inventory);
+			config.SmallLocker = ValidateConfigValue("SmallLocker", min, max, config.SmallLocker, defaultConfig.SmallLocker);
+			config.Locker = ValidateConfigValue("Locker", min, max, config.Locker, defaultConfig.Locker);
+			config.EscapePodLocker = ValidateConfigValue("EscapePodLocker", min, max, config.EscapePodLocker, defaultConfig.EscapePodLocker);
+			config.CyclopsLocker = ValidateConfigValue("CyclopsLocker", min, max, config.CyclopsLocker, defaultConfig.CyclopsLocker);
+			config.WaterproofLocker = ValidateConfigValue("WaterproofLocker", min, max, config.WaterproofLocker, defaultConfig.WaterproofLocker);
+			config.CarryAll = ValidateConfigValue("CarryAll", min, max, config.CarryAll, defaultConfig.CarryAll);
+			config.SeamothStorage = ValidateConfigValue("SeamothStorage", min, max, config.SeamothStorage, defaultConfig.SeamothStorage);
 
-			ModUtils.ValidateConfigValue("width", min.width, max.width, ref config.Exosuit, ref defaultConfig.Exosuit);
-			ModUtils.ValidateConfigValue("baseHeight", min.height, max.height, ref config.Exosuit, ref defaultConfig.Exosuit);
+			config.Exosuit.width = ValidateConfigValue("Exosuit.width", min.width, max.width, config.Exosuit.width, defaultConfig.Exosuit.width);
+			config.Exosuit.baseHeight = ValidateConfigValue("Exosuit.baseHeight", min.height, max.height, config.Exosuit.baseHeight, defaultConfig.Exosuit.baseHeight);
 
-			/*int exoMaxHeight = config.Exosuit.baseHeight + (config.Exosuit.heightPerStorageModule * 4);
-			exoMaxHeight = Mathf.Min(max.height, exoMaxHeight);
-			if (exoMaxHeight > max.height)
-			{
-				Console.WriteLine("Config values for 'Exosuit' were not valid. Max height is {0} but the exosuit might exceed that. ({1})",
-					max.height,
-					"MaxHeight = baseHeight + (heightPerStorageModule * 4)"
-				);
-				config.Exosuit = defaultConfig.Exosuit;
-			}*/
-
-			ModUtils.ValidateConfigValue("width", min.width, max.width, ref config.FiltrationMachine, ref defaultConfig.FiltrationMachine);
-			ModUtils.ValidateConfigValue("height", min.height, max.height, ref config.FiltrationMachine, ref defaultConfig.FiltrationMachine);
+            config.FiltrationMachine.width = ValidateConfigValue("FiltrationMachine.width", min.width, max.width, config.FiltrationMachine.width, defaultConfig.FiltrationMachine.width);
+            config.FiltrationMachine.height = ValidateConfigValue("FiltrationMachine.height", min.height, max.height, config.FiltrationMachine.height, defaultConfig.FiltrationMachine.height);
 			var totalSpace = config.FiltrationMachine.width * config.FiltrationMachine.height;
 			var totalContents = config.FiltrationMachine.maxSalt + config.FiltrationMachine.maxWater;
 			if (totalContents > totalSpace)
@@ -109,5 +98,20 @@ namespace CustomizedStorage
 				config.FiltrationMachine.maxWater = Mathf.CeilToInt(totalSpace / 2);
 			}
 		}
-	}
+        
+        public static T ValidateConfigValue<T>(string field, T min, T max, T value, T defaultValue) where T : IComparable
+        {
+            if (value.CompareTo(min) < 0 || value.CompareTo(max) > 0)
+            {
+                Console.WriteLine("Config value for '{0}' ({1}) was not valid. Must be between {2} and {3}",
+                    field,
+                    value,
+                    min,
+                    max
+                );
+                return defaultValue;
+            }
+            return value;
+        }
+    }
 }
