@@ -38,21 +38,27 @@
   <ItemGroup>
     <Reference Include="0Harmony-1.2.0.1">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\0Harmony-1.2.0.1.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\..\SteamApps\steamapps\common\Subnautica\Subnautica_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="QModInstaller">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\QModInstaller.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SMLHelper">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\SMLHelper.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -62,33 +68,43 @@
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
       <HintPath>..\..\..\..\..\SteamApps\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>..\..\..\PrimeSonicSubnauticaMods\DependenciesSubnautica\UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -125,7 +141,9 @@
     <Compile Include="SubmenuCloseButton.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mod.json" />
+    <None Include="mod.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
