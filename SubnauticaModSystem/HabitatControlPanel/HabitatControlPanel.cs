@@ -29,7 +29,7 @@ namespace HabitatControlPanel
 
 	public class HabitatControlPanel : MonoBehaviour, IProtoEventListener, IPowerInterface, IObstacle
 	{
-		private static FieldInfo s_compatibleTechFieldInfo = typeof(PowerCellCharger).GetField("compatibleTech", BindingFlags.Static | BindingFlags.NonPublic);
+		private static readonly FieldInfo s_compatibleTechFieldInfo = typeof(PowerCellCharger).GetField("compatibleTech", BindingFlags.Static | BindingFlags.NonPublic);
 		private static HashSet<TechType> s_compatibleTech;
 
 		public static string SlotName = "PowerCellCharger1";
@@ -404,8 +404,8 @@ namespace HabitatControlPanel
 			PingManager.NotifyColor(ping);
 			PingManager.NotifyVisible(ping);
 
-			base.InvokeRepeating("UpdatePowerRelay", 0, 1);
-			base.InvokeRepeating("UpdateBaseColor", UnityEngine.Random.Range(0.5f, 1.0f), 3);
+			base.InvokeRepeating(nameof(UpdatePowerRelay), 0, 1);
+			base.InvokeRepeating(nameof(UpdateBaseColor), UnityEngine.Random.Range(0.5f, 1.0f), 3);
 
 			UpdatePowerCell();
 			initialized = true;
