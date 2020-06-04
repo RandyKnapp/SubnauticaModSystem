@@ -7,13 +7,14 @@ namespace HabitatControlPanel.Patches
 {
 	[HarmonyPatch(typeof(uGUI_Pings))]
 	[HarmonyPatch("OnWillRenderCanvases")]
-	class uGUI_Pings_OnWillRenderCanvases_Patch
+	internal class uGUI_Pings_OnWillRenderCanvases_Patch
 	{
 		private static readonly FieldInfo uGUI_Pings_pings = typeof(uGUI_Pings).GetField("pings", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		private static uGUI_Pings staticInstance;
 		private static Dictionary<int, uGUI_Ping> pings;
 
+		[HarmonyPostfix]
 		private static void Postfix(uGUI_Pings __instance)
 		{
 			if (staticInstance != __instance)

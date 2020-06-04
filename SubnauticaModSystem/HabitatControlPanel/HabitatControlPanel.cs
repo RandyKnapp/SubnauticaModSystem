@@ -1,6 +1,9 @@
 ﻿using Common.Mod;
 using Common.Utility;
 using HabitatControlPanel.Secret;
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -316,9 +319,9 @@ namespace HabitatControlPanel
 		private void Initialize()
 		{
 			background.gameObject.SetActive(true);
-			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
+			background.sprite = Common.Utility.ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
 
-			scrim.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Scrim.png"));
+			scrim.sprite = Common.Utility.ImageUtils.LoadSprite(Mod.GetAssetPath("Scrim.png"));
 
 			transform.Find("mesh").gameObject.SetActive(false);
 
@@ -783,38 +786,48 @@ namespace HabitatControlPanel
 			Logger.Log(thing.name + " p=" + t.anchoredPosition);
 		}*/
 
+		internal class HcpBuildable : Buildable
+		{
+			public HcpBuildable()
+				: base("HabitatControlPanel",
+					   "Habitat Control Panel",
+					   "Adds a built-in beacon with customizable name and a power cell slot that can power your habitat.")
+			{
+			}
 
+			public override TechCategory CategoryForPDA => TechCategory.InteriorModule;
+			public override TechGroup GroupForPDA => TechGroup.InteriorModules;
+
+			protected override Atlas.Sprite GetItemSprite()
+			{
+				return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("BlueprintIcon.png"));
+			}
+
+			public override GameObject GetGameObject()
+			{
+				return GetPrefab();
+			}
+
+			protected override TechData GetBlueprintRecipe()
+			{
+				return new TechData
+				{
+					craftAmount = 1,
+					Ingredients =
+					{
+						new Ingredient(TechType.Titanium, 1),
+						new Ingredient(TechType.CopperWire, 1),
+						new Ingredient(TechType.WiringKit, 1)
+					}
+				};
+			}
+		}
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 		public static void AddBuildable()
 		{
-			BuilderUtils.AddBuildable(new CustomTechInfo() {
-				getPrefab = HabitatControlPanel.GetPrefab,
-				techType = (TechType)CustomTechType.HabitatControlPanel,
-				techGroup = TechGroup.InteriorModules,
-				techCategory = TechCategory.InteriorModule,
-				knownAtStart = true,
-				assetPath = "Submarine/Build/HabitatControlPanel",
-				displayString = "Habitat Control Panel",
-				tooltip = "Adds a built-in beacon with customizable name and a power cell slot that can power your habitat.",
-				techTypeKey = CustomTechType.HabitatControlPanel.ToString(),
-				sprite = new Atlas.Sprite(ImageUtils.LoadTexture(Mod.GetAssetPath("BlueprintIcon.png"))),
-				recipe = new List<CustomIngredient>
-				{
-					new CustomIngredient() {
-						techType = TechType.Titanium,
-						amount = 1
-					},
-					new CustomIngredient() {
-						techType = TechType.CopperWire,
-						amount = 1
-					},
-					new CustomIngredient() {
-						techType = TechType.WiringKit,
-						amount = 1
-					}
-				}
-			});
+			var hcp = new HcpBuildable();
+			hcp.Patch();
 		}
 
 		public static GameObject GetPrefab()
