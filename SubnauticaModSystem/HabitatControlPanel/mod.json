@@ -1,8 +1,8 @@
 {
-  "Id": "HabitatControlPanel",
-  "DisplayName": "HabitatControlPanel",
+  "Id": "HabitatControlPanelSML",
+  "DisplayName": "HabitatControlPanelSML",
   "Author": "RandyKnapp",
   "Version": "2.0.0",
   "Enable": true,
-  "AssemblyName": "HabitatControlPanel.dll"
+  "AssemblyName": "HabitatControlPanelSML.dll"
 }
