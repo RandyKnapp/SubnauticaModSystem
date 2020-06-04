@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Oculus.Newtonsoft.Json;
 
 namespace HabitatControlPanel
 {
-	[Serializable]
-	class Config
+	[JsonObject]
+	public class Config
 	{
-		public bool RequireBatteryToUse = false;
+		[JsonProperty]
+		public bool RequireBatteryToUse { get; set; } = false;
 	}
 }
