@@ -46,14 +46,9 @@ namespace HabitatControlPanel
 			return GetModPath() + "/Assets/" + filename;
 		}
 
-		private static string GetModInfoPath()
-		{
-			return GetModPath() + "/mod.json";
-		}
-
 		private static void LoadConfig()
 		{
-			config = ModUtils.LoadConfig<Config>(GetModInfoPath());
+			config = ModUtils.LoadConfig<Config>(GetModPath() + "/config.json");
 			ValidateConfig();
 		}
 
