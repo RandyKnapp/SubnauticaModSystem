@@ -1,14 +1,11 @@
 ﻿using Common.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-	class HabitatColorPicker : Picker
+    class HabitatColorPicker : Picker
 	{
 		private static readonly List<Color> Colors = new List<Color>() {
 			Color.white, Color.red, new Color32(255, 165, 0, 255), Color.yellow, Color.green,

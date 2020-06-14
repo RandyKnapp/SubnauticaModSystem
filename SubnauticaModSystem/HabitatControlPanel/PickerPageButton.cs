@@ -1,15 +1,12 @@
 ﻿using Common.Utility;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-	public class PickerPageButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+    public class PickerPageButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 	{
 		private Color UpColor = new Color32(66, 134, 244, 255);
 		private static readonly Color HoverColor = new Color(0.9f, 0.9f, 1);

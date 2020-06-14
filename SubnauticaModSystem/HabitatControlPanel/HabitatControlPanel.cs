@@ -1,9 +1,7 @@
 ﻿using Common.Mod;
-using Common.Utility;
 using HabitatControlPanel.Secret;
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
-using SMLHelper.V2.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +12,7 @@ using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-	[Serializable]
+    [Serializable]
 	public class HabitatControlPanelSaveData
 	{
 		public TechType PowerCellType = TechType.None;

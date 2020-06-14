@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-	class HabitatNameController : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+    class HabitatNameController : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 	{
 		private bool hover;
 

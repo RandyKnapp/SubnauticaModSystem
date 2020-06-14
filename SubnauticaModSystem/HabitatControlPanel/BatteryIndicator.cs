@@ -1,14 +1,9 @@
-﻿using Common.Mod;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-	class BatteryIndicator : MonoBehaviour
+    class BatteryIndicator : MonoBehaviour
 	{
 		public static readonly Color ColorEmpty = new Color(1f, 0f, 0f, 1f);
 		public static readonly Color ColorHalf = new Color(1f, 1f, 0f, 1f);

@@ -1,15 +1,13 @@
 ﻿using Common.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HabitatControlPanel.Secret
 {
-	class SecretGame : MonoBehaviour, IPointerClickHandler, IPointerHoverHandler
+    class SecretGame : MonoBehaviour, IPointerClickHandler, IPointerHoverHandler
 	{
 		private const float GameWidth = 160;
 		private const float GameHeight = 120;
