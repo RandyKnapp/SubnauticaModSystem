@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-    class HabitatColorSettings : MonoBehaviour
+	class HabitatColorSettings : MonoBehaviour
 	{
 		private bool hasPower = false;
 

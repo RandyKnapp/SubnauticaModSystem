@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-    public static class LockerPrefabShared
+	public static class LockerPrefabShared
 	{
 		internal static Canvas CreateCanvas(Transform parent)
 		{

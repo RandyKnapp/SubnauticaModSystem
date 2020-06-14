@@ -1,12 +1,14 @@
 ﻿using Common.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-    class Picker : MonoBehaviour
+	class Picker : MonoBehaviour
 	{
 		protected const float ButtonSize = 30;
 		protected const int ButtonsPerRow = 5;

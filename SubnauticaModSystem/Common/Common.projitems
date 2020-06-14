@@ -9,7 +9,9 @@
     <Import_RootNamespace>Common</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Mod\CallbackOnDestroy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\ImageUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mod\LockerPrefabShared.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\ModSaver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\ProtobufSerializerPatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\SerializableColor.cs" />

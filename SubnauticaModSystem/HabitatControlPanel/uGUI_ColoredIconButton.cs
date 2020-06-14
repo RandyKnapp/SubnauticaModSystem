@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Common.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HabitatControlPanel
 {
-    public class uGUI_ColoredIconButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+	public class uGUI_ColoredIconButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 	{
 		private static readonly Color DisabledColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
 		private Color UpColor = new Color32(66, 134, 244, 255);
