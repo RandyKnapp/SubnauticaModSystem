@@ -447,8 +447,21 @@ namespace HabitatControlPanel
 		private void UpdatePowerCell()
 		{
 			var equippedPowerCell = equipment.GetItemInSlot(SlotName);
-			powerCellMesh.SetActive(equippedPowerCell != null && equippedPowerCell.item.GetTechType() == TechType.PowerCell);
-			ionPowerCellMesh.SetActive(equippedPowerCell != null && equippedPowerCell.item.GetTechType() == TechType.PrecursorIonPowerCell);
+
+			if (equippedPowerCell == null)
+            {
+				powerCellMesh.SetActive(false);
+				ionPowerCellMesh.SetActive(false);
+			}
+			else
+            {
+				TechType techType = equippedPowerCell.item.GetTechType();
+				
+				if (techType == TechType.PrecursorIonPowerCell)
+					powerCellMesh.SetActive(true);
+				else // Handle any modded power cells with the same mesh as the standard power cell
+					ionPowerCellMesh.SetActive(true);
+            }
 		}
 
 		private void UpdateBatteryIndicator()
