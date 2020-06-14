@@ -10,11 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Mod\CallbackOnDestroy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mod\ImageUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\LockerPrefabShared.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\ModSaver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\ProtobufSerializerPatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\SerializableColor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod\ModUtils.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utility\ImageUtils.cs" />
   </ItemGroup>
 </Project>

@@ -1,13 +1,8 @@
 {
-  "Id": "HabitatControlPanel",
-  "DisplayName": "HabitatControlPanel",
+  "Id": "HabitatControlPanelSML",
+  "DisplayName": "HabitatControlPanelSML",
   "Author": "RandyKnapp",
-  "Version": "1.3.3",
-  "Requires": [ "0Harmony-1.2.0.1.dll" ],
+  "Version": "2.0.0",
   "Enable": true,
-  "AssemblyName": "HabitatControlPanel.dll",
-  "EntryMethod": "HabitatControlPanel.QPatch.Patch",
-  "Config": {
-    "RequireBatteryToUse": false
-  }
+  "AssemblyName": "HabitatControlPanelSML.dll"
 }

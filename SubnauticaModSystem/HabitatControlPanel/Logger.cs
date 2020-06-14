@@ -6,7 +6,7 @@ namespace HabitatControlPanel
 	{
 		public static void Log(string message)
 		{
-			Console.WriteLine("[HabitatControlPanel] " + message);
+			Console.WriteLine("[HabitatControlPanelSML] " + message);
 		}
 
 		public static void Log(string format, params object[] args)
@@ -16,7 +16,7 @@ namespace HabitatControlPanel
 
 		public static void Error(string message)
 		{
-			Console.WriteLine("[HabitatControlPanel:ERROR] " + message);
+			Console.WriteLine("[HabitatControlPanelSML:ERROR] " + message);
 		}
 
 		public static void Error(string format, params object[] args)
