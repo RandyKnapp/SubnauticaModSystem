@@ -22,7 +22,6 @@ namespace QuitToDesktop.Patches
 
 			if (__instance != null && quitButton == null)
 			{
-				ErrorMessage.AddMessage("1");
 				// make a new confirmation Menu
 				var quitConfirmationPrefab = __instance.gameObject.FindChild("QuitConfirmation");
 				quitConfirmation = GameObject.Instantiate(quitConfirmationPrefab, __instance.gameObject.FindChild("QuitConfirmation").transform.parent);
