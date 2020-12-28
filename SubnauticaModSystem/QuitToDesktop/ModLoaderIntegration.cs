@@ -1,16 +1,18 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using System;
 using System.Reflection;
-
+using QModManager.API.ModLoading;
 namespace QuitToDesktop
 {
 	// QMods by qwiso https://github.com/Qwiso/QModManager
+	[QModCore]
 	public static class QPatch
 	{
+		private static Assembly myAssembly = Assembly.GetExecutingAssembly();
+		[QModPatch]
 		public static void Patch()
 		{
-			HarmonyInstance harmony = HarmonyInstance.Create("com.QuitToDesktop.mod");
-			harmony.PatchAll(Assembly.GetExecutingAssembly());
+			Harmony.CreateAndPatchAll(myAssembly, $"RandyKnapp_{myAssembly.GetName().Name}");
 
 			Console.WriteLine("[QuitToDesktop] Patched");
 		}
