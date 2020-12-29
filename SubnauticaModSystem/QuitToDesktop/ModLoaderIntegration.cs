@@ -12,7 +12,7 @@ namespace QuitToDesktop
 		[QModPatch]
 		public static void Patch()
 		{
-			Harmony.CreateAndPatchAll(myAssembly, $"RandyKnapp_{myAssembly.GetName().Name}");
+			Harmony.CreateAndPatchAll(myAssembly, "com.QuitToDesktop.mod");
 
 			Console.WriteLine("[QuitToDesktop] Patched");
 		}
