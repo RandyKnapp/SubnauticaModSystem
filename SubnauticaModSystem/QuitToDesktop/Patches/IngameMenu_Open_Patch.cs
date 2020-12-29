@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-
 namespace QuitToDesktop.Patches
 {
 	[HarmonyPatch(typeof(IngameMenu), nameof(IngameMenu.Open))]
@@ -47,7 +46,11 @@ namespace QuitToDesktop.Patches
 				quitButton.onClick.RemoveAllListeners();
 				quitButton.onClick.AddListener(() => { __instance.gameObject.FindChild("QuitConfirmationWithSaveWarning").SetActive(false); }); // set the confirmation with save false so it doesn't conflict
 				quitButton.onClick.AddListener(() => { __instance.gameObject.FindChild("QuitConfirmation").SetActive(false); }); // set the Quit To Main Menu confirmation to false so it doesn't conflict
-				quitButton.onClick.AddListener(() => { quitConfirmation.SetActive(true); }); // set our new confirmation to true
+				if (!QPatch.Config.ShowConfirmationDialog)
+					quitButton.onClick.AddListener(() => { __instance.QuitGame(true); });
+				else if (QPatch.Config.ShowConfirmationDialog)
+					quitButton.onClick.AddListener(() => { quitConfirmation.SetActive(true); }); // set our new confirmation to true
+
 
 				IEnumerable<Text> texts = quitButton.GetComponents<Text>().Concat(quitButton.GetComponentsInChildren<Text>());
 				foreach (Text text in texts)
