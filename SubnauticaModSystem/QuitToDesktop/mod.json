@@ -1,11 +1,9 @@
 {
   "Id": "QuitToDesktop",
   "DisplayName": "QuitToDesktop",
-  "Author": "RandyKnapp",
-  "Version": "1.0.3",
-  "Requires": [ "0Harmony-1.2.0.1.dll" ],
+  "Author": "RandyKnapp - Metious",
+  "Version": "1.0.4",
+  "Game":  "Subnautica",
   "Enable": true,
-  "AssemblyName": "QuitToDesktop.dll",
-  "EntryMethod": "QuitToDesktop.QPatch.Patch",
-  "Config": {}
+  "AssemblyName": "QuitToDesktop.dll"
 }
