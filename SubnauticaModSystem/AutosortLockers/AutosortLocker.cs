@@ -7,6 +7,12 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
 using UnityEngine;
 using UnityEngine.UI;
+using UWE;
+#if SUBNAUTICA
+    using RecipeData = SMLHelper.V2.Crafting.TechData;
+    using Sprite = Atlas.Sprite;
+#endif
+
 
 namespace AutosortLockers
 {
@@ -302,6 +308,7 @@ namespace AutosortLockers
 
             public override TechCategory CategoryForPDA => TechCategory.InteriorModule;
 
+#if SUBNAUTICA
             public override GameObject GetGameObject()
             {
                 GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
@@ -339,10 +346,58 @@ namespace AutosortLockers
 
                 return prefab;
             }
+#endif
 
-            protected override TechData GetBlueprintRecipe()
+            public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
             {
-                return new TechData
+                CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.SmallLocker);
+                yield return task;
+
+                //GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
+                //GameObject prefab = GameObject.Instantiate(originalPrefab);
+                GameObject prefab = task.GetResult();
+
+                if (prefab == null)
+                    QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"AutosortLockerBuildable.GetGameObjectAsync(): prefab == null");
+
+                var container = prefab.GetComponent<StorageContainer>();
+                container.width = Mod.config.AutosorterWidth;
+                container.height = Mod.config.AutosorterHeight;
+                container.container.Resize(Mod.config.AutosorterWidth, Mod.config.AutosorterHeight);
+
+                var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
+                foreach (var meshRenderer in meshRenderers)
+                {
+                    meshRenderer.material.color = new Color(1, 0, 0);
+                }
+
+                var prefabText = prefab.GetComponentInChildren<Text>();
+                var label = prefab.FindChild("Label");
+                DestroyImmediate(label);
+
+                var autoSorter = prefab.AddComponent<AutosortLocker>();
+
+                var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
+                autoSorter.background = LockerPrefabShared.CreateBackground(canvas.transform);
+                autoSorter.icon = LockerPrefabShared.CreateIcon(autoSorter.background.transform, MainColor, 40);
+                autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, 0, 14, "Autosorter");
+
+                autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, -120, 12, "Sorting...");
+                autoSorter.sortingText.alignment = TextAnchor.UpperCenter;
+
+                autoSorter.background.gameObject.SetActive(false);
+                autoSorter.icon.gameObject.SetActive(false);
+                autoSorter.text.gameObject.SetActive(false);
+                autoSorter.sortingText.gameObject.SetActive(false);
+
+                //return prefab;
+                gameObject.Set(prefab);
+                yield break;
+            }
+
+            protected override RecipeData GetBlueprintRecipe()
+            {
+                return new RecipeData()
                 {
                     craftAmount = 1,
                     Ingredients = Mod.config.EasyBuild
@@ -359,7 +414,7 @@ namespace AutosortLockers
                 };
             }
 
-            protected override Atlas.Sprite GetItemSprite()
+            protected override Sprite GetItemSprite()
             {
                 return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("AutosortLocker.png"));
             }

@@ -1,0 +1,10 @@
+{
+  "Game": "Subnautica",
+  "Id": "AutosortLockersSML",
+  "DisplayName": "Autosort Lockers SML",
+  "Author": "RandyKnapp w/PrimeSonic",
+  "Version": "2.0.0",
+  "Requires": [ "SMLHelper" ],
+  "Enable": true,
+  "AssemblyName": "AutosortLockersSML.dll"
+}

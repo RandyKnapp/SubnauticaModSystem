@@ -4,8 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Common.Mod;
-using Harmony;
+using HarmonyLib;
+#if SUBNAUTICA
 using Oculus.Newtonsoft.Json;
+#elif BELOWZERO
+using Newtonsoft.Json;
+#endif
 using UnityEngine;
 
 namespace AutosortLockers
@@ -31,7 +35,7 @@ namespace AutosortLockers
 
 			AddBuildables();
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.AutosortLockersSML.mod");
+			Harmony harmony = new Harmony("com.AutosortLockersSML.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");
@@ -58,7 +62,7 @@ namespace AutosortLockers
 			config = ModUtils.LoadConfig<Config>(GetModPath() + "/config.json");
 			ValidateConfig();
 
-			var serializedColors = JsonConvert.DeserializeObject<List<SerializableColor>>(File.ReadAllText(GetAssetPath("colors.json")));
+			List<SerializableColor> serializedColors = JsonConvert.DeserializeObject< List<SerializableColor> >(File.ReadAllText(GetAssetPath("colors.json")));
 			foreach (var sColor in serializedColors)
 			{
 				colors.Add(sColor.ToColor());

@@ -7,6 +7,10 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
 using UnityEngine;
 using UnityEngine.UI;
+#if SUBNAUTICA
+    using RecipeData = SMLHelper.V2.Crafting.TechData;
+    using Sprite = Atlas.Sprite;
+#endif
 
 namespace AutosortLockers
 {
@@ -534,21 +538,26 @@ namespace AutosortLockers
 
 			public override TechCategory CategoryForPDA => TechCategory.InteriorModule;
 
-			public override GameObject GetGameObject()
+			public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
 			{
-				GameObject prefab = GetPrefab(TechType.SmallLocker);
+				//var prefab = GetPrefab(TechType.Locker);
+				TaskResult<GameObject> result = new TaskResult<GameObject>();
+				yield return GetPrefabAsync(TechType.Locker, result);
+				GameObject prefab = result.Get();
 
 				StorageContainer container = prefab.GetComponent<StorageContainer>();
 				container.width = Mod.config.ReceptacleWidth;
 				container.height = Mod.config.ReceptacleHeight;
 				container.container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
 
-				return prefab;
+				gameObject.Set(prefab);
+				yield break;
+				//return prefab;
 			}
 
-			protected override TechData GetBlueprintRecipe()
+			protected override RecipeData GetBlueprintRecipe()
 			{
-				return new TechData
+				return new RecipeData
 				{
 					craftAmount = 1,
 					Ingredients = Mod.config.EasyBuild
@@ -564,7 +573,7 @@ namespace AutosortLockers
 				};
 			}
 
-			protected override Atlas.Sprite GetItemSprite()
+			protected override Sprite GetItemSprite()
 			{
 				return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("AutosortTarget.png"));
 			}
@@ -583,21 +592,26 @@ namespace AutosortLockers
 
 			public override TechCategory CategoryForPDA => TechCategory.InteriorModule;
 
-			public override GameObject GetGameObject()
+			public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
 			{
-				var prefab = GetPrefab(TechType.Locker);
+				//var prefab = GetPrefab(TechType.Locker);
+				TaskResult<GameObject> result = new TaskResult<GameObject>();
+				yield return GetPrefabAsync(TechType.Locker, result);
+				GameObject prefab = result.Get();
 
 				var container = prefab.GetComponent<StorageContainer>();
 				container.width = Mod.config.StandingReceptacleWidth;
 				container.height = Mod.config.StandingReceptacleHeight;
 				container.container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
 
-				return prefab;
+				gameObject.Set(prefab);
+				yield break;
+				//return prefab;
 			}
 
-			protected override TechData GetBlueprintRecipe()
+			protected override RecipeData GetBlueprintRecipe()
 			{
-				return new TechData
+				return new RecipeData
 				{
 					craftAmount = 1,
 					Ingredients = Mod.config.EasyBuild
@@ -615,7 +629,7 @@ namespace AutosortLockers
 				};
 			}
 
-			protected override Atlas.Sprite GetItemSprite()
+			protected override Sprite GetItemSprite()
 			{
 				return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("AutosortTargetStanding.png"));
 			}
@@ -631,9 +645,12 @@ namespace AutosortLockers
 			sorterStandingTarget.Patch();
 		}
 
-		public static GameObject GetPrefab(TechType basePrefab)
+		public static IEnumerator GetPrefabAsync(TechType basePrefab, IOut<GameObject> gameObject)
 		{
-			GameObject originalPrefab = CraftData.GetPrefabForTechType(basePrefab);
+			CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(basePrefab);
+			yield return task;
+
+			GameObject originalPrefab = task.GetResult();//CraftData.GetPrefabForTechType(basePrefab);
 			GameObject prefab = GameObject.Instantiate(originalPrefab);
 
 			var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
@@ -644,7 +661,10 @@ namespace AutosortLockers
 
 			var autosortTarget = prefab.AddComponent<AutosortTarget>();
 
-			var smallLockerPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
+			task = CraftData.GetPrefabForTechTypeAsync(TechType.SmallLocker);
+			yield return task;
+			//var smallLockerPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
+			var smallLockerPrefab = task.GetResult();
 			autosortTarget.textPrefab = GameObject.Instantiate(smallLockerPrefab.GetComponentInChildren<Text>());
 			var label = prefab.FindChild("Label");
 			DestroyImmediate(label);
@@ -677,7 +697,9 @@ namespace AutosortLockers
 			autosortTarget.customizeButton = ConfigureButton.Create(autosortTarget.background.transform, autosortTarget.textPrefab.color, 20);
 			autosortTarget.customizeButtonImage = autosortTarget.customizeButton.GetComponent<Image>();
 
-			return prefab;
+			//return prefab;
+			originalPrefab.SetActive(false);
+			gameObject.Set(prefab);
 		}
 	}
 }

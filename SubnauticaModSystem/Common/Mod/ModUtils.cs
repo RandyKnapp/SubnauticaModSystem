@@ -5,7 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+#if SUBNAUTICA
 using Oculus.Newtonsoft.Json;
+#elif BELOWZERO
+using Newtonsoft.Json;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -216,7 +220,12 @@ namespace Common.Mod
 
 		public static Text GetTextPrefab()
 		{
-			Text prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
+			Text prefab = null;
+#if SUBNAUTICA
+			prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
+#elif BELOWZERO
+			//prefab = GameObject.FindObjectOfType<HandReticle>().
+#endif
 			if (prefab == null)
 			{
 				return null;

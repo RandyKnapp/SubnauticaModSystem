@@ -1,4 +1,8 @@
-﻿using Oculus.Newtonsoft.Json;
+﻿#if SUBNAUTICA
+using Oculus.Newtonsoft.Json;
+#elif BELOWZERO
+using Newtonsoft.Json;
+#endif
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using static HandReticle;
 
 namespace AutosortLockers
 {

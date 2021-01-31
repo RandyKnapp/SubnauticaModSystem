@@ -65,7 +65,11 @@ namespace AutosortLockers
 			if (hover)
 			{
 				HandReticle.main.SetIcon(HandReticle.IconType.Rename);
+#if SUBNAUTICA
 				HandReticle.main.SetInteractTextRaw("Set Locker Label", "");
+#elif BELOWZERO
+				HandReticle.main.SetTextRaw(HandReticle.TextType.Hand, "Set Locker Label");
+#endif
 			}
 		}
 
