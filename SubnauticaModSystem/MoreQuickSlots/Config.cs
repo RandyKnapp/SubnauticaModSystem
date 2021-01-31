@@ -1,9 +1,8 @@
-﻿using System;
+﻿using SMLHelper.V2.Json;
 
 namespace MoreQuickSlots
 {
-	[Serializable]
-	public class Config
+	public class Config: ConfigFile
 	{
 		public int SlotCount = 12;
 		public bool ShowInputText = true;
