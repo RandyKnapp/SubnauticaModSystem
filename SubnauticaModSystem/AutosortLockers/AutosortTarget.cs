@@ -635,17 +635,25 @@ namespace AutosortLockers
 
 			public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
 			{
+				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 1");
 				//var prefab = GetPrefab(TechType.Locker);
 				TaskResult<GameObject> result = new TaskResult<GameObject>();
 				yield return GetPrefabAsync(TechType.Locker, result);
+				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 2");
+
 				GameObject basePrefab = result.Get();
 				GameObject prefab = GameObject.Instantiate(basePrefab);
 
+				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3");
 				var container = prefab.GetComponent<StorageContainer>();
+				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.1");
 				container.width = Mod.config.StandingReceptacleWidth;
+				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.2");
 				container.height = Mod.config.StandingReceptacleHeight;
+				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.3");
 				container.container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
 
+				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 4");
 				gameObject.Set(prefab);
 				yield break;
 			}

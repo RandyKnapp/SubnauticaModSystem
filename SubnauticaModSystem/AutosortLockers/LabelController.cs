@@ -91,6 +91,7 @@ namespace AutosortLockers
 		{
 #if SUBNAUTICA
 			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
 #elif BELOWZERO
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
 #endif
