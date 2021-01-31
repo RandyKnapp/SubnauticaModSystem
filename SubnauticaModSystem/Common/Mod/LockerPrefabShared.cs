@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+#if BELOWZERO
+using TMPro;
+#endif
 
 namespace Common.Mod
 {
@@ -59,9 +62,14 @@ namespace Common.Mod
 			return icon;
 		}
 
+#if SUBNAUTICA
 		internal static Text CreateText(Transform parent, Text prefab, Color color, int y, int size, string initial)
+#elif BELOWZERO
+		internal static TextMeshProUGUI CreateText(Transform parent, TextMeshProUGUI prefab, Color color, int y, int size, string initial)
+#endif
+		
 		{
-			var text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
+			var text = new GameObject("TextMeshProUGUI", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
 			var rt = text.rectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(rt, 120, 200);
@@ -70,7 +78,11 @@ namespace Common.Mod
 			text.font = prefab.font;
 			text.fontSize = size;
 			text.color = color;
+#if SUBNAUTICA
 			text.alignment = TextAnchor.MiddleCenter;
+#elif BELOWZERO
+			text.alignment = TextAlignmentOptions.Center;
+#endif
 			text.text = initial;
 
 			return text;

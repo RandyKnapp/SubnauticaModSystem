@@ -11,6 +11,8 @@ using UWE;
 #if SUBNAUTICA
     using RecipeData = SMLHelper.V2.Crafting.TechData;
     using Sprite = Atlas.Sprite;
+#elif BELOWZERO
+    using TMPro;
 #endif
 
 
@@ -34,10 +36,17 @@ namespace AutosortLockers
         private Image background;
         [SerializeField]
         private Image icon;
+#if SUBNAUTICA
         [SerializeField]
         private Text text;
         [SerializeField]
         private Text sortingText;
+#elif BELOWZERO
+        [SerializeField]
+        private TextMeshProUGUI text;
+        [SerializeField]
+        private TextMeshProUGUI sortingText;
+#endif
         [SerializeField]
         private bool isSorting;
         [SerializeField]
@@ -350,46 +359,64 @@ namespace AutosortLockers
 
             public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
             {
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 1");
                 CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.SmallLocker);
                 yield return task;
 
                 //GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
-                //GameObject prefab = GameObject.Instantiate(originalPrefab);
-                GameObject prefab = task.GetResult();
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 2");
+                GameObject originalPrefab = task.GetResult();
+                GameObject prefab = GameObject.Instantiate(originalPrefab);
 
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 3");
                 if (prefab == null)
                     QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"AutosortLockerBuildable.GetGameObjectAsync(): prefab == null");
 
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4");
                 var container = prefab.GetComponent<StorageContainer>();
                 container.width = Mod.config.AutosorterWidth;
                 container.height = Mod.config.AutosorterHeight;
                 container.container.Resize(Mod.config.AutosorterWidth, Mod.config.AutosorterHeight);
 
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 5");
                 var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
                 foreach (var meshRenderer in meshRenderers)
                 {
                     meshRenderer.material.color = new Color(1, 0, 0);
                 }
 
-                var prefabText = prefab.GetComponentInChildren<Text>();
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 6");
+                var prefabText = prefab.GetComponentInChildren<TextMeshProUGUI>();
                 var label = prefab.FindChild("Label");
                 DestroyImmediate(label);
 
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 7");
                 var autoSorter = prefab.AddComponent<AutosortLocker>();
 
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8");
                 var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8.1");
                 autoSorter.background = LockerPrefabShared.CreateBackground(canvas.transform);
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8.2");
                 autoSorter.icon = LockerPrefabShared.CreateIcon(autoSorter.background.transform, MainColor, 40);
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8.3: prefabText " + (prefabText == null ? "is" : "is not") + " null");
                 autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, 0, 14, "Autosorter");
 
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 9");
                 autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, -120, 12, "Sorting...");
+#if SUBNAUTICA
                 autoSorter.sortingText.alignment = TextAnchor.UpperCenter;
+#elif BELOWZERO
+                autoSorter.sortingText.alignment = TextAlignmentOptions.Top;
+#endif
 
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 10");
                 autoSorter.background.gameObject.SetActive(false);
                 autoSorter.icon.gameObject.SetActive(false);
                 autoSorter.text.gameObject.SetActive(false);
                 autoSorter.sortingText.gameObject.SetActive(false);
 
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 11");
                 //return prefab;
                 gameObject.Set(prefab);
                 yield break;

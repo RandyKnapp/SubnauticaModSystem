@@ -6,6 +6,11 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using UWE;
+using System.Collections;
+#if BELOWZERO
+using TMPro;
+#endif
 
 namespace AutosortLockers
 {
@@ -20,7 +25,11 @@ namespace AutosortLockers
 		[SerializeField]
 		private Image background;
 		[SerializeField]
+#if SUBNAUTICA
 		private Text labelLabel;
+#elif BELOWZERO
+		private TextMeshProUGUI labelLabel;
+#endif
 		[SerializeField]
 		private LabelController label;
 		[SerializeField]
@@ -174,49 +183,70 @@ namespace AutosortLockers
 
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		public static CustomizeScreen Create(Transform parent, SaveDataEntry data)
+		public static CustomizeScreen Create(Transform parent, SaveDataEntry data, GameObject lockerPrefab = null)
 		{
-			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+			Logger.Log("CustomiseScreen.Create: 1");
+#if SUBNAUTICA
+			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
+#elif BELOWZERO
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
+#endif
+			Logger.Log("CustomiseScreen.Create: 2");
 			textPrefab.fontSize = 12;
 			textPrefab.color = CustomizeScreen.ScreenContentColor;
 
+			Logger.Log("CustomiseScreen.Create: 3");
 			var screen = new GameObject("CustomizeScreen", typeof(RectTransform)).AddComponent<CustomizeScreen>();
 			RectTransformExtensions.SetParams(screen.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(screen.rectTransform, 114, 241);
 
+			Logger.Log("CustomiseScreen.Create: 4");
 			screen.background = new GameObject("Background").AddComponent<Image>();
 			screen.background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("CustomizeScreen.png"));
 			RectTransformExtensions.SetParams(screen.background.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), screen.transform);
 			RectTransformExtensions.SetSize(screen.background.rectTransform, 114, 241);
 
+			Logger.Log("CustomiseScreen.Create: 5");
 			screen.labelLabel = LockerPrefabShared.CreateText(screen.background.transform, textPrefab, ScreenContentColor, 100, 9, "Label:");
 			RectTransformExtensions.SetSize(screen.labelLabel.rectTransform, 90, 40);
+#if SUBNAUTICA
 			screen.labelLabel.alignment = TextAnchor.MiddleLeft;
+#elif BELOWZERO
+			screen.labelLabel.alignment = TextAlignmentOptions.MidlineLeft;
+#endif
 
-			screen.label = LabelController.Create(data, screen.background.transform);
+			Logger.Log("CustomiseScreen.Create: 6");
+			screen.label = LabelController.Create(data, screen.background.transform, lockerPrefab);
 			screen.label.rectTransform.anchoredPosition = new Vector2(0, 80);
 
+			Logger.Log("CustomiseScreen.Create: 7");
 			screen.exitButton = ConfigureButton.Create(screen.background.transform, Color.white, 40);
 
 			var startX = 0;
 			var startY = 30;
-			screen.labelColorSetting = ColorSetting.Create(screen.background.transform, "Label Color");
+			Logger.Log("CustomiseScreen.Create: 8");
+			screen.labelColorSetting = ColorSetting.Create(screen.background.transform, "Label Color", lockerPrefab);
 			screen.labelColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY);
 
-			screen.iconColorSetting = ColorSetting.Create(screen.background.transform, "Icon Color");
+			Logger.Log("CustomiseScreen.Create: 9");
+			screen.iconColorSetting = ColorSetting.Create(screen.background.transform, "Icon Color", lockerPrefab);
 			screen.iconColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - 19);
 
-			screen.textColorSetting = ColorSetting.Create(screen.background.transform, "Filters Color");
+			Logger.Log("CustomiseScreen.Create: 10");
+			screen.textColorSetting = ColorSetting.Create(screen.background.transform, "Filters Color", lockerPrefab);
 			screen.textColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 2));
 
-			screen.buttonsColorSetting = ColorSetting.Create(screen.background.transform, "Misc Color");
+			Logger.Log("CustomiseScreen.Create: 11");
+			screen.buttonsColorSetting = ColorSetting.Create(screen.background.transform, "Misc Color", lockerPrefab);
 			screen.buttonsColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 3));
 
-			screen.lockerColorSetting = ColorSetting.Create(screen.background.transform, "Locker Color");
+			Logger.Log("CustomiseScreen.Create: 12");
+			screen.lockerColorSetting = ColorSetting.Create(screen.background.transform, "Locker Color", lockerPrefab);
 			screen.lockerColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 4));
 
-			screen.colorPicker = ColorPicker.Create(screen.background.transform);
+			Logger.Log("CustomiseScreen.Create: 13");
+			screen.colorPicker = ColorPicker.Create(screen.background.transform, lockerPrefab);
 			screen.colorPicker.gameObject.SetActive(false);
 			screen.colorPicker.rectTransform.anchoredPosition = new Vector2(0, 30);
 

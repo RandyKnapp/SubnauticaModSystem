@@ -133,6 +133,10 @@
       <HintPath>$(GameDir)\$(DataFolder)\Managed\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.TextMeshPro" Condition="$(Configuration.Contains('BZ'))">
+	  <HintPath>$(GameDir)\$(DataFolder)\Managed\Unity.TextMeshPro.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutosorterCategories.cs" />

@@ -54,7 +54,7 @@ namespace AutosortLockers
 
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		public static ColorPicker Create(Transform parent)
+		public static ColorPicker Create(Transform parent, GameObject lockerPrefab = null)
 		{
 			var beaconColorPicker = new GameObject("ColorPicker", typeof(RectTransform)).AddComponent<ColorPicker>();
 
@@ -63,8 +63,7 @@ namespace AutosortLockers
 			beaconColorPicker.ButtonsPerPage = 72;
 			beaconColorPicker.ButtonsPerRow = 8;
 
-			Picker.Create(parent, beaconColorPicker, Mod.colors.Count);
-
+			Picker.Create(parent, beaconColorPicker, Mod.colors.Count, lockerPrefab);
 			return beaconColorPicker;
 		}
 	}
