@@ -363,7 +363,6 @@ namespace AutosortLockers
                 CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.SmallLocker);
                 yield return task;
 
-                //GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
                 Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 2");
                 GameObject originalPrefab = task.GetResult();
                 GameObject prefab = GameObject.Instantiate(originalPrefab);
@@ -372,7 +371,6 @@ namespace AutosortLockers
 
                 Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4");
                 // TEST
-                //StorageContainer container = prefab.GetComponent<StorageContainer>();
                 StorageContainer container = prefab.GetComponent<StorageContainer>();
                 Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.1, container.container is " + (container.container == null ? "is" : "is not") + " null");
                 container.width = Mod.config.AutosorterWidth;

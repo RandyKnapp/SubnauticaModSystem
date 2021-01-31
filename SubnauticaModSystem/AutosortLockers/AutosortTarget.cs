@@ -577,7 +577,7 @@ namespace AutosortLockers
 				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 1");
 				//var prefab = GetPrefab(TechType.Locker);
 				TaskResult<GameObject> result = new TaskResult<GameObject>();
-				yield return GetPrefabAsync(TechType.Locker, result);
+				yield return GetPrefabAsync(TechType.SmallLocker, result);
 
 				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 2");
 				GameObject basePrefab = result.Get();
@@ -594,8 +594,8 @@ namespace AutosortLockers
 				container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
 
 				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 4");
+
 				gameObject.Set(prefab);
-				prefab.SetActive(false);
 				yield break;
 			}
 

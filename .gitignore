@@ -277,3 +277,4 @@ paket-files/
 SubnauticaModSystem/AutosortLockersSML/BZ/AutosortLockersSML.dll
 SubnauticaModSystem/AutosortLockersSML/BZ/AutosortLockersSML.dll
 *.dll
+*.xml
