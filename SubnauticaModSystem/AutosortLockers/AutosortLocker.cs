@@ -368,15 +368,18 @@ namespace AutosortLockers
                 GameObject originalPrefab = task.GetResult();
                 GameObject prefab = GameObject.Instantiate(originalPrefab);
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 3");
-                if (prefab == null)
-                    QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"AutosortLockerBuildable.GetGameObjectAsync(): prefab == null");
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 3, prefab " + (prefab == null ? "is" : "is not") + " null");
 
                 Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4");
-                var container = prefab.GetComponent<StorageContainer>();
+                // TEST
+                //StorageContainer container = prefab.GetComponent<StorageContainer>();
+                StorageContainer container = prefab.GetComponent<StorageContainer>();
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.1, container.container is " + (container.container == null ? "is" : "is not") + " null");
                 container.width = Mod.config.AutosorterWidth;
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.2");
                 container.height = Mod.config.AutosorterHeight;
-                container.container.Resize(Mod.config.AutosorterWidth, Mod.config.AutosorterHeight);
+                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.3");
+                container.Resize(Mod.config.AutosorterWidth, Mod.config.AutosorterHeight);
 
                 Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 5");
                 var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
@@ -387,6 +390,7 @@ namespace AutosortLockers
 
                 Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 6");
                 var prefabText = prefab.GetComponentInChildren<TextMeshProUGUI>();
+                Logger.Log($"AutosortLockerBuildable.GetGameObjectAsync: 6.1, prefabText == {prefabText.ToString()}");
                 var label = prefab.FindChild("Label");
                 DestroyImmediate(label);
 

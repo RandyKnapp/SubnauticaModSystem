@@ -27,7 +27,6 @@ namespace AutosortLockers
 
 		public static event Action<SaveData> OnDataLoaded;
 
-		internal static GameObject lockerPrefab;
 		public static void Patch(string modDirectory = null)
 		{
 			Logger.Log("Starting patching");

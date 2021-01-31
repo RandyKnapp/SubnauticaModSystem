@@ -275,3 +275,5 @@ paket-files/
 .idea/
 *.sln.iml
 SubnauticaModSystem/AutosortLockersSML/BZ/AutosortLockersSML.dll
+SubnauticaModSystem/AutosortLockersSML/BZ/AutosortLockersSML.dll
+*.dll

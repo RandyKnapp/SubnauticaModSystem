@@ -586,9 +586,12 @@ namespace AutosortLockers
 
 				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3");
 				StorageContainer container = prefab.GetComponent<StorageContainer>();
+				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3.1");
 				container.width = Mod.config.ReceptacleWidth;
+				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3.2");
 				container.height = Mod.config.ReceptacleHeight;
-				container.container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
+				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3.3, container.container " + (container.container == null ? "is" : "is not") + " null");
+				container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
 
 				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 4");
 				gameObject.Set(prefab);
@@ -645,13 +648,13 @@ namespace AutosortLockers
 				GameObject prefab = GameObject.Instantiate(basePrefab);
 
 				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3");
-				var container = prefab.GetComponent<StorageContainer>();
+				StorageContainer container = prefab.GetComponent<StorageContainer>();
 				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.1");
 				container.width = Mod.config.StandingReceptacleWidth;
 				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.2");
 				container.height = Mod.config.StandingReceptacleHeight;
-				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.3");
-				container.container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
+				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.3, container.container " + (container.container == null ? "is" : "is not") + " null");
+				container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
 
 				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 4");
 				gameObject.Set(prefab);
