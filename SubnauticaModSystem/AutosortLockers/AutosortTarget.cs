@@ -575,7 +575,7 @@ namespace AutosortLockers
 			public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
 			{
 				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 1");
-				//var prefab = GetPrefab(TechType.Locker);
+
 				TaskResult<GameObject> result = new TaskResult<GameObject>();
 				yield return GetPrefabAsync(TechType.SmallLocker, result);
 
@@ -639,7 +639,7 @@ namespace AutosortLockers
 			public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
 			{
 				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 1");
-				//var prefab = GetPrefab(TechType.Locker);
+
 				TaskResult<GameObject> result = new TaskResult<GameObject>();
 				yield return GetPrefabAsync(TechType.Locker, result);
 				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 2");
@@ -758,7 +758,7 @@ namespace AutosortLockers
 			autosortTarget.customizeButtonImage = autosortTarget.customizeButton.GetComponent<Image>();
 
 			//return prefab;
-			originalPrefab.SetActive(false);
+			//originalPrefab.SetActive(false);
 			gameObject.Set(prefab);
 		}
 	}

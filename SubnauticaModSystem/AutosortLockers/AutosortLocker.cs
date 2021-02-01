@@ -431,15 +431,15 @@ namespace AutosortLockers
                     craftAmount = 1,
                     Ingredients = Mod.config.EasyBuild
                     ? new List<Ingredient>
-                    {
-                        new Ingredient(TechType.Titanium, 2)
-                    }
+                        {
+                            new Ingredient(TechType.Titanium, 2)
+                        }
                     : new List<Ingredient>
-                    {
-                        new Ingredient(TechType.Titanium, 2),
-                        new Ingredient(TechType.ComputerChip, 1),
-                        new Ingredient(TechType.AluminumOxide, 2)
-                    }
+                        {
+                            new Ingredient(TechType.Titanium, 2),
+                            new Ingredient(TechType.ComputerChip, 1),
+                            new Ingredient(TechType.AluminumOxide, 2)
+                        }
                 };
             }
 
