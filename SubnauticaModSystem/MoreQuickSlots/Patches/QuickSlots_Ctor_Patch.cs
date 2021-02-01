@@ -1,6 +1,5 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using System;
-using System.Reflection;
 using UnityEngine;
 
 namespace MoreQuickSlots.Patches
@@ -9,7 +8,8 @@ namespace MoreQuickSlots.Patches
 	[HarmonyPatch(new Type[] { typeof(GameObject), typeof(Transform), typeof(Transform), typeof(Inventory), typeof(Transform), typeof(int) })]
 	class QuickSlots_Ctor_Patch
 	{
-		static bool Prefix(ref int slotCount)
+		[HarmonyPrefix]
+		static void Prefix(ref int slotCount, ref string[] ___slotNames)
 		{
 			slotCount = Mod.config.SlotCount;
 
@@ -18,9 +18,7 @@ namespace MoreQuickSlots.Patches
 			{
 				newSlotNames[i] = "QuickSlot" + i;
 			}
-			typeof(QuickSlots).GetField("slotNames", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, newSlotNames);
-
-			return true;
+			___slotNames = newSlotNames;
 		}
 	}
 }
