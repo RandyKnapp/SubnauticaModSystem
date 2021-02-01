@@ -58,6 +58,15 @@ namespace AutosortLockers
 			TechType.Peeper,
 			TechType.Reginald,
 			TechType.Spadefish,
+			TechType.SpinnerFish,
+			TechType.Symbiote,
+			TechType.ArcticPeeper,
+			TechType.ArrowRay,
+			TechType.NootFish,
+			TechType.Triops,
+			TechType.FeatherFish,
+			TechType.FeatherFishRed,
+			TechType.DiscusFish,
 		};
 
 		public static List<TechType> AlterraArtifacts = new List<TechType> {

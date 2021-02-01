@@ -359,52 +359,52 @@ namespace AutosortLockers
 
             public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
             {
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 1");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 1");
                 CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.SmallLocker);
                 yield return task;
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 2");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 2");
                 GameObject originalPrefab = task.GetResult();
                 GameObject prefab = GameObject.Instantiate(originalPrefab);
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 3, prefab " + (prefab == null ? "is" : "is not") + " null");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 3, prefab " + (prefab == null ? "is" : "is not") + " null");
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4");
                 // TEST
                 StorageContainer container = prefab.GetComponent<StorageContainer>();
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.1, container.container is " + (container.container == null ? "is" : "is not") + " null");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.1, container.container is " + (container.container == null ? "is" : "is not") + " null");
                 container.width = Mod.config.AutosorterWidth;
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.2");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.2");
                 container.height = Mod.config.AutosorterHeight;
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.3");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 4.3");
                 container.Resize(Mod.config.AutosorterWidth, Mod.config.AutosorterHeight);
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 5");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 5");
                 var meshRenderers = prefab.GetComponentsInChildren<MeshRenderer>();
                 foreach (var meshRenderer in meshRenderers)
                 {
                     meshRenderer.material.color = new Color(1, 0, 0);
                 }
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 6");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 6");
                 var prefabText = prefab.GetComponentInChildren<TextMeshProUGUI>();
-                Logger.Log($"AutosortLockerBuildable.GetGameObjectAsync: 6.1, prefabText == {prefabText.ToString()}");
+                //Logger.Log($"AutosortLockerBuildable.GetGameObjectAsync: 6.1, prefabText == {prefabText.ToString()}");
                 var label = prefab.FindChild("Label");
                 DestroyImmediate(label);
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 7");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 7");
                 var autoSorter = prefab.AddComponent<AutosortLocker>();
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8");
                 var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8.1");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8.1");
                 autoSorter.background = LockerPrefabShared.CreateBackground(canvas.transform);
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8.2");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8.2");
                 autoSorter.icon = LockerPrefabShared.CreateIcon(autoSorter.background.transform, MainColor, 40);
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8.3: prefabText " + (prefabText == null ? "is" : "is not") + " null");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 8.3: prefabText " + (prefabText == null ? "is" : "is not") + " null");
                 autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, 0, 14, "Autosorter");
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 9");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 9");
                 autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, -120, 12, "Sorting...");
 #if SUBNAUTICA
                 autoSorter.sortingText.alignment = TextAnchor.UpperCenter;
@@ -412,13 +412,13 @@ namespace AutosortLockers
                 autoSorter.sortingText.alignment = TextAlignmentOptions.Top;
 #endif
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 10");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 10");
                 autoSorter.background.gameObject.SetActive(false);
                 autoSorter.icon.gameObject.SetActive(false);
                 autoSorter.text.gameObject.SetActive(false);
                 autoSorter.sortingText.gameObject.SetActive(false);
 
-                Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 11");
+                //Logger.Log("AutosortLockerBuildable.GetGameObjectAsync: 11");
                 //return prefab;
                 gameObject.Set(prefab);
                 yield break;

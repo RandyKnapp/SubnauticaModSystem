@@ -574,26 +574,26 @@ namespace AutosortLockers
 
 			public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
 			{
-				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 1");
+				//Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 1");
 
 				TaskResult<GameObject> result = new TaskResult<GameObject>();
 				yield return GetPrefabAsync(TechType.SmallLocker, result);
 
-				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 2");
+				//Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 2");
 				GameObject basePrefab = result.Get();
 				GameObject prefab = GameObject.Instantiate(basePrefab);
 
 
-				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3");
+				//Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3");
 				StorageContainer container = prefab.GetComponent<StorageContainer>();
-				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3.1");
+				//Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3.1");
 				container.width = Mod.config.ReceptacleWidth;
-				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3.2");
+				//Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3.2");
 				container.height = Mod.config.ReceptacleHeight;
-				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3.3, container.container " + (container.container == null ? "is" : "is not") + " null");
+				//Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 3.3, container.container " + (container.container == null ? "is" : "is not") + " null");
 				container.Resize(Mod.config.ReceptacleWidth, Mod.config.ReceptacleHeight);
 
-				Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 4");
+				//Logger.Log("AutosortTargetBuildable.GetGameObjectAsync: 4");
 
 				gameObject.Set(prefab);
 				yield break;
@@ -638,25 +638,25 @@ namespace AutosortLockers
 
 			public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
 			{
-				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 1");
+				//Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 1");
 
 				TaskResult<GameObject> result = new TaskResult<GameObject>();
 				yield return GetPrefabAsync(TechType.Locker, result);
-				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 2");
+				//Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 2");
 
 				GameObject basePrefab = result.Get();
 				GameObject prefab = GameObject.Instantiate(basePrefab);
 
-				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3");
+				//Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3");
 				StorageContainer container = prefab.GetComponent<StorageContainer>();
-				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.1");
+				//Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.1");
 				container.width = Mod.config.StandingReceptacleWidth;
-				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.2");
+				//Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.2");
 				container.height = Mod.config.StandingReceptacleHeight;
-				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.3, container.container " + (container.container == null ? "is" : "is not") + " null");
+				//Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 3.3, container.container " + (container.container == null ? "is" : "is not") + " null");
 				container.Resize(Mod.config.StandingReceptacleWidth, Mod.config.StandingReceptacleHeight);
 
-				Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 4");
+				//Logger.Log("AutosortStandingTargetBuildable.GetGameObjectAsync: 4");
 				gameObject.Set(prefab);
 				yield break;
 			}
@@ -718,9 +718,9 @@ namespace AutosortLockers
 			yield return task;
 			//var smallLockerPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
 
-			Logger.Log($"GetPrefabAsync() attempting to instantiate smallLockerPrefab");
+			//Logger.Log($"GetPrefabAsync() attempting to instantiate smallLockerPrefab");
 			var smallLockerPrefab = GameObject.Instantiate(task.GetResult());
-			Logger.Log($"GetPrefabAsync() attempting to instantiate autosortTarget; smallLockerPrefab " + (smallLockerPrefab == null ? "is" : "is not") + " null");
+			//Logger.Log($"GetPrefabAsync() attempting to instantiate autosortTarget; smallLockerPrefab " + (smallLockerPrefab == null ? "is" : "is not") + " null");
 #if SUBNAUTICA
 			autosortTarget.textPrefab = GameObject.Instantiate(smallLockerPrefab.GetComponentInChildren<Text>());
 #elif BELOWZERO
