@@ -11,7 +11,7 @@
     <RootNamespace>DockedVehicleStorageAccess</RootNamespace>
     <AssemblyName>DockedVehicleStorageAccessSML</AssemblyName>
     <OutputPath>$(SolutionDir)$(AssemblyName)\$(Configuration)\</OutputPath>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -87,6 +87,10 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="Unity.TextMeshPro" Condition="$(Configuration.Contains('BZ'))">
+      <HintPath>$(GameDir)\$(DataFolder)\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(GameDir)\$(DataFolder)\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>

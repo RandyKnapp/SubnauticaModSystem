@@ -134,15 +134,16 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro" Condition="$(Configuration.Contains('BZ'))">
-	  <HintPath>$(GameDir)\$(DataFolder)\Managed\Unity.TextMeshPro.dll</HintPath>
-	  <Private>False</Private>
-	</Reference>
+      <HintPath>$(GameDir)\$(DataFolder)\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutosorterCategories.cs" />
     <Compile Include="AutosortTarget.cs" />
     <Compile Include="AutosortLocker.cs" />
     <Compile Include="AutosortTypePicker.cs" />
+    <Compile Include="CanvasLink_Patch.cs" />
     <Compile Include="ColorPicker.cs" />
     <Compile Include="ColorPickerButton.cs" />
     <Compile Include="ColorPickerPageButton.cs" />

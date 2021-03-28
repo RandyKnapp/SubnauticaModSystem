@@ -1,13 +1,17 @@
 ﻿using Common.Mod;
 using Common.Utility;
-using Harmony;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using HarmonyLib;
+#if SUBNAUTICA
 using Oculus.Newtonsoft.Json;
+#elif BELOWZERO
+using Newtonsoft.Json;
+#endif
 using System.Threading;
 using System.Globalization;
 
@@ -24,7 +28,7 @@ namespace BetterScannerBlips
 			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
 			LoadConfig();
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.BetterScannerBlips.mod");
+			var harmony = new Harmony("com.BetterScannerBlips.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			CustomBlip.InitializeColors();

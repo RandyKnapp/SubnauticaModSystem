@@ -3,20 +3,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace BetterScannerBlips
 {
-	class CustomBlip : MonoBehaviour
+	public class CustomBlip : MonoBehaviour
 	{
 		private static Color circleColor;
 		private static Color textColor;
 
 		private Image image;
+#if SUBNAUTICA
 		private Text text;
+#elif BELOWZERO
+		private TextMeshProUGUI text;
+#endif
 		private TechType techType;
 		private string resourceName;
+
+		private BlipIdentifier blipId;
+
+		public void ResetCustomBlip()
+		{
+			this.techType = TechType.None;
+			this.resourceName = "";
+		}
 
 		public static void InitializeColors()
 		{
@@ -36,20 +49,56 @@ namespace BetterScannerBlips
 		private void Awake()
 		{
 			image = gameObject.GetComponent<Image>();
+#if SUBNAUTICA
 			text = gameObject.GetComponentInChildren<Text>();
+#elif BELOWZERO
+			text = gameObject.GetComponentInChildren<TextMeshProUGUI>();
+#endif
 		}
 
-		public void Refresh(ResourceTracker.ResourceInfo target)
+		public void Refresh(ResourceTrackerDatabase.ResourceInfo target)
 		{
 			if (target != null)
 			{
 				var vectorToPlayer = Player.main.transform.position - target.position;
 				var distance = vectorToPlayer.magnitude;
 
-				if (resourceName == string.Empty || techType != target.techType)
+				if (techType == TechType.None)
 				{
-					techType = target.techType;
-					resourceName = Language.main.Get(techType);
+					TechType thisTechType = target.techType;
+					QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug,
+						$"CustomBlip.Refresh(): Attempting to establish resourceName for ResourceInfo with unique ID {target.uniqueId}, which includes TechType {thisTechType}");
+					if (thisTechType == TechType.Fragment)
+					{
+						blipId = gameObject.GetComponent<BlipIdentifier>();
+						if (blipId == null)
+						{
+							blipId = gameObject.AddComponent<BlipIdentifier>();
+							blipId.uniqueId = target.uniqueId;
+						}
+						if (blipId != null)
+						{
+							thisTechType = blipId.actualTechType;
+							if (thisTechType == TechType.None)
+							{
+								QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug,
+									$"CustomBlip.Refresh(): Could not get TechType from BlipIdentifier, attempting to use ResourceTrackerPatches.GetTechTypeForId");
+								thisTechType = ResourceTrackerPatches.GetTechTypeForId(target.uniqueId);
+								QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug,
+									$"CustomBlip.Refresh(): Got TechType of {techType.AsString()}");
+							}
+						}
+					}
+
+					if (thisTechType != TechType.None && thisTechType != TechType.Fragment)
+					{
+						techType = thisTechType;
+						resourceName = Language.main.Get(techType);
+						QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug,
+							$"For unique ID {target.uniqueId}, got TechType {thisTechType.AsString()} and resourceName '{resourceName}'");
+					}
+					else
+						resourceName = "(*)" + Language.main.Get(target.techType);
 				}
 
 				RefreshColor(distance);

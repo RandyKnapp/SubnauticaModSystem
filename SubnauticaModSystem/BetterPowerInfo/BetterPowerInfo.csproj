@@ -11,7 +11,7 @@
     <RootNamespace>BetterPowerInfo</RootNamespace>
     <AssemblyName>BetterPowerInfo</AssemblyName>
     <OutputPath>$(SolutionDir)$(AssemblyName)\$(Configuration)\</OutputPath>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -45,7 +45,7 @@
     <DataFolder>SubnauticaZero_Data</DataFolder>
     <SMLHelperFolder>SMLHelper_BZ</SMLHelperFolder>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.1</LangVersion>
+	<LangVersion>8.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SN1|AnyCPU'">
@@ -56,7 +56,7 @@
     <DataFolder>Subnautica_Data</DataFolder>
     <SMLHelperFolder>Modding Helper</SMLHelperFolder>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
@@ -70,6 +70,9 @@
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GameDir)\$(DataFolder)\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="NewtonSoft.Json">
+      <HintPath>$(GameDir)\$(DataFolder)\Managed\NewtonSoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SMLHelper">
       <HintPath>$(GameDir)\QMods\$(SMLHelperFolder)\SMLHelper.dll</HintPath>
@@ -127,8 +130,7 @@
     <Compile Include="PowerProductionTracker.cs" />
     <Compile Include="Producers\BioreactorPowerSourceInfo.cs" />
     <Compile Include="Producers\GenericPowerSourceInfo.cs" />
-    <Compile Include="Producers
-uclearReactorPowerSourceInfo.cs" />
+    <Compile Include="Producers\NuclearReactorPowerSourceInfo.cs" />
     <Compile Include="Producers\PowerSourceInfo.cs" />
     <Compile Include="Producers\RegenPowerSourceInfo.cs" />
     <Compile Include="Producers\SolarPanelPowerSourceInfo.cs" />

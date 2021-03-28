@@ -9,6 +9,7 @@ using HarmonyLib;
 using Oculus.Newtonsoft.Json;
 #elif BELOWZERO
 using Newtonsoft.Json;
+using SMLHelper.V2.Handlers;
 #endif
 using UnityEngine;
 using UWE;
@@ -18,6 +19,9 @@ namespace AutosortLockers
 	internal static class Mod
 	{
 		public const string SaveDataFilename = "AutosortLockerSMLSaveData.json";
+
+		private const int MAX_LOCKER_WIDTH = 8;
+		private const int MAX_LOCKER_HEIGHT = 10;
 		public static Config config;
 		public static SaveData saveData;
 		public static List<Color> colors = new List<Color>();
@@ -75,10 +79,12 @@ namespace AutosortLockers
 			Config defaultConfig = new Config();
 
 			ModUtils.ValidateConfigValue("SortInterval", 0.1f, 10.0f, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("AutosorterWidth", 1, 8, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("AutosorterHeight", 1, 10, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("ReceptacleWidth", 1, 8, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("ReceptacleHeight", 1, 10, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("AutosorterWidth", 1, MAX_LOCKER_WIDTH, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("AutosorterHeight", 1, MAX_LOCKER_HEIGHT, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("ReceptacleWidth", 1, MAX_LOCKER_WIDTH, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("ReceptacleHeight", 1, MAX_LOCKER_HEIGHT, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("StandingReceptacleWidth", 1, MAX_LOCKER_WIDTH, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("StandingReceptacleHeight", 1, MAX_LOCKER_HEIGHT, ref config, ref defaultConfig);
 		}
 
 		public static SaveData GetSaveData()

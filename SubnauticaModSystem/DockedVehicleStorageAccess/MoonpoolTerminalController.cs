@@ -1,5 +1,9 @@
 ﻿using Common.Mod;
+#if SUBNAUTICA
 using Oculus.Newtonsoft.Json;
+#elif BELOWZERO
+using Newtonsoft.Json;
+#endif
 using System;
 using System.Collections.Generic;
 using System.IO;

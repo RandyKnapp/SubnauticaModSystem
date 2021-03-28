@@ -58,6 +58,7 @@ namespace AutosortLockers
 			TechType.Peeper,
 			TechType.Reginald,
 			TechType.Spadefish,
+#if BELOWZERO
 			TechType.SpinnerFish,
 			TechType.Symbiote,
 			TechType.ArcticPeeper,
@@ -67,6 +68,9 @@ namespace AutosortLockers
 			TechType.FeatherFish,
 			TechType.FeatherFishRed,
 			TechType.DiscusFish,
+			TechType.Penguin,
+			TechType.PenguinBaby
+#endif
 		};
 
 		public static List<TechType> AlterraArtifacts = new List<TechType> {
@@ -140,6 +144,7 @@ namespace AutosortLockers
 			TechType.LavaLizardEggUndiscovered,
 			TechType.CrabsnakeEggUndiscovered,
 			TechType.SpadefishEggUndiscovered,
+#if BELOWZERO
 			TechType.SeaMonkeyEgg,
 			TechType.ArcticRayEgg,
 			TechType.ArcticRayEggUndiscovered,
@@ -169,6 +174,7 @@ namespace AutosortLockers
 			TechType.PenguinEggUndiscovered,
 			TechType.RockPuncherEgg,
 			TechType.RockPuncherEggUndiscovered
+#endif
 		};
 
 		public static List<TechType> Food = new List<TechType> {
@@ -208,6 +214,7 @@ namespace AutosortLockers
 			TechType.HangingFruit,
 			TechType.Melon,
 			TechType.PurpleVegetable,
+#if BELOWZERO
 			TechType.CookedSpinnerfish,
 			TechType.CookedSymbiote,
 			TechType.CookedArcticPeeper,
@@ -231,6 +238,7 @@ namespace AutosortLockers
 			TechType.HeatFruit,
 			TechType.LeafyFruit,
 			TechType.IceFruit,
+#endif
 		};
 
 		public static List<TechType> Water = new List<TechType> {
@@ -239,7 +247,9 @@ namespace AutosortLockers
 			TechType.DisinfectedWater,
 			TechType.FilteredWater,
 			TechType.StillsuitWater,
+#if BELOWZERO
 			TechType.WaterPurificationTablet,
+#endif
 		};
 
 		public static List<TechType> ScannerRoomUpgrades = new List<TechType> {
@@ -288,6 +298,7 @@ namespace AutosortLockers
 			TechType.VehicleHullModule3,
 			TechType.VehiclePowerUpgradeModule,
 			TechType.VehicleStorageModule,
+#if BELOWZERO
 			TechType.SeaTruckUpgradeAfterburner,
 			TechType.SeaTruckUpgradeThruster,
 			TechType.SeaTruckUpgradeEnergyEfficiency,
@@ -298,6 +309,7 @@ namespace AutosortLockers
 			TechType.SeaTruckUpgradeHull3,
 			TechType.HoverbikeJumpModule,
 			TechType.HoverbikeIceWormReductionModule
+#endif
 		};
 
 		public static List<TechType> Equipment = new List<TechType> {
@@ -315,6 +327,7 @@ namespace AutosortLockers
 			TechType.Stillsuit,
 			TechType.SwimChargeFins,
 			TechType.Tank,
+#if BELOWZERO
 			TechType.UltraGlideFins,
 			TechType.ColdSuit,
 			TechType.ColdSuitGloves,
@@ -322,6 +335,7 @@ namespace AutosortLockers
 			TechType.SuitBoosterTank,
 			TechType.Constructor,
 			TechType.Hoverbike,
+#endif
 		};
 
 		public static List<TechType> Tools = new List<TechType> {
@@ -349,6 +363,7 @@ namespace AutosortLockers
 			TechType.SmallStorage,
 			TechType.StasisRifle,
 			TechType.Welder,
+#if BELOWZERO
 			TechType.LuggageBag,
 			TechType.Thumper,
 			TechType.TeleportationTool,
@@ -358,6 +373,7 @@ namespace AutosortLockers
 			TechType.SnowBall,
 			TechType.SpyPenguin,
 			TechType.SpyPenguinRemote,
+#endif
 		};
 
 		public static List<TechType> Torpedoes = new List<TechType> {
@@ -375,6 +391,7 @@ namespace AutosortLockers
 			TechType.FernPalmSeed,
 			TechType.GabeSFeatherSeed,
 			TechType.HangingFruit,
+			TechType.JellyPlant,
 			TechType.JellyPlantSeed,
 			TechType.KooshChunk,
 			TechType.Melon,
@@ -405,13 +422,18 @@ namespace AutosortLockers
 			TechType.SpikePlantSeed,
 			TechType.SpottedLeavesPlantSeed,
 			TechType.WhiteMushroomSpore,
+#if BELOWZERO
 			TechType.KelpRootPustule,
 			TechType.KelpRootPustuleSeed,
 			TechType.GenericRibbonSeed,
+			TechType.FrozenRiverPlant2,
 			TechType.FrozenRiverPlant2Seeds,
 			TechType.GenericSpiralChunk,
+			TechType.DeepLilyShroom,
 			TechType.DeepLilyShroomSeed,
 			TechType.SmallMaroonPlantSeed,
+			TechType.LilyPadResource,
+#endif
 		};
 
 		public static List<TechType> Metals = new List<TechType> {
@@ -440,7 +462,9 @@ namespace AutosortLockers
 			TechType.SeaTreaderPoop,
 			TechType.StalkerTooth,
 			TechType.JellyPlant,
+#if BELOWZERO
 			TechType.SnowStalkerFur,
+#endif
 		};
 
 		public static List<TechType> Electronics = new List<TechType> {
@@ -466,7 +490,9 @@ namespace AutosortLockers
 			TechType.Polyaniline,
 			TechType.PrecursorIonCrystal,
 			TechType.Silicone,
+#if BELOWZERO
 			TechType.HydraulicFluid,
+#endif
 		};
 
 		public static List<TechType> CrystalMaterials = new List<TechType> {

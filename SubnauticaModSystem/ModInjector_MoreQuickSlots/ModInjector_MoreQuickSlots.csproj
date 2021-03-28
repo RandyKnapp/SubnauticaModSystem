@@ -10,7 +10,7 @@
     <RootNamespace>ModInjector_MoreQuickSlots</RootNamespace>
     <AssemblyName>ModInjector_MoreQuickSlots</AssemblyName>
     <OutputPath>$(SolutionDir)$(AssemblyName)\$(Configuration)\</OutputPath>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>

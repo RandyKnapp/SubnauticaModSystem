@@ -8,7 +8,7 @@ namespace Common.Mod
 {
 	public static class LockerPrefabShared
 	{
-		internal static Canvas CreateCanvas(Transform parent)
+        internal static Canvas CreateCanvas(Transform parent)
 		{
 			var canvas = new GameObject("Canvas", typeof(RectTransform)).AddComponent<Canvas>();
 			var t = canvas.transform;

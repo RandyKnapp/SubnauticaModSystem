@@ -11,7 +11,7 @@
     <RootNamespace>BetterScannerBlips</RootNamespace>
     <AssemblyName>BetterScannerBlips</AssemblyName>
     <OutputPath>$(SolutionDir)$(AssemblyName)\$(Configuration)\</OutputPath>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -71,6 +71,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GameDir)\$(DataFolder)\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="QModInstaller">
+      <HintPath>$(GameDir)\BepInEx\plugins\QModManager\QModInstaller.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GameDir)\$(DataFolder)\Managed\NewtonSoft.Json.dll</HintPath>
@@ -111,8 +114,13 @@
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(GameDir)\$(DataFolder)\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.TextMeshPro" Condition="$(Configuration.Contains('BZ'))">
+      <HintPath>$(GameDir)\$(DataFolder)\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlipIdentifier.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="CustomBlip.cs" />
     <Compile Include="Logger.cs" />
@@ -125,6 +133,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ResourceTracker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />
@@ -140,12 +149,12 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) $(GameDir)\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)mod.json $(GameDir)\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)Assets $(GameDir)\QMods\$(ProjectName)\Assets\ /q /y /i
+    <PostBuildEvent>rem xcopy $(TargetPath) $(GameDir)\QMods\$(ProjectName)\ /q /y
+rem xcopy $(ProjectDir)mod.json $(GameDir)\QMods\$(ProjectName)\ /q /y
+rem xcopy $(ProjectDir)Assets $(GameDir)\QMods\$(ProjectName)\Assets\ /q /y /i
 
-xcopy $(TargetPath) D:\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)mod.json D:\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)Assets D:\EpicGames\Subnautica\QMods\$(ProjectName)\Assets\ /q /y /i</PostBuildEvent>
+rem xcopy $(TargetPath) D:\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y
+rem xcopy $(ProjectDir)mod.json D:\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y
+rem xcopy $(ProjectDir)Assets D:\EpicGames\Subnautica\QMods\$(ProjectName)\Assets\ /q /y /i</PostBuildEvent>
   </PropertyGroup>
 </Project>

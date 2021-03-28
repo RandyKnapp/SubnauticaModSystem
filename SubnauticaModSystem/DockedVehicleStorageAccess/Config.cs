@@ -1,9 +1,18 @@
-﻿using Oculus.Newtonsoft.Json;
+﻿#if SUBNAUTICA
+using Oculus.Newtonsoft.Json;
+#elif BELOWZERO
+using Newtonsoft.Json;
+using SMLHelper.V2.Json;
+#endif
 
 namespace DockedVehicleStorageAccess
 {
+#if !BELOWZERO
 	[JsonObject]
 	internal class Config
+#else
+	internal class Config : ConfigFile
+#endif
 	{
 		public int LockerWidth { get; set; } = 6;
 		public int LockerHeight { get; set; } = 8;
@@ -11,7 +20,9 @@ namespace DockedVehicleStorageAccess
 		public float ExtractInterval { get; set; } = 0.25f;
 		public float AutosortTransferInterval { get; set; } = 0.25f;
 
+#if !BELOWZERO
 		[JsonIgnore]
+#endif
 		internal bool UseAutosortMod { get; set; }
 	}
 }

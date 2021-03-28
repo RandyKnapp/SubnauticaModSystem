@@ -11,7 +11,7 @@
     <RootNamespace>BaseTeleporters</RootNamespace>
     <AssemblyName>BaseTeleporters</AssemblyName>
     <OutputPath>$(SolutionDir)$(AssemblyName)\$(Configuration)\</OutputPath>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>

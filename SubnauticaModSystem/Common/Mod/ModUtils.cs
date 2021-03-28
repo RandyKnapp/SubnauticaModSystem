@@ -68,13 +68,16 @@ namespace Common.Mod
 			var value = (T)fieldInfo.GetValue(config, null);
 			if (value.CompareTo(min) < 0 || value.CompareTo(max) > 0)
 			{
-				Console.WriteLine("Config value for '{0}' ({1}) was not valid. Must be between {2} and {3}",
-					field,
-					value,
-					min,
-					max
-				);
-				fieldInfo.SetValue(config, fieldInfo.GetValue(defaultConfig, null), null);
+				string errorString = $"Config value for '{field}' ({value}) was not valid. Must be between {min} and {max}";
+				//Console.WriteLine(string);
+				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, errorString, null, true);
+				var newValue = value;
+				if (value.CompareTo(min) < 0)
+					newValue = min;
+				else if (value.CompareTo(max) > 0)
+					newValue = max;
+				//fieldInfo.SetValue(config, fieldInfo.GetValue(defaultConfig, null), null);
+				fieldInfo.SetValue(config, newValue, null);
 			}
 		}
 
