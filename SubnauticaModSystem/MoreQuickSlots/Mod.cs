@@ -1,27 +1,23 @@
-﻿using Common.Utility;
-using HarmonyLib;
-using System;
-using System.IO;
+﻿using HarmonyLib;
+using QModManager.API.ModLoading;
 using System.Reflection;
 using UnityEngine;
 
 namespace MoreQuickSlots
 {
+	[QModCore]
 	public static class Mod
 	{
 		public const int MaxSlots = 12;
 		public const int MinSlots = 1;
 
-		public static Config config;
+		public static Config config = new Config();
 
-		private static string modDirectory;
-		private static string[] keys = new string[MaxSlots];
-
-		public static void Patch(string modDirectory = null)
+		private static readonly string[] keys = new string[MaxSlots];
+		
+		[QModPatch]
+		public static void Patch()
 		{
-			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
-			LoadConfig();
-
 			keys[5] = config.Slot6Key;
 			keys[6] = config.Slot7Key;
 			keys[7] = config.Slot8Key;
@@ -30,45 +26,24 @@ namespace MoreQuickSlots
 			keys[10] = config.Slot11Key;
 			keys[11] = config.Slot12Key;
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.morequickslots.mod");
+			Harmony harmony = new Harmony("com.morequickslots.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");
 		}
 
-		private static string GetModInfoPath()
+		[QModPrePatch]
+		public static void LoadConfig()
 		{
-			return Environment.CurrentDirectory + "/" + modDirectory + "/mod.json";
-		}
-
-		private static void LoadConfig()
-		{
-			string modInfoPath = GetModInfoPath();
-
-			if (!File.Exists(modInfoPath))
-			{
-				config = new Config();
-				return;
-			}
-
-			var modInfoObject = JSON.Parse(File.ReadAllText(modInfoPath));
-			string configJson = modInfoObject["Config"].ToString();
-			config = JsonUtility.FromJson<Config>(configJson);
+			config.Load(true);
 			ValidateConfig();
 		}
 
 		private static void ValidateConfig()
 		{
-			Config defaultConfig = new Config();
-			if (config == null)
-			{
-				config = defaultConfig;
-				return;
-			}
-
 			if (config.SlotCount < MinSlots || config.SlotCount > MaxSlots)
 			{
-				config.SlotCount = defaultConfig.SlotCount;
+				config.SlotCount = 12;
 			}
 		}
 
@@ -80,15 +55,10 @@ namespace MoreQuickSlots
 				string input = LanguageCache.GetButtonFormat("{0}", GameInput.Button.Slot1 + slotID);
 				return string.IsNullOrEmpty(inputName) ? "" : input;
 			}
-			if (slotID < 0 || slotID >= MaxSlots)
-			{
-				return "???";
-			}
+            return slotID < 0 || slotID >= MaxSlots ? "???" : keys[slotID];
+        }
 
-			return keys[slotID];
-		}
-
-		public static bool GetKeyDownForSlot(int slotID)
+        public static bool GetKeyDownForSlot(int slotID)
 		{
 			return slotID >= Player.quickSlotButtonsCount && slotID < Mod.MaxSlots && Input.GetKeyDown(Mod.GetInputForSlot(slotID));
 		}
