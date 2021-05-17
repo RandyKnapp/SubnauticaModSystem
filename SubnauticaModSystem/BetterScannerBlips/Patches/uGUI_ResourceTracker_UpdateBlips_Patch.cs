@@ -1,6 +1,6 @@
 ﻿using Common.Mod;
 using HarmonyLib;
-#if SUBNAUTICA
+#if SN1
 using Oculus.Newtonsoft.Json;
 #elif BELOWZERO
 using Newtonsoft.Json;
@@ -24,17 +24,6 @@ namespace BetterScannerBlips.Patches
 		private static FieldInfo Blip_gameObject;
 
 		private static bool hide = false;
-
-		private static void CustomiseBlip(GameObject blipObject, ResourceTrackerDatabase.ResourceInfo node)
-		{
-			if(node.techType == TechType.Fragment && blipObject.GetComponent<BlipIdentifier>() == null)
-			{
-				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"CustomiseBlip: Customising blip for ResourceInfo node (position=({node.position.ToString()}), techType={node.techType.AsString()}, uniqueId={node.uniqueId}");
-				BlipIdentifier blipId = blipObject.EnsureComponent<BlipIdentifier>();
-				blipId.uniqueId = node.uniqueId;
-				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"CustomiseBlip: got actual techType of {blipId.actualTechType}");
-			}
-		}
 
 		[HarmonyPrefix]
 		[HarmonyPatch("UpdateBlips")]
@@ -68,7 +57,7 @@ namespace BetterScannerBlips.Patches
 				ErrorMessage.AddDebug(string.Format("Scanner Blips Toggled: {0}", hide ? $"OFF (Press {Mod.config.ToggleKey} to show)" : "ON"));
 			}
 
-#if SUBNAUTICA
+#if SN1
 			HashSet<ResourceTracker.ResourceInfo> nodes = (HashSet<ResourceTracker.ResourceInfo>)uGUI_ResourceTracker_nodes.GetValue(__instance); 
 #elif BELOWZERO
 			HashSet<ResourceTrackerDatabase.ResourceInfo> nodes = (HashSet<ResourceTrackerDatabase.ResourceInfo>)uGUI_ResourceTracker_nodes.GetValue(__instance);
@@ -79,7 +68,7 @@ namespace BetterScannerBlips.Patches
 			Vector3 position = camera.transform.position;
 			Vector3 forward = camera.transform.forward;
 			int i = 0;
-#if SUBNAUTICA
+#if SN1
 			foreach (ResourceTracker.ResourceInfo resourceInfo in nodes)
 #elif BELOWZERO
 			foreach (ResourceTrackerDatabase.ResourceInfo resourceInfo in nodes)
@@ -90,7 +79,6 @@ namespace BetterScannerBlips.Patches
 				{
 					var blipObject = (GameObject)Blip_gameObject.GetValue(blips[i]);
 					var customBlip = blipObject.GetComponent<CustomBlip>();
-					CustomiseBlip(blipObject, resourceInfo);
 
 					customBlip.Refresh(resourceInfo);
 

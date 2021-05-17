@@ -16,6 +16,7 @@ namespace BetterScannerBlips
 	{
 		internal static Dictionary<string, GameObject> IdToGameObjectDict = new Dictionary<string, GameObject>();
 		internal static Dictionary<string, TechType> IdToTechTypeDict = new Dictionary<string, TechType>();
+		internal static Dictionary<string, string> IdToResourceNameDict = new Dictionary<string, string>();
 		internal static readonly FieldInfo uniqueIdInfo = typeof(ResourceTracker).GetField("uniqueId", BindingFlags.Instance | BindingFlags.NonPublic);
 		internal static readonly FieldInfo TechTypeInfo = typeof(ResourceTracker).GetField("techType", BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -24,17 +25,18 @@ namespace BetterScannerBlips
 		public static void PreRegister(ref ResourceTracker __instance)
 		{
 			TechType tt = (TechType)TechTypeInfo.GetValue(__instance);
-			if (tt == TechType.Fragment || __instance.overrideTechType == TechType.Fragment)
+			if (tt == TechType.Fragment || __instance.overrideTechType == TechType.Fragment) // We only need to concern ourselves with fragments
 			{
 				string uniqueId = __instance.prefabIdentifier.Id;
 				GameObject go = __instance.gameObject;
 				TechType resourceType = (go == null ? TechType.None : CraftData.GetTechType(go));
-				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"ResourceTrackerPatches.PreRegister() running on ResourceTracker with unique ID {uniqueId}, overrideTechType {__instance.overrideTechType} and techType {resourceType}");
+				//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"ResourceTrackerPatches.PreRegister() running on ResourceTracker with unique ID {uniqueId}, overrideTechType {__instance.overrideTechType} and techType {resourceType}");
 
 				if (!string.IsNullOrEmpty(uniqueId))
 				{
 					IdToGameObjectDict[uniqueId] = __instance.gameObject;
 					IdToTechTypeDict[uniqueId] = resourceType;
+					IdToResourceNameDict[uniqueId] = Language.main.Get(resourceType);
 				}
 
 				//__instance.overrideTechType = TechType.None;
@@ -46,12 +48,12 @@ namespace BetterScannerBlips
 		public static void PostRegister(ref ResourceTracker __instance)
 		{
 			TechType tt = (TechType)TechTypeInfo.GetValue(__instance);
-			if (tt == TechType.Fragment || __instance.overrideTechType == TechType.Fragment) // We only need to concern ourselves with fragments
+			if (tt == TechType.Fragment || __instance.overrideTechType == TechType.Fragment)
 			{
 				string uniqueId = __instance.prefabIdentifier.Id;
 				GameObject go = __instance.gameObject;
 				TechType resourceType = (go == null ? TechType.None : CraftData.GetTechType(go));
-				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"ResourceTrackerPatches.PostRegister() running on ResourceTracker with unique ID {uniqueId}, overrideTechType {__instance.overrideTechType} and techType {resourceType}");
+				//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"ResourceTrackerPatches.PostRegister() running on ResourceTracker with unique ID {uniqueId}, overrideTechType {__instance.overrideTechType} and techType {resourceType}");
 
 				//TechType actualTechType = CraftData.GetTechType(__instance.gameObject);
 				if (!string.IsNullOrEmpty(uniqueId))
@@ -61,6 +63,7 @@ namespace BetterScannerBlips
 						IdToGameObjectDict[uniqueId] = __instance.gameObject;
 					}
 					IdToTechTypeDict[uniqueId] = resourceType;
+					IdToResourceNameDict[uniqueId] = Language.main.Get(resourceType);
 				}
 			}
 
@@ -77,6 +80,7 @@ namespace BetterScannerBlips
 			{
 				IdToGameObjectDict.Remove(uniqueId);
 				IdToTechTypeDict.Remove(uniqueId);
+				IdToResourceNameDict.Remove(uniqueId);
 			}
 		}
 
@@ -86,7 +90,8 @@ namespace BetterScannerBlips
 			{
 				if (IdToTechTypeDict.TryGetValue(uniqueId, out TechType tt))
 				{
-					return tt;
+					if(tt != TechType.Fragment)
+						return tt;
 				}
 				else if (IdToGameObjectDict.TryGetValue(uniqueId, out GameObject go))
 				{
@@ -96,6 +101,11 @@ namespace BetterScannerBlips
 			}
 
 			return TechType.None;
+		}
+
+		public static bool TryGetResourceName(string uniqueId, out string resourceName)
+		{
+			return IdToResourceNameDict.TryGetValue(uniqueId, out resourceName);
 		}
 	}
 }

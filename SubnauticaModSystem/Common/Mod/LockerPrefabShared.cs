@@ -62,14 +62,16 @@ namespace Common.Mod
 			return icon;
 		}
 
-#if SUBNAUTICA
+#if SN1
 		internal static Text CreateText(Transform parent, Text prefab, Color color, int y, int size, string initial)
+		{
+			var text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
 #elif BELOWZERO
 		internal static TextMeshProUGUI CreateText(Transform parent, TextMeshProUGUI prefab, Color color, int y, int size, string initial)
-#endif
-		
 		{
 			var text = new GameObject("TextMeshProUGUI", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+#endif
+
 			var rt = text.rectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(rt, 120, 200);

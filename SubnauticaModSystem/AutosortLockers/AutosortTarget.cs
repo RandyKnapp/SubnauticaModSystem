@@ -699,7 +699,7 @@ namespace AutosortLockers
 
 		public static IEnumerator GetPrefabAsync(TechType basePrefab, IOut<GameObject> gameObject)
 		{
-			Logger.Log($"GetPrefabAsync() executing for basePrefab TechType.{basePrefab.AsString()}");
+			//Logger.Log($"GetPrefabAsync() executing for basePrefab TechType.{basePrefab.AsString()}");
 			CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(basePrefab);
 			yield return task;
 

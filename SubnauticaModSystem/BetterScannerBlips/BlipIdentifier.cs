@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace BetterScannerBlips
 {
-    internal class BlipIdentifier : MonoBehaviour
+    /*internal class BlipIdentifier : MonoBehaviour
     {
         // A component added to a GUI scanner blip that stores information about the actual TechType of a fragment, allowing the code to identify exactly what type of Fragment the object is
 
@@ -17,5 +17,5 @@ namespace BetterScannerBlips
                 return ResourceTrackerPatches.GetTechTypeForId(this.uniqueId);
             }
         }
-    }
+    }*/
 }

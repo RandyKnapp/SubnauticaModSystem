@@ -150,7 +150,10 @@
     <Compile Include="SaveData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mod.json">
+    <None Include="mod_BZ.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="mod_SN1.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -163,12 +166,9 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) $(GameDir)\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)mod.json $(GameDir)\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)Assets $(GameDir)\QMods\$(ProjectName)\Assets\ /q /y /i
-
-xcopy $(TargetPath) D:\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)mod.json D:\EpicGames\Subnautica\QMods\$(ProjectName)\ /q /y
-xcopy $(ProjectDir)Assets D:\EpicGames\Subnautica\QMods\$(ProjectName)\Assets\ /q /y /i</PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetPath) $(GameDir)\QMods\$(AssemblyName)\ /q /y
+copy $(ProjectDir)mod_$(Configuration).json "$(GameDir)\QMods\$(AssemblyName)\mod.json" /y
+xcopy $(ProjectDir)Assets $(GameDir)\QMods\$(AssemblyName)\Assets\ /q /y /i
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
