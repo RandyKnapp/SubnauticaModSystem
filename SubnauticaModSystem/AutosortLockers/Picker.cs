@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+#if BELOWZERO
+	using TMPro;
+#endif
 
 namespace AutosortLockers
 {
@@ -32,7 +35,11 @@ namespace AutosortLockers
 		[SerializeField]
 		private ColorPickerPageButton nextPageButton;
 		[SerializeField]
+#if SUBNAUTICA
 		private Text pageText;
+#elif BELOWZERO
+		private TextMeshProUGUI pageText;
+#endif
 		[SerializeField]
 		protected List<ColorPickerButton> buttons = new List<ColorPickerButton>();
 
@@ -171,10 +178,15 @@ namespace AutosortLockers
 
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		protected static void Create(Transform parent, Picker instance, int buttonCount)
+
+		protected static void Create(Transform parent, Picker instance, int buttonCount, GameObject lockerPrefab = null)
 		{
-			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+#if SUBNAUTICA
+			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
+#elif BELOWZERO
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
+#endif
 			textPrefab.fontSize = 16;
 			textPrefab.color = ScreenContentColor;
 

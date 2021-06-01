@@ -1,0 +1,9 @@
+{
+  "Id": "DockedVehicleStorageAccessSML",
+  "DisplayName": "Docked Vehicle Storage Access",
+  "Author": "RandyKnapp w/PrimeSonic",
+  "Version": "2.0.0",
+  "Requires": [ "SMLHelper" ],
+  "Enable": true,
+  "AssemblyName": "DockedVehicleStorageAccessSML.dll"
+}

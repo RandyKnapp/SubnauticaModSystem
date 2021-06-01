@@ -10,6 +10,12 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
 using UnityEngine;
 using UnityEngine.UI;
+#if SUBNAUTICA
+    using RecipeData = SMLHelper.V2.Crafting.TechData;
+    using Sprite = Atlas.Sprite;
+#elif BELOWZERO
+using TMPro;
+#endif
 
 namespace DockedVehicleStorageAccess
 {
@@ -34,11 +40,16 @@ namespace DockedVehicleStorageAccess
 		private StorageContainer container;
 		private SubRoot subRoot;
 		private VehicleDockingBay[] dockingBays = new VehicleDockingBay[0];
+#if SN1
 		private List<Vehicle> vehicles = new List<Vehicle>();
+#elif BZ
+		private List<Dockable> vehicles = new List<Dockable>();
+#endif
 
 		private bool transferringToAutosorter;
 		private List<Component> autosorters = new List<Component>();
 
+#if SN1
 		[SerializeField]
 		private Text textPrefab;
 		[SerializeField]
@@ -55,6 +66,24 @@ namespace DockedVehicleStorageAccess
 		private Image exosuitIcon;
 		[SerializeField]
 		private Text exosuitCountText;
+#elif BZ
+		[SerializeField]
+		private TextMeshProUGUI textPrefab;
+		[SerializeField]
+		private Image background;
+		[SerializeField]
+		private Image icon;
+		[SerializeField]
+		private TextMeshProUGUI text;
+		[SerializeField]
+		private Image seamothIcon;
+		[SerializeField]
+		private TextMeshProUGUI seamothCountText;
+		[SerializeField]
+		private Image exosuitIcon;
+		[SerializeField]
+		private TextMeshProUGUI exosuitCountText;
+#endif
 		[SerializeField]
 		private CheckboxButton enableCheckbox;
 
@@ -132,7 +161,11 @@ namespace DockedVehicleStorageAccess
 			vehicles.Clear();
 			foreach (var dockingBay in dockingBays)
 			{
+#if SN1
 				var vehicle = dockingBay.GetDockedVehicle();
+#elif BZ
+				var vehicle = dockingBay.GetDockedObject();
+#endif
 				if (vehicle != null)
 				{
 					vehicles.Add(vehicle);
@@ -160,6 +193,7 @@ namespace DockedVehicleStorageAccess
 			bool extractedAnything = false;
 			Dictionary<string, int> extractionResults = new Dictionary<string, int>();
 
+#if SN1
 			List<Vehicle> localVehicles = vehicles.ToList();
 			foreach (var vehicle in localVehicles)
 			{
@@ -167,6 +201,31 @@ namespace DockedVehicleStorageAccess
 				extractionResults[vehicleName] = 0;
 				var vehicleContainers = vehicle.gameObject.GetComponentsInChildren<StorageContainer>().Select((x) => x.container).ToList();
 				vehicleContainers.AddRange(GetSeamothStorage(vehicle));
+#elif BZ
+			foreach (Dockable dockable in vehicles)
+			{
+				if (dockable.gameObject == null)
+					continue;
+
+				string vehicleName = "";
+				NamePlate namePlate = dockable.gameObject.GetComponent<NamePlate>();
+				if (namePlate != null)
+				{
+					vehicleName = namePlate.namePlateText;
+				}
+				else
+				{
+					vehicleName = dockable.gameObject.name;
+				}
+
+				extractionResults[vehicleName] = 0;
+				List<ItemsContainer> vehicleContainers = new List<ItemsContainer>();
+				vehicleContainers.AddRange(dockable.gameObject.GetComponentsInChildren<StorageContainer>().Select((x) => x.container).ToList());
+				List<ItemsContainer> dockableContainers = GetSeamothStorage(dockable);
+				if (dockableContainers != null)
+					vehicleContainers.AddRange(dockableContainers);
+				
+#endif
 				bool couldNotAdd = false;
 				foreach (var vehicleContainer in vehicleContainers)
 				{
@@ -218,10 +277,11 @@ namespace DockedVehicleStorageAccess
 			extractingItems = false;
 		}
 
+#if SN1
 		private List<ItemsContainer> GetSeamothStorage(Vehicle seamoth)
 		{
 			var results = new List<ItemsContainer>();
-			if (seamoth is SeaMoth && seamoth.modules != null)
+			if ((seamoth is SeaMoth && seamoth.modules != null)
 			{
 				using (var e = seamoth.modules.GetEquipment())
 				{
@@ -243,6 +303,55 @@ namespace DockedVehicleStorageAccess
 			}
 			return results;
 		}
+
+#elif BZ
+		// This method appears to be flawless as-is; no exceptions seem to be getting thrown here.
+		private List<ItemsContainer> GetSeamothStorage(Dockable dockable)
+		{
+			if (dockable == null)
+			{
+				//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, $"GetSeamothStorage invoked with null dockable");
+				return null;
+			}
+
+			//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"GetSeamothStorage: running on dockable {dockable.name}; dockable.truckMotor = " + (dockable.truckMotor != null ? dockable.truckMotor.ToString() : "null"));
+			Equipment modules = null;
+			if (dockable.vehicle is SeaMoth)
+				modules = dockable.vehicle.modules;
+			else if (dockable.truckMotor != null)
+				modules = dockable.truckMotor.upgrades.modules;
+
+			if (modules != null)
+			{
+				var results = new List<ItemsContainer>();
+				int i = 0;
+				using (var e = modules.GetEquipment())
+				{
+					//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"GetSeamothStorage: start enumerator");
+					while (e.MoveNext())
+					{
+						//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"GetSeamothStorage: For dockable {dockable.name}, using module {i}");
+						var module = e.Current.Value;
+						if (module != null && module.item != null)
+						{
+							var container = module.item.GetComponent<SeamothStorageContainer>();
+							if (container != null && !container.gameObject.name.Contains("Torpedo"))
+							{
+								//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"GetSeamothStorage: For dockable {dockable.name}, found SeamothStorageContainer at index {i}");
+								results.Add(container.container);
+							}
+						}
+						i++;
+					}
+				}
+				//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"GetSeamothStorage: got {results.Count} storage containers");
+				return results;
+			}
+
+			//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"GetSeamothStorage: could not get Equipment instance");
+			return null;
+		}
+#endif
 
 		private void NotifyExtraction(Dictionary<string, int> extractionResults)
 		{
@@ -346,10 +455,16 @@ namespace DockedVehicleStorageAccess
 
 			int seamothCount = 0;
 			int exosuitCount = 0;
-			foreach (var vehicle in vehicles)
+			foreach (var dockable in vehicles)
 			{
-				seamothCount += (vehicle is SeaMoth ? 1 : 0);
+#if SN1
+				seamothCount += (dockable is SeaMoth ? 1 : 0);
+				exosuitCount += (dockable is Exosuit ? 1 : 0);
+#elif BZ
+				var vehicle = dockable.vehicle;
+				seamothCount += ((vehicle is SeaMoth || dockable.truckMotor != null) ? 1 : 0);
 				exosuitCount += (vehicle is Exosuit ? 1 : 0);
+#endif
 			}
 
 			seamothCountText.text = seamothCount > 1 ? "x" + seamothCount : "";
@@ -364,15 +479,15 @@ namespace DockedVehicleStorageAccess
 			}
 			else if (extractingItems)
 			{
-				text.text += "\n\n<color=lime>EXTRACTING...</color>";
+				text.text += "\n\n<color=green>EXTRACTING...</color>"; // The original code here was <color=lime>, but that apparently isn't valid for a TextMeshProUGUI.
 			}
 			else if (Mod.config.UseAutosortMod && autosorters.Count == 0 && transferringToAutosorter)
 			{
-				text.text += "\n\n<color=lime>TRANSFERRING...</color>";
+				text.text += "\n\n<color=green>TRANSFERRING...</color>";
 			}
 			else
 			{
-				text.text += "\n\n<color=lime>READY</color>";
+				text.text += "\n\n<color=green>READY</color>";
 			}
 		}
 
@@ -406,7 +521,9 @@ namespace DockedVehicleStorageAccess
 			background.gameObject.SetActive(true);
 			icon.gameObject.SetActive(true);
 			text.gameObject.SetActive(true);
+#if !BZ
 			text.supportRichText = true;
+#endif
 
 			background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("LockerScreen.png"));
 			icon.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Receptacle.png"));
@@ -461,6 +578,7 @@ namespace DockedVehicleStorageAccess
 				saveData = data;
 				initialized = false;
 			});
+			StopAllCoroutines();
 		}
 
 		public string GetSaveDataPath()
@@ -485,12 +603,26 @@ namespace DockedVehicleStorageAccess
 
 			public override TechCategory CategoryForPDA => TechCategory.InteriorModule;
 
+#if SN1
 			public override GameObject GetGameObject()
 			{
 				GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
 				GameObject prefab = GameObject.Instantiate(originalPrefab);
+				var storageAccess = prefab.AddComponent<VehicleStorageAccess>();
+				storageAccess.textPrefab = GameObject.Instantiate(prefab.GetComponentInChildren<Text>());
 
-				var container = prefab.GetComponent<StorageContainer>();
+#elif BZ
+			public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
+			{
+				CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.SmallLocker);
+				yield return task;
+				var smallLockerPrefab = task.GetResult();
+				GameObject prefab = GameObject.Instantiate(smallLockerPrefab);
+				var storageAccess = prefab.EnsureComponent<VehicleStorageAccess>();
+				storageAccess.textPrefab = GameObject.Instantiate(smallLockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
+#endif
+
+				var container = prefab.EnsureComponent<StorageContainer>();
 				container.width = Mod.config.LockerWidth;
 				container.height = Mod.config.LockerHeight;
 				container.container.Resize(Mod.config.LockerWidth, Mod.config.LockerHeight);
@@ -501,9 +633,6 @@ namespace DockedVehicleStorageAccess
 					meshRenderer.material.color = new Color(0, 0, 1);
 				}
 
-				var storageAccess = prefab.AddComponent<VehicleStorageAccess>();
-
-				storageAccess.textPrefab = GameObject.Instantiate(prefab.GetComponentInChildren<Text>());
 				var label = prefab.FindChild("Label");
 				DestroyImmediate(label);
 
@@ -532,12 +661,16 @@ namespace DockedVehicleStorageAccess
 
 				storageAccess.background.gameObject.SetActive(false);
 
+#if SN1
 				return prefab;
+#elif BZ
+				gameObject.Set(prefab);
+#endif
 			}
 
-			protected override TechData GetBlueprintRecipe()
+			protected override RecipeData GetBlueprintRecipe()
 			{
-				return new TechData
+				return new RecipeData
 				{
 					craftAmount = 1,
 					Ingredients =
@@ -548,7 +681,7 @@ namespace DockedVehicleStorageAccess
 				};
 			}
 
-			protected override Atlas.Sprite GetItemSprite()
+			protected override Sprite GetItemSprite()
 			{
 				return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("StorageAccess.png"));
 			}

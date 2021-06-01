@@ -1,4 +1,8 @@
-﻿using Oculus.Newtonsoft.Json;
+﻿#if SUBNAUTICA
+using Oculus.Newtonsoft.Json;
+#elif BELOWZERO
+using Newtonsoft.Json;
+#endif
 
 namespace AutosortLockers
 {

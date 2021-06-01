@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Mod;
 using Common.Utility;
+#if BELOWZERO
+	using TMPro;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,8 +32,13 @@ namespace AutosortLockers
 		private Image[] underlines = new Image[2];
 		[SerializeField]
 		private PickerCloseButton closeButton;
+#if SUBNAUTICA
 		[SerializeField]
 		private Text pageText;
+#elif BELOWZERO
+		[SerializeField]
+		private TextMeshProUGUI pageText;
+#endif
 		[SerializeField]
 		private PickerPageButton prevPageButton;
 		[SerializeField]
@@ -167,7 +175,13 @@ namespace AutosortLockers
 
 
 
-		public static AutosortTypePicker Create(Transform parent, Text textPrefab)
+		public static AutosortTypePicker Create(Transform parent,
+#if SUBNAUTICA
+			Text textPrefab
+#elif BELOWZERO
+			TextMeshProUGUI textPrefab
+#endif
+			)
 		{
 			var picker = LockerPrefabShared.CreateCanvas(parent).gameObject.AddComponent<AutosortTypePicker>();
 			picker.GetComponent<Canvas>().sortingLayerID = 0;
@@ -253,7 +267,13 @@ namespace AutosortLockers
 			return closeButton;
 		}
 
-		public static PickerButton CreatePickerButton(Transform parent, int x, int y, Text textPrefab, Action<AutosorterFilter> action, int width = 100)
+		public static PickerButton CreatePickerButton(Transform parent, int x, int y,
+#if SUBNAUTICA
+			Text textPrefab,
+#elif BELOWZERO
+			TextMeshProUGUI textPrefab,
+#endif
+			Action<AutosorterFilter> action, int width = 100)
 		{
 			var button = PickerButton.Create(parent, textPrefab, action, width);
 

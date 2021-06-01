@@ -4,6 +4,9 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+#if SUBNAUTICA
+    using Sprite = Atlas.Sprite;
+#endif
 
 namespace AutosortLockers
 {
@@ -31,13 +34,13 @@ namespace AutosortLockers
 			onClick(id);
 		}
 
-		public void Initialize(int id, Color color, bool toggled, Sprite imageSprite)
+		/*public void Initialize(int id, Color color, bool toggled, Sprite imageSprite)
 		{
-			var sprite = new Atlas.Sprite(imageSprite);
+			Sprite sprite = new Sprite(imageSprite);
 			Initialize(id, color, toggled, sprite);
-		}
+		}*/
 
-		public void Initialize(int id, Color color, bool toggled, Atlas.Sprite imageSprite)
+		public void Initialize(int id, Color color, bool toggled, Sprite imageSprite)
 		{
 			this.id = id;
 			this.toggled = toggled;

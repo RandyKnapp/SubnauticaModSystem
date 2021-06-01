@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using ProtoBuf;
 
 public class ProtobufSerializerPatcher
@@ -28,7 +28,7 @@ public class ProtobufSerializerPatcher
 		return true;
 	}
 
-	public static void Patch(HarmonyInstance instance)
+	public static void Patch(Harmony instance)
 	{
 		Type type = typeof(ProtobufSerializerPrecompiled);
 		instance.Patch(type.GetMethod("Serialize", BindingFlags.NonPublic | BindingFlags.Instance), new HarmonyMethod(typeof(ProtobufSerializerPatcher).GetMethod("Prefix_Serialize")), null);
