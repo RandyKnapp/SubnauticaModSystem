@@ -42,7 +42,6 @@ namespace AutosortLockers
 		public void Update()
 		{
 			var color = (pointerDown ? DownColor : (pointerOver ? HoverColor : UpColor));
-
 			if (image != null)
 			{
 				image.color = color;
@@ -69,20 +68,17 @@ namespace AutosortLockers
 			pointerDown = false;
 		}
 
+		/*_____________________________________________________________________________________________________*/
 
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public static ColorPickerPageButton Create(Transform parent, Color color, float iconWidth = 20)
 		{
 			var pageButton = new GameObject("ColorPickerPageButton", typeof(RectTransform));
 			var rt = pageButton.transform as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			RectTransformExtensions.SetSize(rt, iconWidth, iconWidth);
-			rt.anchoredPosition = new Vector2(0, 0);
 
 			var icon = LockerPrefabShared.CreateIcon(rt, color, 0);
+			// Size of the arrows
 			RectTransformExtensions.SetSize(icon.rectTransform, iconWidth, iconWidth);
-			icon.rectTransform.anchoredPosition = new Vector2(0, 0);
 
 			pageButton.AddComponent<BoxCollider2D>();
 

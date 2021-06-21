@@ -5,23 +5,26 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Oculus.Newtonsoft.Json;
+using Newtonsoft.Json;
+#if SUBNAUTICA
 using UnityEngine;
 using UnityEngine.UI;
+#elif BELOWZERO
+using TMPro;
+#endif
+using UnityEngine;
 
 namespace Common.Mod
 {
 	internal static class ModUtils
 	{
-		//private static FieldInfo CraftData_techMapping = typeof(CraftData).GetField("techMapping", BindingFlags.NonPublic | BindingFlags.Static);
-
-		//private static List<TechType> pickupableTypes;
 		private static MonoBehaviour coroutineObject;
 
 		public static ConfigT LoadConfig<ConfigT>(string configFilePath) where ConfigT : class, new()
 		{
 			if (!File.Exists(configFilePath))
 			{
+				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, $"Could not find config file {configFilePath}", null, true);
 				return WriteDefaultConfig<ConfigT>(configFilePath);
 			}
 
@@ -31,6 +34,7 @@ namespace Common.Mod
 
 				if (string.IsNullOrEmpty(serialilzedConfig))
 				{
+					QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, $"Config file {configFilePath} empty; creating default config", null, true);
 					return new ConfigT();
 				}
 
@@ -38,13 +42,15 @@ namespace Common.Mod
 
 				if (config == null)
 				{
+					QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, $"Failed to deserialise configuration object from file {configFilePath}", null, true);
 					config = new ConfigT();
 				}
 
 				return config;
 			}
-			catch
+			catch (Exception e)
 			{
+				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, $"Exception caught while parsing config file {configFilePath}", e, true);
 				return WriteDefaultConfig<ConfigT>(configFilePath);
 			}
 		}
@@ -64,13 +70,16 @@ namespace Common.Mod
 			var value = (T)fieldInfo.GetValue(config, null);
 			if (value.CompareTo(min) < 0 || value.CompareTo(max) > 0)
 			{
-				Console.WriteLine("Config value for '{0}' ({1}) was not valid. Must be between {2} and {3}",
-					field,
-					value,
-					min,
-					max
-				);
-				fieldInfo.SetValue(config, fieldInfo.GetValue(defaultConfig, null), null);
+				string errorString = $"Config value for '{field}' ({value}) was not valid. Must be between {min} and {max}";
+
+				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, errorString, null, true);
+				var newValue = value;
+				if (value.CompareTo(min) < 0)
+					newValue = min;
+				else if (value.CompareTo(max) > 0)
+					newValue = max;
+
+				fieldInfo.SetValue(config, newValue, null);
 			}
 		}
 
@@ -213,22 +222,29 @@ namespace Common.Mod
 				Console.WriteLine(indent + "  " + property.Name + " : " + property.GetValue(obj, new object[] { }));
 			}
 		}
-
+#if SUBNAUTICA
 		public static Text GetTextPrefab()
 		{
-			Text prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
-			if (prefab == null)
-			{
-				return null;
-			}
-
+			Text prefab = null;
+			prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
+#elif BELOWZERO
+		public static TextMeshProUGUI GetTextPrefab()
+		{
+			TextMeshProUGUI prefab = GameObject.FindObjectOfType<HandReticle>().progressText;
+#endif
 			return prefab;
 		}
 
+#if SUBNAUTICA
 		public static Text InstantiateNewText(string name, Transform parent)
 		{
 			Text text = GameObject.Instantiate(GetTextPrefab());
-			text.gameObject.layer = parent.gameObject.layer;
+#elif BELOWZERO
+		public static TextMeshProUGUI InstantiateNewText(string name, Transform parent)
+		{
+			TextMeshProUGUI text = GameObject.Instantiate(GetTextPrefab());
+#endif
+		text.gameObject.layer = parent.gameObject.layer;
 			text.gameObject.name = name;
 			text.transform.SetParent(parent, false);
 			text.transform.localScale = new Vector3(1, 1, 1);
@@ -263,36 +279,6 @@ namespace Common.Mod
 			}
 			return found;
 		}
-
-		/*
-		public static List<TechType> GetPickupableTechTypes()
-		{
-			if (pickupableTypes != null)
-			{
-				return pickupableTypes;
-			}
-
-			Console.WriteLine("[ModUtils] Initialize Pickupable Types");
-			pickupableTypes = new List<TechType>();
-
-			var techMapping = (Dictionary<TechType, string>)CraftData_techMapping.GetValue(null);
-			foreach (var entry in techMapping)
-			{
-				var techType = entry.Key;
-				var prefab = CraftData.GetPrefabForTechType(techType);
-				if (prefab != null)
-				{
-					if (prefab.GetComponent<Pickupable>() != null)
-					{
-						Console.WriteLine("" + techType);
-						pickupableTypes.Add(techType);
-					}
-				}
-			}
-			
-			return pickupableTypes;
-		}
-		*/
 
 		public static T CopyComponent<T>(T original, GameObject destination) where T : Component
 		{
