@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
+#if SUBNAUTICA
 using UnityEngine.UI;
+#elif BELOWZERO
+using TMPro;
+#endif
 
 namespace AutosortLockers
 {
@@ -14,8 +15,11 @@ namespace AutosortLockers
 
 		public RectTransform rectTransform;
 		public Action<string> onModified = delegate { };
+#if SUBNAUTICA
 		public Text text;
-
+#elif BELOWZERO
+		public TextMeshProUGUI text;
+#endif
 		[SerializeField]
 		private SaveDataEntry target;
 
@@ -24,12 +28,16 @@ namespace AutosortLockers
 			rectTransform = transform as RectTransform;
 		}
 
+#if SUBNAUTICA
 		private void Initialize(SaveDataEntry data, Text textPrefab)
+#elif BELOWZERO
+		private void Initialize(SaveDataEntry data, TextMeshProUGUI textPrefab)
+#endif
 		{
 			target = data;
 
 			text = GameObject.Instantiate(textPrefab);
-			text.fontSize = 16;
+			text.fontSize = 12;
 			text.gameObject.name = "Text";
 			text.rectTransform.SetParent(transform, false);
 			RectTransformExtensions.SetSize(text.rectTransform, 140, 50);
@@ -65,17 +73,25 @@ namespace AutosortLockers
 			if (hover)
 			{
 				HandReticle.main.SetIcon(HandReticle.IconType.Rename);
+#if SUBNAUTICA
 				HandReticle.main.SetInteractTextRaw("Set Locker Label", "");
+#elif BELOWZERO
+				HandReticle.main.SetTextRaw(HandReticle.TextType.Hand, "Set Locker Label");
+#endif
 			}
 		}
 
+		/*__________________________________________________________________________________________________________*/
 
-
-		///////////////////////////////////////////////////////////////////////////////////////////
-		public static LabelController Create(SaveDataEntry data, Transform parent)
+		public static LabelController Create(SaveDataEntry data, Transform parent, GameObject lockerPrefab = null)
 		{
-			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+#if SUBNAUTICA
+			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
+#elif BELOWZERO
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
+#endif
+
 			textPrefab.fontSize = 12;
 			textPrefab.color = CustomizeScreen.ScreenContentColor;
 

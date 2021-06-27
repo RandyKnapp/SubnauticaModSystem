@@ -33,12 +33,6 @@ namespace AutosortLockers
 
 		public void Initialize(int id, Color color, bool toggled, Sprite imageSprite)
 		{
-			var sprite = new Atlas.Sprite(imageSprite);
-			Initialize(id, color, toggled, sprite);
-		}
-
-		public void Initialize(int id, Color color, bool toggled, Atlas.Sprite imageSprite)
-		{
 			this.id = id;
 			this.toggled = toggled;
 
@@ -74,9 +68,8 @@ namespace AutosortLockers
 			pointerOver = false;
 		}
 
+		/*_____________________________________________________________________________________________________*/
 
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public static ColorPickerButton Create(Transform parent, float width, float iconWidth)
 		{
 			var button = new GameObject("ColorPickerButton", typeof(RectTransform)).AddComponent<ColorPickerButton>();

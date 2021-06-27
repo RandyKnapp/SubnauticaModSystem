@@ -4,15 +4,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Common.Mod;
-using Harmony;
-using Oculus.Newtonsoft.Json;
+using HarmonyLib;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace AutosortLockers
 {
 	internal static class Mod
 	{
+#if SUBNAUTICA
 		public const string SaveDataFilename = "AutosortLockerSMLSaveData.json";
+#elif BELOWZERO
+		public const string SaveDataFilename = "AutosortLockerSMLBZSaveData.json";
+#endif
+
+		private const int MAX_LOCKER_WIDTH = 8;
+		private const int MAX_LOCKER_HEIGHT = 10;
 		public static Config config;
 		public static SaveData saveData;
 		public static List<Color> colors = new List<Color>();
@@ -25,13 +32,16 @@ namespace AutosortLockers
 		public static void Patch(string modDirectory = null)
 		{
 			Logger.Log("Starting patching");
-
-			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
+#if SUBNAUTICA
+            Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
+#elif BELOWZERO
+			Mod.modDirectory = modDirectory ?? "SubnauticaZero_Data/Managed";
+#endif
 			LoadConfig();
 
 			AddBuildables();
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.AutosortLockersSML.mod");
+			Harmony harmony = new Harmony("com.AutosortLockersSML.mod");
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");
@@ -58,7 +68,7 @@ namespace AutosortLockers
 			config = ModUtils.LoadConfig<Config>(GetModPath() + "/config.json");
 			ValidateConfig();
 
-			var serializedColors = JsonConvert.DeserializeObject<List<SerializableColor>>(File.ReadAllText(GetAssetPath("colors.json")));
+			List<SerializableColor> serializedColors = JsonConvert.DeserializeObject<List<SerializableColor>>(File.ReadAllText(GetAssetPath("colors.json")));
 			foreach (var sColor in serializedColors)
 			{
 				colors.Add(sColor.ToColor());
@@ -70,10 +80,18 @@ namespace AutosortLockers
 			Config defaultConfig = new Config();
 
 			ModUtils.ValidateConfigValue("SortInterval", 0.1f, 10.0f, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("AutosorterWidth", 1, 8, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("AutosorterHeight", 1, 10, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("ReceptacleWidth", 1, 8, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("ReceptacleHeight", 1, 10, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("ShowLabel", true, false, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("AutosorterWidth", 1, MAX_LOCKER_WIDTH, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("AutosorterHeight", 1, MAX_LOCKER_HEIGHT, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("ReceptacleWidth", 1, MAX_LOCKER_WIDTH, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("ReceptacleHeight", 1, MAX_LOCKER_HEIGHT, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("StandingReceptacleWidth", 1, MAX_LOCKER_WIDTH, ref config, ref defaultConfig);
+			ModUtils.ValidateConfigValue("StandingReceptacleHeight", 1, MAX_LOCKER_HEIGHT, ref config, ref defaultConfig);
+#if SUBNAUTICA
+			ModUtils.ValidateConfigValue("GameVersion", '1', '1', ref config, ref defaultConfig);
+#elif BELOWZERO
+			ModUtils.ValidateConfigValue("GameVersion", '2', '2', ref config, ref defaultConfig);
+#endif
 		}
 
 		public static SaveData GetSaveData()
