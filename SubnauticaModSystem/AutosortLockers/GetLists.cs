@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+#if SN
+using Oculus.Newtonsoft.Json;
+using Oculus.Newtonsoft.Json.Linq;
+#elif BZ
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+#endif
 
 namespace AutosortLockers
 {

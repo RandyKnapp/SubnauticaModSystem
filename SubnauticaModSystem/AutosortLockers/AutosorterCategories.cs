@@ -1,6 +1,6 @@
-﻿#if SUBNAUTICA
-using Newtonsoft.Json;
-#elif BELOWZERO
+﻿#if SN
+using Oculus.Newtonsoft.Json;
+#elif BZ
 using Newtonsoft.Json;
 #endif
 using System;

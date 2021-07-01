@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-#if SUBNAUTICA
+#if SN
 using UnityEngine.UI;
-#elif BELOWZERO
+#elif BZ
 using TMPro;
 #endif
 
@@ -15,9 +15,9 @@ namespace AutosortLockers
 
 		public RectTransform rectTransform;
 		public Action<string> onModified = delegate { };
-#if SUBNAUTICA
+#if SN
 		public Text text;
-#elif BELOWZERO
+#elif BZ
 		public TextMeshProUGUI text;
 #endif
 		[SerializeField]
@@ -28,9 +28,9 @@ namespace AutosortLockers
 			rectTransform = transform as RectTransform;
 		}
 
-#if SUBNAUTICA
+#if SN
 		private void Initialize(SaveDataEntry data, Text textPrefab)
-#elif BELOWZERO
+#elif BZ
 		private void Initialize(SaveDataEntry data, TextMeshProUGUI textPrefab)
 #endif
 		{
@@ -73,9 +73,9 @@ namespace AutosortLockers
 			if (hover)
 			{
 				HandReticle.main.SetIcon(HandReticle.IconType.Rename);
-#if SUBNAUTICA
+#if SN
 				HandReticle.main.SetInteractTextRaw("Set Locker Label", "");
-#elif BELOWZERO
+#elif BZ
 				HandReticle.main.SetTextRaw(HandReticle.TextType.Hand, "Set Locker Label");
 #endif
 			}
@@ -85,10 +85,10 @@ namespace AutosortLockers
 
 		public static LabelController Create(SaveDataEntry data, Transform parent, GameObject lockerPrefab = null)
 		{
-#if SUBNAUTICA
+#if SN
 			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
-#elif BELOWZERO
+#elif BZ
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
 #endif
 

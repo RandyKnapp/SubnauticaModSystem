@@ -5,16 +5,20 @@ using System.IO;
 using System.Reflection;
 using Common.Mod;
 using HarmonyLib;
+#if SN
+using Oculus.Newtonsoft.Json;
+#elif BZ
 using Newtonsoft.Json;
+#endif
 using UnityEngine;
 
 namespace AutosortLockers
 {
 	internal static class Mod
 	{
-#if SUBNAUTICA
+#if SN
 		public const string SaveDataFilename = "AutosortLockerSMLSaveData.json";
-#elif BELOWZERO
+#elif BZ
 		public const string SaveDataFilename = "AutosortLockerSMLBZSaveData.json";
 #endif
 
@@ -32,9 +36,9 @@ namespace AutosortLockers
 		public static void Patch(string modDirectory = null)
 		{
 			Logger.Log("Starting patching");
-#if SUBNAUTICA
-            Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
-#elif BELOWZERO
+#if SN
+      Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
+#elif BZ
 			Mod.modDirectory = modDirectory ?? "SubnauticaZero_Data/Managed";
 #endif
 			LoadConfig();
@@ -80,16 +84,15 @@ namespace AutosortLockers
 			Config defaultConfig = new Config();
 
 			ModUtils.ValidateConfigValue("SortInterval", 0.1f, 10.0f, ref config, ref defaultConfig);
-			ModUtils.ValidateConfigValue("ShowLabel", true, false, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("AutosorterWidth", 1, MAX_LOCKER_WIDTH, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("AutosorterHeight", 1, MAX_LOCKER_HEIGHT, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("ReceptacleWidth", 1, MAX_LOCKER_WIDTH, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("ReceptacleHeight", 1, MAX_LOCKER_HEIGHT, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("StandingReceptacleWidth", 1, MAX_LOCKER_WIDTH, ref config, ref defaultConfig);
 			ModUtils.ValidateConfigValue("StandingReceptacleHeight", 1, MAX_LOCKER_HEIGHT, ref config, ref defaultConfig);
-#if SUBNAUTICA
+#if SN
 			ModUtils.ValidateConfigValue("GameVersion", '1', '1', ref config, ref defaultConfig);
-#elif BELOWZERO
+#elif BZ
 			ModUtils.ValidateConfigValue("GameVersion", '2', '2', ref config, ref defaultConfig);
 #endif
 		}

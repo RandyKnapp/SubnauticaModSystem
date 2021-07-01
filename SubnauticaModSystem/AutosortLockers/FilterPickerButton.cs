@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-#if BELOWZERO
+#if BZ
 using TMPro;
 #endif
 
@@ -25,9 +25,9 @@ namespace AutosortLockers
 		[SerializeField]
 		private Image background;
 		[SerializeField]
-#if SUBNAUTICA
+#if SN
 		private Text text;
-#elif BELOWZERO
+#elif BZ
 		private TextMeshProUGUI text;
 #endif
 
@@ -102,9 +102,9 @@ namespace AutosortLockers
 		}
 
 		public static FilterPickerButton Create(Transform parent,
-#if SUBNAUTICA
+#if SN
 			Text textPrefab,
-#elif BELOWZERO
+#elif BZ
 			TextMeshProUGUI textPrefab,
 #endif
 			// The size of the picker buttons, only the height is useful, the width is overwritten later
@@ -120,10 +120,10 @@ namespace AutosortLockers
 			button.background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("MainMenuStandardSprite.png"), new RectOffset(Slice, Slice, Slice, Slice));
 			button.background.color = upColor;
 			button.background.type = Image.Type.Sliced;
-#if SUBNAUTICA
+#if SN
 			button.text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
 			button.text.alignment = TextAnchor.MiddleCenter;
-#elif BELOWZERO
+#elif BZ
 			button.text = new GameObject("TextMeshProUGUI", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
 #endif
 			RectTransformExtensions.SetParams(button.text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), button.transform);
@@ -132,9 +132,13 @@ namespace AutosortLockers
 			button.text.font = textPrefab.font;
 			button.text.fontSize = 10;
 			button.onClick += action;
+#if SN
+			button.text.alignment = TextAnchor.MiddleLeft;
+#elif BZ
 			button.text.alignment = TextAlignmentOptions.Left;
 			// Set the left margin
 			button.text.margin = new Vector4(5.0f, 0.0f);
+#endif
 
 			return button;
 		}

@@ -46,8 +46,14 @@ namespace AutosortLockers
 			}
 
 			highlight.sprite = hoverSprite;
+#if SN
+			imageSprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Circle.png"), new Vector2(0.5f, 0.5f));
+			var sprite = new Atlas.Sprite(imageSprite);
 
+			image.sprite = sprite;
+#elif BZ
 			image.sprite = imageSprite;
+#endif
 			image.color = color;
 		}
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
-#if SUBNAUTICA
+#if SN
 using UnityEngine.UI;
-#elif BELOWZERO
+#elif BZ
 using TMPro;
 #endif
 
@@ -20,13 +20,13 @@ namespace AutosortLockers
 		{
 			rectTransform = transform as RectTransform;
 		}
-#if SUBNAUTICA
+#if SN
 		private void Initialize(Text textPrefab, string label)
 		{
 			activeButton = ColoredIconButton.Create(transform, CustomizeScreen.ScreenContentColor, textPrefab, label, 100, 15);
 			activeButton.text.supportRichText = true;
 		}
-#elif BELOWZERO
+#elif BZ
 		private void Initialize(TextMeshProUGUI textPrefab, string label)
 		{
 			activeButton = ColoredIconButton.Create(transform, CustomizeScreen.ScreenContentColor, textPrefab, label, 100, 15);
@@ -53,10 +53,10 @@ namespace AutosortLockers
 
 		public static ColorSetting Create(Transform parent, string label, GameObject lockerPrefab = null)
 		{
-#if SUBNAUTICA
+#if SN
 			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
-#elif BELOWZERO
+#elif BZ
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
 #endif
 			

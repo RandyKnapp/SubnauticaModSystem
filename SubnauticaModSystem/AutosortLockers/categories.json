@@ -1,0 +1,118 @@
+{
+  "Categories": [
+    {
+      "CategoryID": "batteries",
+      "CategoryDescription": "Batteries",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "baseupgrades",
+      "CategoryDescription": "Base Upgrades",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "crystalline",
+      "CategoryDescription": "Crystalline Materials",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "decorations",
+      "CategoryDescription": "Decorations",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "eggs",
+      "CategoryDescription": "Eggs",
+      "UseInMod": false,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "electronics",
+      "CategoryDescription": "Electronics",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "equipment",
+      "CategoryDescription": "Equipment",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "fish",
+      "CategoryDescription": "Fish",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "food",
+      "CategoryDescription": "Food",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "metals",
+      "CategoryDescription": "Metals",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "natural",
+      "CategoryDescription": "Natural Materials",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "none",
+      "CategoryDescription": "None",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "plantsandseeds",
+      "CategoryDescription": "Plants & Seeds",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "synthetics",
+      "CategoryDescription": "Synthetic Materials",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "tablets",
+      "CategoryDescription": "Precursor Tablets",
+      "UseInMod": true,
+      "GameVersion": "1"
+    },
+    {
+      "CategoryID": "tools",
+      "CategoryDescription": "Hand Held Tools",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "torpedoes",
+      "CategoryDescription": "Torpedoes",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "vehicleupgrades",
+      "CategoryDescription": "Vehicle Upgrades",
+      "UseInMod": true,
+      "GameVersion": "A"
+    },
+    {
+      "CategoryID": "water",
+      "CategoryDescription": "Water",
+      "UseInMod": true,
+      "GameVersion": "A"
+    }
+  ]
+}

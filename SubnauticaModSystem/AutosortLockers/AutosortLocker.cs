@@ -7,9 +7,8 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
 using UnityEngine;
 using UnityEngine.UI;
-#if SUBNAUTICA
-//using RecipeData = SMLHelper.V2.Crafting.RecipeData;
-#elif BELOWZERO
+#if SN
+#elif BZ
 using TMPro;
 #endif
 
@@ -33,12 +32,12 @@ namespace AutosortLockers
 		private Image background;
 		[SerializeField]
 		private Image icon;
-#if SUBNAUTICA
+#if SN
 		[SerializeField]
 		private Text text;
 		[SerializeField]
 		private Text sortingText;
-#elif BELOWZERO
+#elif BZ
 		[SerializeField]
 		private TextMeshProUGUI text;
 		[SerializeField]
@@ -312,10 +311,9 @@ namespace AutosortLockers
 			}
 
 			public override TechGroup GroupForPDA => TechGroup.InteriorModules;
-
 			public override TechCategory CategoryForPDA => TechCategory.InteriorModule;
 
-#if SUBNAUTICA
+#if SN
 			public override GameObject GetGameObject()
 			{
 				GameObject originalPrefab = CraftData.GetPrefabForTechType(TechType.SmallLocker);
@@ -334,16 +332,18 @@ namespace AutosortLockers
 
 				var prefabText = prefab.GetComponentInChildren<Text>();
 				var label = prefab.FindChild("Label");
+				label.SetActive(false);
 				DestroyImmediate(label);
 
 				var autoSorter = prefab.AddComponent<AutosortLocker>();
 
 				var canvas = LockerPrefabShared.CreateCanvas(prefab.transform);
-				autoSorter.background = LockerPrefabShared.CreateBackground(canvas.transform);
+				autoSorter.background = LockerPrefabShared.CreateBackground(canvas.transform, autoSorter.name);
 				autoSorter.icon = LockerPrefabShared.CreateIcon(autoSorter.background.transform, MainColor, 40);
-				autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, 0, 14, "Autosorter");
+				autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, -4, 14, "Autosorter", "Autosorter");
+				autoSorter.text.rectTransform.anchoredPosition += new Vector2(23, 0);
 
-				autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, -120, 12, "Sorting...");
+				autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, -120, 12, "Sorting...", "Autosorter");
 				autoSorter.sortingText.alignment = TextAnchor.UpperCenter;
 
 				autoSorter.background.gameObject.SetActive(false);
@@ -373,9 +373,9 @@ namespace AutosortLockers
 					meshRenderer.material.color = new Color(1, 0, 0);
 				}
 
-#if SUBNAUTICA
+#if SN
 				var prefabText = prefab.GetComponentInChildren<Text>();
-#elif BELOWZERO
+#elif BZ
 				var prefabText = prefab.GetComponentInChildren<TextMeshProUGUI>();
 #endif
 				var label = prefab.FindChild("Label");
@@ -388,12 +388,12 @@ namespace AutosortLockers
 				autoSorter.icon = LockerPrefabShared.CreateIcon(autoSorter.background.transform, MainColor, 40);
 				// The first number is the vertical position, the second number is the font
 				autoSorter.text = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, 0, 14, "Autosorter", "Autosorter");
-				autoSorter.text.rectTransform.anchoredPosition += new Vector2(20, 0);
+				autoSorter.text.rectTransform.anchoredPosition += new Vector2(19, 0);
 
 				autoSorter.sortingText = LockerPrefabShared.CreateText(autoSorter.background.transform, prefabText, MainColor, -120, 18, "Sorting...", "Autosorter");
-#if SUBNAUTICA
+#if SN
 				autoSorter.sortingText.alignment = TextAnchor.UpperCenter;
-#elif BELOWZERO
+#elif BZ
 				autoSorter.sortingText.alignment = TextAlignmentOptions.Top;
 #endif
 
@@ -406,6 +406,30 @@ namespace AutosortLockers
 				yield break;
 			}
 
+#if SN
+			protected override TechData GetBlueprintRecipe()
+			{
+				return new TechData
+				{
+					craftAmount = 1,
+					Ingredients = Mod.config.EasyBuild
+						? new List<Ingredient>
+						{
+												new Ingredient(TechType.Titanium, 2)
+						}
+						: new List<Ingredient>
+						{
+												new Ingredient(TechType.Titanium, 2),
+												new Ingredient(TechType.ComputerChip, 1),
+												new Ingredient(TechType.AluminumOxide, 2)
+						}
+				};
+			}
+			protected override Atlas.Sprite GetItemSprite()
+			{
+				return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("AutosortLocker.png"));
+			}
+#elif BZ
 			protected override RecipeData GetBlueprintRecipe()
 			{
 				return new RecipeData()
@@ -429,6 +453,7 @@ namespace AutosortLockers
 			{
 				return SMLHelper.V2.Utility.ImageUtils.LoadSpriteFromFile(Mod.GetAssetPath("AutosortLocker.png"));
 			}
+#endif
 		}
 
 		/*_____________________________________________________________________________________________________*/

@@ -1,14 +1,11 @@
 ﻿using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace AutosortLockers
 {
+#if BZ
 	[HarmonyPatch(typeof(CanvasLink))]
     public class CanvasLink_Patch
     {
@@ -40,4 +37,5 @@ namespace AutosortLockers
 			return true;
 		}
 	}
+#endif
 }

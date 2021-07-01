@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-#if BELOWZERO
+#if BZ
 using TMPro;
 #endif
 
@@ -23,7 +23,7 @@ namespace AutosortLockers
 		[SerializeField]
 		private ConfigureButton exitButton;
 		[SerializeField]
-		private ColorSetting labelColorSetting;
+		private ColorSetting labelSetting;
 		[SerializeField]
 		private ColorSetting iconColorSetting;
 		[SerializeField]
@@ -56,9 +56,6 @@ namespace AutosortLockers
 			label.onModified += OnLabelChanged;
 			exitButton.onClick += OnExitButtonClicked;
 
-			labelColorSetting.SetInitialValue(saveData.LabelColor.ToColor());
-			labelColorSetting.onClick += OnLabelColorSettingClicked;
-
 			iconColorSetting.SetInitialValue(saveData.IconColor.ToColor());
 			iconColorSetting.onClick += OnIconColorSettingClicked;
 
@@ -75,7 +72,6 @@ namespace AutosortLockers
 		private void SetColor(SaveDataEntry saveData)
 		{
 			label.text.color = saveData.LabelColor.ToColor();
-			labelColorSetting.SetColor(saveData.LabelColor.ToColor());
 			iconColorSetting.SetColor(saveData.IconColor.ToColor());
 			textColorSetting.SetColor(saveData.OtherTextColor.ToColor());
 			buttonsColorSetting.SetColor(saveData.ButtonsColor.ToColor());
@@ -152,7 +148,7 @@ namespace AutosortLockers
 			SetColor(target);
 		}
 
-		
+
 		private void OnLockerColorSettingClicked()
 		{
 			colorPicker.Initialize(target.LockerColor.ToColor());
@@ -172,12 +168,13 @@ namespace AutosortLockers
 
 		public static CustomizeScreen Create(Transform parent, SaveDataEntry data, GameObject lockerPrefab = null)
 		{
-#if SUBNAUTICA
+#if SN
 			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
-#elif BELOWZERO
+#elif BZ
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
 #endif
+
 			textPrefab.fontSize = 12;
 			textPrefab.color = CustomizeScreen.ScreenContentColor;
 			// The color picker settings 
@@ -188,12 +185,24 @@ namespace AutosortLockers
 			screen.background = new GameObject("Background").AddComponent<Image>();
 			screen.background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("CustomizeScreen.png"));
 			// 1st = 2nd = 3rd = horizontal 4th = vertical positon of the color settings
-			RectTransformExtensions.SetParams(screen.background.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.41f, 0.4f), screen.transform);
+			if (parent.parent.parent.name == "AutosortTarget(Clone)")
+			{
+				RectTransformExtensions.SetParams(screen.background.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.52f, 0.4f), screen.transform);
+			}
+			else // Standing locker
+			{
+				RectTransformExtensions.SetParams(screen.background.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.41f, 0.4f), screen.transform);
+			}
 			RectTransformExtensions.SetSize(screen.background.rectTransform, 114, 220);
 
 			screen.label = LabelController.Create(data, screen.background.transform, lockerPrefab);
-			// The position of the LOCKER label 
-			screen.label.rectTransform.anchoredPosition = new Vector2(0, 70);
+			// The position of the Label, it is hidden sort of so this pushes it off the background 
+			screen.label.rectTransform.anchoredPosition = new Vector2(0, 300);
+			// Set the fontsize to zero to make it disappear, DestroyImmediate(label) doesn't work
+			screen.label.text.fontSize = 0;
+			screen.labelSetting = ColorSetting.Create(screen.background.transform, "Color Settings", lockerPrefab);
+			// The position of the Color Settings string 
+			screen.labelSetting.rectTransform.anchoredPosition = new Vector2(-10, 70);
 			// The position of the close (X) button on the color settings
 			screen.exitButton = ConfigureButton.Create(screen.background.transform, Color.white, 0, -85);
 
@@ -210,9 +219,6 @@ namespace AutosortLockers
 
 			screen.buttonsColorSetting = ColorSetting.Create(screen.background.transform, "Misc Color", lockerPrefab);
 			screen.buttonsColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 3));
-
-			screen.labelColorSetting = ColorSetting.Create(screen.background.transform, "Label Color", lockerPrefab);
-			screen.labelColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 4));
 
 			screen.colorPicker = ColorPicker.Create(screen.background.transform, lockerPrefab);
 			screen.colorPicker.gameObject.SetActive(false);

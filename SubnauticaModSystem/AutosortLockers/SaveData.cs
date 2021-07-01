@@ -10,7 +10,7 @@ namespace AutosortLockers
 	{
 		public string Id;
 		public List<AutosorterFilter> FilterData = new List<AutosorterFilter>();
-		public string Label = "Locker";
+		public string Label = "";
 		public SerializableColor LabelColor = Color.white;
 		public SerializableColor IconColor = Color.white;
 		public SerializableColor OtherTextColor = Color.white;

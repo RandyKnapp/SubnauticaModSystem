@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-#if BELOWZERO
+#if BZ
 using TMPro;
 #endif
 
@@ -131,10 +131,10 @@ namespace AutosortLockers
 
 		protected static void Create(Transform parent, Picker colorGrid, int buttonCount, GameObject lockerPrefab = null)
 		{
-#if SUBNAUTICA
+#if SN
 			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
-#elif BELOWZERO
+#elif BZ
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
 #endif
 

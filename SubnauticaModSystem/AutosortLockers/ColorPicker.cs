@@ -15,6 +15,7 @@ namespace AutosortLockers
 			base.Initialize();
 
 			var sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Circle.png"), new Vector2(0.5f, 0.5f));
+
 			for (int i = 0; i < buttons.Count; ++i)
 			{
 				var button = buttons[i];

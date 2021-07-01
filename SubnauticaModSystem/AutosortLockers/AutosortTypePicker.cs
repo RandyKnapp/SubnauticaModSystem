@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Mod;
 using Common.Utility;
-#if BELOWZERO
+#if BZ
 using TMPro;
 #endif
 using UnityEngine;
@@ -32,10 +32,10 @@ namespace AutosortLockers
 		private Image[] underlines = new Image[2];
 		[SerializeField]
 		private PickerCloseButton closeButton;
-#if SUBNAUTICA
+#if SN
 		[SerializeField]
 		private Text pageText;
-#elif BELOWZERO
+#elif BZ
 		[SerializeField]
 		private TextMeshProUGUI pageText;
 #endif
@@ -172,9 +172,9 @@ namespace AutosortLockers
 		}
 
 		public static AutosortTypePicker Create(Transform parent,
-#if SUBNAUTICA
+#if SN
 			Text textPrefab
-#elif BELOWZERO
+#elif BZ
 			TextMeshProUGUI textPrefab
 #endif
 			)
@@ -186,18 +186,18 @@ namespace AutosortLockers
 
 			var t = picker.transform;
 			t.localEulerAngles = new Vector3(0, 180, 0);
-			//t.localPosition = new Vector3(0, 0, 0.4f);
+			t.localPosition = new Vector3(0, 0, 0.4f);
 
 			picker.background = LockerPrefabShared.CreateBackground(picker.transform, picker.name);
-			//picker.background.color = new Color(0, 0, 0, 1);
-			//picker.background.type = Image.Type.Simple;
+			picker.background.color = new Color(0, 0, 0, 1);
+			picker.background.type = Image.Type.Simple;
 
 			// Set the size of the Item Picker background - first number width, second height
-			RectTransformExtensions.SetSize(picker.background.rectTransform, 250, 295);
+			RectTransformExtensions.SetSize(picker.background.rectTransform, 260, 295);
 			// Position the Item Picker on the locker
 			if (parent.name.Contains("Standing(Clone)"))
 			{
-				picker.background.rectTransform.anchoredPosition = new Vector2(0.2f, 0.0f);
+				picker.background.rectTransform.anchoredPosition = new Vector2(0.13f, 0.0f);
 			}
 			else
 			{
@@ -208,24 +208,24 @@ namespace AutosortLockers
 			// Top position of the Item Picker list, but not the Item and Category buttons
 			int startY = 88;
 			// Offset from the center of Selected and Available Item columns in the picker
-			int centOff = 58;
+			int centOff = 61;
 			// The horizontal offset of the Current Filters, Category, and Items
 			// and the Close and Page buttons
 			int horzOff = 120;
 
-			picker.underlines[0] = CreateUnderline(picker.background.transform, centOff);
-			picker.underlines[1] = CreateUnderline(picker.background.transform, -centOff);
+			picker.underlines[0] = CreateUnderline(picker.background.transform, 60);
+			picker.underlines[1] = CreateUnderline(picker.background.transform, -63);
 
 			// The first number is the vertical pos of the Item button, the second number is the font size
-			var currentText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, horzOff, 12, "Current Filters", "Picker");
+			var currentText = LockerPrefabShared.CreateText(picker.background.transform, textPrefab, Color.white, 120, 12, "Current Filters", "Picker");
 			// The vertical position of the "Current Filters" text in the picker is set by the second number
-			currentText.rectTransform.anchoredPosition = new Vector2(-33, 27);
-			// The width of the Categories button is the last number, x - is the horizontal pos, the next number is the vertical pos
-			picker.categoriesTabButton = CreatePickerButton(picker.background.transform, 35, horzOff, textPrefab, picker.OnCategoriesButtonClick, 65);
+			currentText.rectTransform.anchoredPosition = new Vector2(-45, 28);
+			// The width of the Categories button is the last number, horzOff is the horizontal pos, the next number is the vertical pos
+			picker.categoriesTabButton = CreatePickerButton(picker.background.transform, 38, horzOff, textPrefab, picker.OnCategoriesButtonClick, 67);
 			// Prefix with space until I can find the button instance to override
 			picker.categoriesTabButton.Override(" Categories", true);
 			// The width of the Items button is the last number, x - is the horizontal pos, the next number is the vertical pos
-			picker.itemsTabButton = CreatePickerButton(picker.background.transform, 92, horzOff, textPrefab, picker.OnItemsButtonClick, 40);
+			picker.itemsTabButton = CreatePickerButton(picker.background.transform, 96, horzOff, textPrefab, picker.OnItemsButtonClick, 42);
 			// Prefix with space until I can find the button instance to override
 			picker.itemsTabButton.Override(" Items", false);
 			// The smaller number is the font size, the vertical position is overwritten below
@@ -266,7 +266,7 @@ namespace AutosortLockers
 		{
 			var underline = new GameObject("Underline", typeof(RectTransform)).AddComponent<Image>();
 			RectTransformExtensions.SetParams(underline.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
-			RectTransformExtensions.SetSize(underline.rectTransform, 272 / 3, 78 / 3);
+			RectTransformExtensions.SetSize(underline.rectTransform, 90.6f, 26.0f);
 			underline.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("TitleUnderline.png"));
 			// Vertical position of Underline
 			underline.rectTransform.anchoredPosition = new Vector2(x, 115);
@@ -289,13 +289,13 @@ namespace AutosortLockers
 		}
 
 		public static FilterPickerButton CreatePickerButton(Transform parent, int x, int y,
-#if SUBNAUTICA
+#if SN
 			Text textPrefab,
-#elif BELOWZERO
+#elif BZ
 			TextMeshProUGUI textPrefab,
 #endif
 			// The width of the picker button is set here
-			Action<AutosorterFilter> action, int width = 110)
+			Action<AutosorterFilter> action, int width = 116)
 		{
 			var button = FilterPickerButton.Create(parent, textPrefab, action, width);
 

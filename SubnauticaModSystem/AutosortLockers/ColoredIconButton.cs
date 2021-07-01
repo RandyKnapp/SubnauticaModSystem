@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-#if BELOWZERO
+#if BZ
 using TMPro;
 #endif
 
@@ -23,9 +23,9 @@ namespace AutosortLockers
 		public Color imageColor;
 
 		public Image image;
-#if SUBNAUTICA
+#if SN
 		public Text text;
-#elif BELOWZERO
+#elif BZ
 		public TextMeshProUGUI text;
 #endif
 		public Action onClick = delegate { };
@@ -94,9 +94,9 @@ namespace AutosortLockers
 		/*_____________________________________________________________________________________________________*/
 
 		public static ColoredIconButton Create(Transform parent, Color color,
-#if SUBNAUTICA
+#if SN
 			Text textPrefab = null,
-#elif BELOWZERO
+#elif BZ
 			TextMeshProUGUI textPrefab = null,
 #endif
 			string label = "", float width = 100, float iconWidth = 20)
@@ -111,9 +111,9 @@ namespace AutosortLockers
 			RectTransformExtensions.SetSize(checkbox.rectTransform, iconWidth, iconWidth);
 			checkbox.rectTransform.anchoredPosition = new Vector2(textPrefab != null ? - width / 2 + 10 : 0, 0);
 
-#if SUBNAUTICA
+#if SN
 			Text text = null;
-#elif BELOWZERO
+#elif BZ
 			TextMeshProUGUI text = null;
 #endif
 
@@ -123,9 +123,9 @@ namespace AutosortLockers
 				text = LockerPrefabShared.CreateText(rt, textPrefab, color, 0, 10, label, "Label");
 				RectTransformExtensions.SetSize(text.rectTransform, width - 20 - spacing, 20);
 				text.rectTransform.anchoredPosition = new Vector2(10 + spacing, 0);
-#if SUBNAUTICA
+#if SN
 				text.alignment = TextAnchor.MiddleLeft;
-#elif BELOWZERO
+#elif BZ
 				text.alignment = TextAlignmentOptions.MidlineLeft;
 #endif
 			}
