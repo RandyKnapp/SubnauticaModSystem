@@ -1,12 +1,12 @@
 ﻿using Common.Mod;
 using Common.Utility;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+#if BZ
+using TMPro;
+#endif
 
 namespace AutosortLockers
 {
@@ -23,7 +23,11 @@ namespace AutosortLockers
 		public Color imageColor;
 
 		public Image image;
+#if SN
 		public Text text;
+#elif BZ
+		public TextMeshProUGUI text;
+#endif
 		public Action onClick = delegate { };
 
 		private Color imageDisabledColor;
@@ -87,9 +91,15 @@ namespace AutosortLockers
 			pointerDown = false;
 		}
 
+		/*_____________________________________________________________________________________________________*/
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		public static ColoredIconButton Create(Transform parent, Color color, Text textPrefab = null, string label = "", float width = 100, float iconWidth = 20)
+		public static ColoredIconButton Create(Transform parent, Color color,
+#if SN
+			Text textPrefab = null,
+#elif BZ
+			TextMeshProUGUI textPrefab = null,
+#endif
+			string label = "", float width = 100, float iconWidth = 20)
 		{
 			var checkboxButton = new GameObject("Checkbox", typeof(RectTransform));
 			var rt = checkboxButton.transform as RectTransform;
@@ -101,14 +111,23 @@ namespace AutosortLockers
 			RectTransformExtensions.SetSize(checkbox.rectTransform, iconWidth, iconWidth);
 			checkbox.rectTransform.anchoredPosition = new Vector2(textPrefab != null ? - width / 2 + 10 : 0, 0);
 
+#if SN
 			Text text = null;
+#elif BZ
+			TextMeshProUGUI text = null;
+#endif
+
 			if (textPrefab != null)
 			{
 				var spacing = 5;
-				text = LockerPrefabShared.CreateText(rt, textPrefab, color, 0, 10, label);
+				text = LockerPrefabShared.CreateText(rt, textPrefab, color, 0, 10, label, "Label");
 				RectTransformExtensions.SetSize(text.rectTransform, width - 20 - spacing, 20);
 				text.rectTransform.anchoredPosition = new Vector2(10 + spacing, 0);
+#if SN
 				text.alignment = TextAnchor.MiddleLeft;
+#elif BZ
+				text.alignment = TextAlignmentOptions.MidlineLeft;
+#endif
 			}
 
 			checkboxButton.AddComponent<BoxCollider2D>();

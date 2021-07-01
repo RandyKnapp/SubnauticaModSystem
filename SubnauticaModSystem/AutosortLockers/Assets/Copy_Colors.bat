@@ -1,0 +1,2 @@
+xcopy /y /u colors.json D:\SteamLibrary\steamapps\common\Subnautica\QMods\AutosortLockersSML\Assets\colors.json
+xcopy /y /u colors.json D:\SteamLibrary\steamapps\common\SubnauticaZero\QMods\AutosortLockersSML\Assets\colors.json
