@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace BetterScannerBlips
 {
-	static class Mod
+	public static class Mod
 	{
 		public static Config config;
 

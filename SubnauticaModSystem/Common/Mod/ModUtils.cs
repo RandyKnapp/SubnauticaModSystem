@@ -5,12 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-#if SN1
 using Oculus.Newtonsoft.Json;
-#elif BELOWZERO
-using Newtonsoft.Json;
-using TMPro;
-#endif
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,7 +22,6 @@ namespace Common.Mod
 		{
 			if (!File.Exists(configFilePath))
 			{
-				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, $"Could not find config file {configFilePath}", null, true);
 				return WriteDefaultConfig<ConfigT>(configFilePath);
 			}
 
@@ -37,7 +31,6 @@ namespace Common.Mod
 
 				if (string.IsNullOrEmpty(serialilzedConfig))
 				{
-					QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, $"Config file {configFilePath} empty; creating default config", null, true);
 					return new ConfigT();
 				}
 
@@ -45,15 +38,13 @@ namespace Common.Mod
 
 				if (config == null)
 				{
-					QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, $"Failed to deserialise configuration object from file {configFilePath}", null, true);
 					config = new ConfigT();
 				}
 
 				return config;
 			}
-			catch (Exception e)
+			catch
 			{
-				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, $"Exception caught while parsing config file {configFilePath}", e, true);
 				return WriteDefaultConfig<ConfigT>(configFilePath);
 			}
 		}
@@ -73,16 +64,13 @@ namespace Common.Mod
 			var value = (T)fieldInfo.GetValue(config, null);
 			if (value.CompareTo(min) < 0 || value.CompareTo(max) > 0)
 			{
-				string errorString = $"Config value for '{field}' ({value}) was not valid. Must be between {min} and {max}";
-				//Console.WriteLine(string);
-				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Error, errorString, null, true);
-				var newValue = value;
-				if (value.CompareTo(min) < 0)
-					newValue = min;
-				else if (value.CompareTo(max) > 0)
-					newValue = max;
-				//fieldInfo.SetValue(config, fieldInfo.GetValue(defaultConfig, null), null);
-				fieldInfo.SetValue(config, newValue, null);
+				Console.WriteLine("Config value for '{0}' ({1}) was not valid. Must be between {2} and {3}",
+					field,
+					value,
+					min,
+					max
+				);
+				fieldInfo.SetValue(config, fieldInfo.GetValue(defaultConfig, null), null);
 			}
 		}
 
@@ -226,33 +214,20 @@ namespace Common.Mod
 			}
 		}
 
-#if SN1
 		public static Text GetTextPrefab()
 		{
-			Text prefab = null;
-			prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
-#elif BELOWZERO
-		public static TextMeshProUGUI GetTextPrefab()
-		{
-			TextMeshProUGUI prefab = GameObject.FindObjectOfType<HandReticle>().progressText;
-#endif
-			/*if (prefab == null)
+			Text prefab = GameObject.FindObjectOfType<HandReticle>().interactPrimaryText;
+			if (prefab == null)
 			{
 				return null;
-			}*/
+			}
 
 			return prefab;
 		}
 
-#if SN1
 		public static Text InstantiateNewText(string name, Transform parent)
 		{
 			Text text = GameObject.Instantiate(GetTextPrefab());
-#elif BZ
-		public static TextMeshProUGUI InstantiateNewText(string name, Transform parent)
-		{
-			TextMeshProUGUI text = GameObject.Instantiate(GetTextPrefab());
-#endif
 			text.gameObject.layer = parent.gameObject.layer;
 			text.gameObject.name = name;
 			text.transform.SetParent(parent, false);

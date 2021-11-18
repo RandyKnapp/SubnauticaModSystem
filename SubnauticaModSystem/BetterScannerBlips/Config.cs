@@ -3,7 +3,7 @@
 namespace BetterScannerBlips
 {
 	[Serializable]
-	class Config
+	public class Config
 	{
 		public float MaxRange = 200.0f;
 		public float MaxRangeScale = 0.2f;

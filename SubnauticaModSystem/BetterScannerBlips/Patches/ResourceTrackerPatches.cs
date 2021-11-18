@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using QLogger = QModManager.Utility.Logger;
+using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +10,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UWE;
 
-namespace BetterScannerBlips
+
+namespace BetterScannerBlips.Patches
 {
 	[HarmonyPatch(typeof(ResourceTracker))]
 	public class ResourceTrackerPatches
@@ -20,29 +22,46 @@ namespace BetterScannerBlips
 		internal static readonly FieldInfo uniqueIdInfo = typeof(ResourceTracker).GetField("uniqueId", BindingFlags.Instance | BindingFlags.NonPublic);
 		internal static readonly FieldInfo TechTypeInfo = typeof(ResourceTracker).GetField("techType", BindingFlags.Instance | BindingFlags.NonPublic);
 
+/*
+		[HarmonyPatch(nameof(ResourceTracker.Start))]
+		[HarmonyPrefix]
+		public static bool PreStart(ref ResourceTracker __instance)
+		{
+			if (__instance.overrideTechType == TechType.Fragment)
+			{
+				__instance.overrideTechType = TechType.None;
+			}
+
+			return true;
+		}
+*/
+
 		[HarmonyPatch("Register")]
 		[HarmonyPrefix]
 		public static void PreRegister(ref ResourceTracker __instance)
 		{
-			TechType tt = (TechType)TechTypeInfo.GetValue(__instance);
-			if (tt == TechType.Fragment || __instance.overrideTechType == TechType.Fragment) // We only need to concern ourselves with fragments
+			GameObject go = __instance.gameObject;
+			TechType gameTechType = (go != null ? CraftData.GetTechType(go) : TechType.None);
+			//TechType tt = ((__instance.overrideTechType == TechType.None) ? gameTechType : __instance.overrideTechType);
+			if (gameTechType == TechType.Fragment || __instance.overrideTechType == TechType.Fragment) // We only need to concern ourselves with fragments
 			{
 				string uniqueId = __instance.prefabIdentifier.Id;
-				GameObject go = __instance.gameObject;
-				TechType resourceType = (go == null ? TechType.None : CraftData.GetTechType(go));
-				//QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"ResourceTrackerPatches.PreRegister() running on ResourceTracker with unique ID {uniqueId}, overrideTechType {__instance.overrideTechType} and techType {resourceType}");
+				QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug, $"ResourceTrackerPatches.PreRegister() running on ResourceTracker with unique ID {uniqueId}, overrideTechType {__instance.overrideTechType} and techType {gameTechType}");
 
 				if (!string.IsNullOrEmpty(uniqueId))
 				{
+					string resourceName = Language.main.Get(gameTechType);
+					QLogger.Log(QLogger.Level.Debug, $"Registering resource names for fragment:\nUnique ID: {uniqueId}\nTechType: {gameTechType.AsString()}\nResource name: {resourceName}");
 					IdToGameObjectDict[uniqueId] = __instance.gameObject;
-					IdToTechTypeDict[uniqueId] = resourceType;
-					IdToResourceNameDict[uniqueId] = Language.main.Get(resourceType);
+					IdToTechTypeDict[uniqueId] = gameTechType;
+					IdToResourceNameDict[uniqueId] = resourceName;
 				}
 
 				//__instance.overrideTechType = TechType.None;
 			}
 		}
 
+		/*
 		[HarmonyPatch("Register")]
 		[HarmonyPostfix]
 		public static void PostRegister(ref ResourceTracker __instance)
@@ -70,6 +89,7 @@ namespace BetterScannerBlips
 			//if((TechType)TechTypeInfo.GetValue(__instance) == TechType.Fragment)
 			//CoroutineHost.StartCoroutine(RegisterResourceTrackerCoroutine(__instance));
 		}
+		*/
 
 		[HarmonyPatch("Unregister")]
 		[HarmonyPostfix]
@@ -105,7 +125,11 @@ namespace BetterScannerBlips
 
 		public static bool TryGetResourceName(string uniqueId, out string resourceName)
 		{
-			return IdToResourceNameDict.TryGetValue(uniqueId, out resourceName);
+			bool result = IdToResourceNameDict.TryGetValue(uniqueId, out resourceName);
+
+			QLogger.Log(QLogger.Level.Debug, $"Attempting to retrieve resource name for unique ID '{uniqueId}': Result is {result}" + (result ? $", retrieved string '{resourceName}'" : ""));
+
+			return result;
 		}
 	}
 }

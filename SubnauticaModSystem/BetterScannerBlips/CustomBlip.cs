@@ -1,4 +1,5 @@
-﻿using Common.Utility;
+﻿using BetterScannerBlips.Patches;
+using Common.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,49 +74,11 @@ namespace BetterScannerBlips
 				var vectorToPlayer = Player.main.transform.position - target.position;
 				var distance = vectorToPlayer.magnitude;
 
-				if(this.techType == TechType.None)
-					this.techType = target.techType;
-				if (this.techType == TechType.Fragment || string.IsNullOrEmpty(resourceName))
+				if (techType != target.techType || target.techType == TechType.Fragment)
 				{
-					/*blipId = gameObject.EnsureComponent<BlipIdentifier>();
-					blipId.uniqueId = target.uniqueId;*/
-					if (this.techType == TechType.Fragment)
-					{
-						/*thisTechType = blipId.actualTechType;
-						if (thisTechType == TechType.None || thisTechType == TechType.Fragment)
-						{
-							QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug,
-								$"CustomBlip.Refresh(): Could not get TechType from BlipIdentifier, attempting to use ResourceTrackerPatches.GetTechTypeForId");
-							thisTechType = ResourceTrackerPatches.GetTechTypeForId(target.uniqueId);
-							QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug,
-								$"CustomBlip.Refresh(): Got TechType of {techType.AsString()}");
-						}*/
-						if (lastID != target.uniqueId)
-						{
-							/*QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug,
-								$"CustomBlip.Refresh(): Last unique ID {lastID} does not match current unique ID {target.uniqueId}; Attempting to establish resourceName for ResourceInfo, which includes TechType {thisTechType}");
-							*/
-							if (!ResourceTrackerPatches.TryGetResourceName(target.uniqueId, out resourceName))
-							{
-								resourceName = Language.main.Get(this.techType);
-								lastID = target.uniqueId;
-								/*QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug,
-									$"For unique ID {target.uniqueId}, got TechType {thisTechType.AsString()} and resourceName '{resourceName}'");*/
-							}
-						}
-					}
-
-					/*if (thisTechType != TechType.None && thisTechType != TechType.Fragment)
-					{
-
-						techType = thisTechType;
-						resourceName = Language.main.Get(thisTechType);
-						lastID = target.uniqueId;
-						QModManager.Utility.Logger.Log(QModManager.Utility.Logger.Level.Debug,
-							$"For unique ID {target.uniqueId}, got TechType {thisTechType.AsString()} and resourceName '{resourceName}'");
-					}*/
-					else
-						resourceName = Language.main.Get(target.techType);
+					techType = target.techType;
+					if(!ResourceTrackerPatches.TryGetResourceName(target.uniqueId, out resourceName))
+						resourceName = Language.main.Get(techType);
 				}
 
 				RefreshColor(distance);
