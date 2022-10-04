@@ -1,0 +1,55 @@
+﻿using SMLHelper.V2.Json;
+using SMLHelper.V2.Options.Attributes;
+using UnityEngine;
+
+namespace AdvancedHighlighting
+{
+  [Menu("Advanced Highlighting", SaveOn = MenuAttribute.SaveEvents.ChangeValue)]
+  public class IngameConfigMenu : ConfigFile
+  {
+    public IngameConfigMenu() : base("config") { }
+
+    [Toggle("Pickupable Items", Tooltip = "Highlight Pickupable Items.", Order = 1)]
+    public bool Pickupable = true;
+
+    [Choice("Pickupable Color", Tooltip = "Select a color for Pickupable Items.", Options = new string[] {"<color=#e0115f>Red</color>", "16dcff"})]
+    public string PickupableColor = "fffb16";
+
+    [Toggle("Pickupable Creatures", Tooltip = "Highlight Pickupable Creatures.", Order = 2)]
+    public bool PickupableCreatures = true;
+
+    [Toggle("Pickupable Resources", Tooltip = "Highlight Pickupable Resource.", Order = 3)]
+    public bool PickupableResource = true;
+
+    [Toggle("Breakable Resources", Tooltip = "Highlight Breakable Resource.", Order = 4)]
+    public bool BreakableResource = true;
+
+    [Toggle("Interactable Items", Tooltip = "Highlight Interactable Items.", Order = 5)]
+    public bool Interactables = true;
+
+    [Toggle("Story Items", Tooltip = "Highlight Story Items.", Order = 6)]
+    public bool StoryItems = true;
+
+    [Toggle("Jukebox Disks", Tooltip = "Highlight Jukebox Disks.", Order = 7)]
+    public bool JukeboxDisk = true;
+
+    [Toggle("Sealed Doors", Tooltip = "Highlight Sealed Doors.", Order = 8)]
+    public bool SealedDoor = true;
+
+    [Toggle("Grown Plants", Tooltip = "Highlight Grown Plants.", Order = 9)]
+    public bool GrownPlant = true;
+
+    [Toggle("Bladder Fish", Tooltip = "Highlight Bladder Fish.", Order = 10)]
+    public bool Bladderfish = true;
+
+    [Toggle("Creature Eggs", Tooltip = "Highlight Creature Eggs.", Order = 11)]
+    public bool CreatureEgg = true;
+
+    [Toggle("Base Ladders", Tooltip = "Highlight Base Ladders.", Order = 12)]
+    public bool BaseLadder = true;
+
+    [Toggle("Laser CutObjects", Tooltip = "Highlight Sealed Doors.", Order = 13)]
+    public bool LaserCutObject = true;
+
+   }
+}
