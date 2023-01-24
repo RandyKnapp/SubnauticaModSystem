@@ -1,112 +1,105 @@
-﻿using System.Reflection;
+﻿using JetBrains.Annotations;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MoreQuickSlots
 {
 	public class GameController : MonoBehaviour
 	{
-		private static FieldInfo uGUI_QuickSlots_icons = typeof(uGUI_QuickSlots).GetField("icons", BindingFlags.NonPublic | BindingFlags.Instance);
+		private uGUI_QuickSlots _quickSlots;
+		private bool _tryAddLabels;
 
-		private uGUI_QuickSlots quickSlots;
-		private bool tryAddLabels;
-
-		private void Awake()
+		[UsedImplicitly]
+        public void Awake()
 		{
-			Logger.Log("GameController Added");
-			quickSlots = GetComponent<uGUI_QuickSlots>();
+			_quickSlots = GetComponent<uGUI_QuickSlots>();
 		}
 
-		private void OnDestroy()
+		[UsedImplicitly]
+        public void Update()
 		{
-			Logger.Log("GameController Destroyed");
-		}
-
-		private void Update()
-		{
-			if (!uGUI_SceneLoading.IsLoadingScreenFinished || uGUI.main == null || uGUI.main.loading.IsLoading)
-			{
+			if (uGUI.main == null || uGUI.main.loading.isLoading)
 				return;
-			}
 
 			if (CanSetQuickSlots())
 			{
-				for (int i = Player.quickSlotButtonsCount; i < Mod.config.SlotCount; ++i)
+				for (var i = Player.quickSlotButtonsCount; i < MoreQuickSlots.SlotCount.Value; ++i)
 				{
-					if (Mod.GetKeyDownForSlot(i))
+					if (MoreQuickSlots.GetKeyDownForSlot(i))
 					{
 						SelectQuickSlot(i);
 					}
 				}
 			}
 
-			if (tryAddLabels)
+			if (_tryAddLabels)
 			{
-				AddHotkeyLabels(quickSlots);
+				AddHotkeyLabels(_quickSlots);
 			}
 		}
 
-		private bool CanSetQuickSlots()
+		private static bool CanSetQuickSlots()
 		{
 			if (Inventory.main == null)
 			{
 				return false;
 			}
 
-			bool isIntroActive = IntroVignette.isIntroActive;
+            var isIntroActive = EscapePod.main.IsPlayingIntroCinematic();
 			if (isIntroActive)
 			{
 				return false;
 			}
 
-			Player player = Player.main;
+			var player = Player.main;
 			return player != null && player.GetMode() != Player.Mode.Piloting && player.GetCanItemBeUsed();
 		}
 		
-		private void SelectQuickSlot(int slotID)
+		private static void SelectQuickSlot(int slotID)
 		{
 			Inventory.main.quickSlots.SlotKeyDown(slotID);
 		}
 
 		public void AddHotkeyLabels(uGUI_QuickSlots instance)
 		{
-			if (instance == null || !Mod.config.ShowInputText)
+			if (instance == null || !MoreQuickSlots.ShowInputText.Value)
 			{
-				tryAddLabels = true;
+				_tryAddLabels = true;
 				return;
 			}
 
-			uGUI_ItemIcon[] icons = (uGUI_ItemIcon[])uGUI_QuickSlots_icons.GetValue(instance);
+            var icons = instance.icons;
 			if (icons == null || icons.Length == 0)
 			{
-				tryAddLabels = true;
+				_tryAddLabels = true;
 				return;
 			}
 
-			Text textPrefab = GetTextPrefab();
+			var textPrefab = GetTextPrefab();
 			if (textPrefab == null)
 			{
-				tryAddLabels = true;
+				_tryAddLabels = true;
 				return;
 			}
 
-			for (int i = 0; i < icons.Length; ++i)
+			for (var i = 0; i < icons.Length; ++i)
 			{
-				uGUI_ItemIcon icon = icons[i];
-				var text = CreateNewText(textPrefab, icon.transform, Mod.GetInputForSlot(i), i);
+				var icon = icons[i];
+                var inputText = MoreQuickSlots.GetInputForSlot(i);
+				CreateNewText(textPrefab, icon.transform, $"<color=#ADF8FFFF>{inputText}</color>", i);
 			}
-			tryAddLabels = false;
+			_tryAddLabels = false;
 		}
 
-		private static Text GetTextPrefab()
+		private static TextMeshProUGUI GetTextPrefab()
 		{
-			var prefabObject = GameObject.FindObjectOfType<HandReticle>();
+			var prefabObject = FindObjectOfType<HandReticle>();
 			if (prefabObject == null)
 			{
 				return null;
 			}
 
-			Text prefab = prefabObject.interactPrimaryText;
+            var prefab = prefabObject.compTextHand;
 			if (prefab == null)
 			{
 				return null;
@@ -115,9 +108,9 @@ namespace MoreQuickSlots
 			return prefab;
 		}
 
-		private static Text CreateNewText(Text prefab, Transform parent, string newText, int index = -1)
+		private static void CreateNewText(TextMeshProUGUI prefab, Transform parent, string newText, int index = -1)
 		{
-			Text text = GameObject.Instantiate(prefab);
+			var text = Instantiate(prefab);
 			text.gameObject.layer = parent.gameObject.layer;
 			text.gameObject.name = "QuickSlotText" + (index >= 0 ? index.ToString() : "");
 			text.transform.SetParent(parent, false);
@@ -130,10 +123,8 @@ namespace MoreQuickSlots
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 100);
 			text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100);
 			text.rectTransform.anchoredPosition = new Vector3(0, -36);
-			text.alignment = TextAnchor.MiddleCenter;
+            text.alignment = TextAlignmentOptions.Center;
 			text.raycastTarget = false;
-
-			return text;
 		}
 	}
 }

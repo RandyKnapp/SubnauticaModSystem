@@ -2,17 +2,15 @@
 
 namespace MoreQuickSlots.Patches
 {
-	[HarmonyPatch(typeof(uGUI_QuickSlots))]
-	[HarmonyPatch("Init")]
-	class uGUI_QuickSlots_Init_Patch
+	[HarmonyPatch(typeof(uGUI_QuickSlots), nameof(uGUI_QuickSlots.Init))]
+	public static class uGUI_QuickSlots_Init_Patch
 	{
-		private static void Postfix(uGUI_QuickSlots __instance)
+		public static void Postfix(uGUI_QuickSlots __instance)
 		{
-			Logger.Log("QuickSlots Init");
 			InstantiateGameController(__instance);
 		}
 
-		private static void InstantiateGameController(uGUI_QuickSlots instance)
+        public static void InstantiateGameController(uGUI_QuickSlots instance)
 		{
 			var controller = instance.gameObject.GetComponent<GameController>();
 			if (controller == null)

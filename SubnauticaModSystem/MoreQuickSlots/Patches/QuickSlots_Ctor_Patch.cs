@@ -4,17 +4,16 @@ using UnityEngine;
 
 namespace MoreQuickSlots.Patches
 {
-	[HarmonyPatch(typeof(QuickSlots), MethodType.Constructor)]
-	[HarmonyPatch(new Type[] { typeof(GameObject), typeof(Transform), typeof(Transform), typeof(Inventory), typeof(Transform), typeof(int) })]
-	class QuickSlots_Ctor_Patch
+	[HarmonyPatch(typeof(QuickSlots), MethodType.Constructor, new Type[] { typeof(GameObject), typeof(Transform), typeof(Transform), typeof(Inventory), typeof(Transform), typeof(int) })]
+	public static class QuickSlots_Ctor_Patch
 	{
 		[HarmonyPrefix]
-		static void Prefix(ref int slotCount, ref string[] ___slotNames)
+		public static void Prefix(ref int slotCount, ref string[] ___slotNames)
 		{
-			slotCount = Mod.config.SlotCount;
+			slotCount = MoreQuickSlots.SlotCount.Value;
 
-			string[] newSlotNames = new string[slotCount];
-			for (int i = 0; i < slotCount; ++i)
+			var newSlotNames = new string[slotCount];
+			for (var i = 0; i < slotCount; ++i)
 			{
 				newSlotNames[i] = "QuickSlot" + i;
 			}
