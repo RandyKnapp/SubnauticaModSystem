@@ -61,15 +61,6 @@ namespace AutosortLockers.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Build an auto-sorter locker and containers to hold sorted items.
-        /// </summary>
-        internal static string desc {
-            get {
-                return ResourceManager.GetString("desc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to AutosortLockers.
         /// </summary>
         internal static string title {

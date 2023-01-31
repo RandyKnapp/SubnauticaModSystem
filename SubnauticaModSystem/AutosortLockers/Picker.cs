@@ -2,10 +2,11 @@
 using Common.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+#if BZ
+using TMPro;
+#endif
 
 namespace AutosortLockers
 {
@@ -28,12 +29,6 @@ namespace AutosortLockers
 		[SerializeField]
 		private Image background;
 		[SerializeField]
-		private ColorPickerPageButton prevPageButton;
-		[SerializeField]
-		private ColorPickerPageButton nextPageButton;
-		[SerializeField]
-		private Text pageText;
-		[SerializeField]
 		protected List<ColorPickerButton> buttons = new List<ColorPickerButton>();
 
 		private void Awake()
@@ -43,61 +38,25 @@ namespace AutosortLockers
 
 		public virtual void Initialize()
 		{
-			bool firstInitialize = false;
-			if (background.sprite == null)
-			{
-				background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("PickerBackground.png"), new RectOffset(100, 100, 100, 100));
-				firstInitialize = true;
-			}
-
-			int pages = GetPageCount();
-
 			int rows = Mathf.CeilToInt(ButtonsPerPage / (float)ButtonsPerRow);
 			float StartX = -(Spacing * (ButtonsPerRow - 1) / 2.0f);
-			float StartY = (Spacing * ((rows - 0.5f) / 2.0f)) + 10;
+			float StartY = (Spacing * ((rows - 0.5f) / 2.0f));
 			for (int i = 0; i < this.buttons.Count; ++i)
 			{
 				var button = this.buttons[i];
 				int page = i / ButtonsPerPage;
 				int row = (i / ButtonsPerRow) % (ButtonsPerPage / ButtonsPerRow);
 				int col = i % ButtonsPerRow;
-				button.rectTransform.anchoredPosition = new Vector2(StartX + (Spacing * col), StartY - (row * Spacing));
+				button.rectTransform.anchoredPosition = new Vector2(StartX + (Spacing * col), StartY - (row * Spacing) - 3);
 				button.onClick += OnClick;
 				button.gameObject.SetActive(page == 0);
 				button.toggled = false;
 			}
-
-			prevPageButton.Initialize("Left.png", Color.white);
-			nextPageButton.Initialize("Right.png", Color.white);
-
-			var paginationY = -Spacing * rows / 2.0f;
-			(prevPageButton.transform as RectTransform).anchoredPosition = new Vector2(-20, paginationY);
-			(nextPageButton.transform as RectTransform).anchoredPosition = new Vector2(20, paginationY);
-			pageText.rectTransform.anchoredPosition = new Vector2(0, paginationY);
-
-			if (firstInitialize)
-			{
-				prevPageButton.onClick += OnPrevPage;
-				nextPageButton.onClick += OnNextPage;
-			}
-
-			page = 0;
-			//prevPageButton.gameObject.SetActive(pages > 1);
-			//nextPageButton.gameObject.SetActive(pages > 1);
-			//pageText.gameObject.SetActive(pages > 1);
-
-			UpdateText();
 		}
 
 		private int GetPageCount()
 		{
 			return Mathf.CeilToInt((float)buttons.Count / ButtonsPerPage);
-		}
-
-		private void UpdateText()
-		{
-			int pages = GetPageCount();
-			pageText.text = (page + 1) + "/" + pages;
 		}
 
 		private void OnPrevPage()
@@ -114,6 +73,7 @@ namespace AutosortLockers
 		{
 			int pages = GetPageCount();
 			page = newPage;
+
 			if (page < 0)
 			{
 				page = pages - 1;
@@ -129,7 +89,6 @@ namespace AutosortLockers
 				int buttonPage = i / ButtonsPerPage;
 				button.gameObject.SetActive(page == buttonPage);
 			}
-			UpdateText();
 		}
 
 		protected void OnClick(int index)
@@ -168,40 +127,39 @@ namespace AutosortLockers
 			gameObject.SetActive(false);
 		}
 
+		/*__________________________________________________________________________________________________________*/
 
-
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		protected static void Create(Transform parent, Picker instance, int buttonCount)
+		protected static void Create(Transform parent, Picker colorGrid, int buttonCount, GameObject lockerPrefab = null)
 		{
-			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+#if SN
+			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
-			textPrefab.fontSize = 16;
+#elif BZ
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
+#endif
+
+			textPrefab.fontSize = 12;
 			textPrefab.color = ScreenContentColor;
 
-			float padding = 30;
-			float width = padding + instance.ButtonSize + ((instance.ButtonsPerRow - 1) * instance.Spacing) - 20;
-			int rowCount = Mathf.CeilToInt(instance.ButtonsPerPage / (float)instance.ButtonsPerRow);
-			float height = padding + instance.ButtonSize + ((rowCount - 0.5f) * instance.Spacing);
+			float padding = 10;
+			float width = padding + colorGrid.ButtonSize + (colorGrid.ButtonsPerRow * colorGrid.Spacing);
+			int rowCount = Mathf.CeilToInt(colorGrid.ButtonsPerPage / (float)colorGrid.ButtonsPerRow);
+			float height = 20 + colorGrid.ButtonSize + ((rowCount - 0.5f) * colorGrid.Spacing);
 
-			var rt = instance.rectTransform;
-			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			var rt = colorGrid.rectTransform;
+			// The first Vector2 positions the colorGrid on the locker horz / vert.
+			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.6f), parent);
 			RectTransformExtensions.SetSize(rt, width, height);
 
-			instance.background = instance.gameObject.AddComponent<Image>();
-			instance.background.type = Image.Type.Sliced;
-			instance.background.rectTransform.anchoredPosition = new Vector2(0, -20);
-
-			instance.pageText = LockerPrefabShared.CreateText(instance.transform, textPrefab, Color.white, 0, 10, "X/X");
-			RectTransformExtensions.SetSize(instance.pageText.rectTransform, 30, 20);
+			colorGrid.background = colorGrid.gameObject.AddComponent<Image>();
+			colorGrid.background.sprite = ImageUtils.LoadSprite(Mod.GetAssetPath("Background.png"));
+			colorGrid.background.color = new Color(1, 1, 1);
 
 			for (int i = 0; i < buttonCount; ++i)
 			{
-				var colorButton = ColorPickerButton.Create(instance.transform, instance.ButtonSize, instance.ButtonSize * 0.7f);
-				instance.buttons.Add(colorButton);
+				var colorButton = ColorPickerButton.Create(colorGrid.transform, colorGrid.ButtonSize, colorGrid.ButtonSize * 0.7f);
+				colorGrid.buttons.Add(colorButton);
 			}
-
-			instance.prevPageButton = ColorPickerPageButton.Create(instance.transform, Color.white);
-			instance.nextPageButton = ColorPickerPageButton.Create(instance.transform, Color.white);
 		}
 	}
 }

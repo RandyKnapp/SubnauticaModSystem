@@ -1,22 +1,21 @@
 ﻿using Common.Utility;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+#if BZ
+using TMPro;
+#endif
 
 namespace AutosortLockers
 {
-	public class PickerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+	public class FilterPickerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 	{
 		private static readonly Color inactiveColor = new Color(0.7f, 0.7f, 0.7f, 0.5f);
 		private static readonly Color inactiveHoverColor = new Color(0.7f, 0.7f, 0.7f, 1f);
 		private static readonly Color upColor = new Color(0.9f, 0.9f, 0.9f, 1f);
 		private static readonly Color hoverColor = new Color(1, 1, 1);
 		private const int Slice = 70;
-
 		private bool hover;
 		private bool tabActive = true;
 		private AutosorterFilter filter;
@@ -26,7 +25,11 @@ namespace AutosortLockers
 		[SerializeField]
 		private Image background;
 		[SerializeField]
+#if SN
 		private Text text;
+#elif BZ
+		private TextMeshProUGUI text;
+#endif
 
 		public AutosorterFilter GetTechType()
 		{
@@ -46,10 +49,11 @@ namespace AutosortLockers
 			filter = value;
 			if (filter != null)
 			{
+				// The filter text displayed on the lockers
 				text.text = filter.GetString();
+
 				SetBackgroundSprite(filter.IsCategory());
 			}
-
 			gameObject.SetActive(filter != null);
 		}
 
@@ -97,30 +101,44 @@ namespace AutosortLockers
 			tabActive = active;
 		}
 
-
-
-		public static PickerButton Create(Transform parent, Text textPrefab, Action<AutosorterFilter> action, int width = 100, int height = 18)
+		public static FilterPickerButton Create(Transform parent,
+#if SN
+			Text textPrefab,
+#elif BZ
+			TextMeshProUGUI textPrefab,
+#endif
+			// The size of the picker buttons, only the height is useful, the width is overwritten later
+			Action<AutosorterFilter> action, int width = 100, int height = 18)
 		{
-			var button = new GameObject("PickerButton", typeof(RectTransform)).AddComponent<PickerButton>();
+			var button = new GameObject("PickerButton", typeof(RectTransform)).AddComponent<FilterPickerButton>();
 			button.transform.SetParent(parent, false);
 
 			button.background = new GameObject("Background", typeof(RectTransform)).AddComponent<Image>();
 			RectTransformExtensions.SetParams(button.background.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), button.transform);
 			RectTransformExtensions.SetSize(button.background.rectTransform, width * 10, height * 10);
-			button.background.rectTransform.localScale = new Vector3(0.1f, 0.1f, 1);
+			button.background.rectTransform.localScale = new Vector3(0.1f, 0.1f, 0.5f);
 			button.background.sprite = ImageUtils.Load9SliceSprite(Mod.GetAssetPath("MainMenuStandardSprite.png"), new RectOffset(Slice, Slice, Slice, Slice));
 			button.background.color = upColor;
 			button.background.type = Image.Type.Sliced;
-
+#if SN
 			button.text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
+			button.text.alignment = TextAnchor.MiddleCenter;
+#elif BZ
+			button.text = new GameObject("TextMeshProUGUI", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+#endif
 			RectTransformExtensions.SetParams(button.text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), button.transform);
 			RectTransformExtensions.SetSize(button.text.rectTransform, width, height);
 			button.text.color = new Color(1, 1, 1);
 			button.text.font = textPrefab.font;
 			button.text.fontSize = 10;
-			button.text.alignment = TextAnchor.MiddleCenter;
-
 			button.onClick += action;
+#if SN
+			button.text.alignment = TextAnchor.MiddleLeft;
+#elif BZ
+			button.text.alignment = TextAlignmentOptions.Left;
+			// Set the left margin
+			button.text.margin = new Vector4(5.0f, 0.0f);
+#endif
 
 			return button;
 		}

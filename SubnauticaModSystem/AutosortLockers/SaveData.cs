@@ -1,8 +1,6 @@
 ﻿using Common.Mod;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace AutosortLockers
@@ -12,7 +10,7 @@ namespace AutosortLockers
 	{
 		public string Id;
 		public List<AutosorterFilter> FilterData = new List<AutosorterFilter>();
-		public string Label = "Locker";
+		public string Label = "";
 		public SerializableColor LabelColor = Color.white;
 		public SerializableColor IconColor = Color.white;
 		public SerializableColor OtherTextColor = Color.white;
