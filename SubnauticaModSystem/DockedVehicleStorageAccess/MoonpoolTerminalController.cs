@@ -1,5 +1,10 @@
 ﻿using Common.Mod;
+#if SUBNAUTICA
 using Oculus.Newtonsoft.Json;
+#elif BELOWZERO
+using Newtonsoft.Json;
+using TMPro;
+#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,13 +42,14 @@ namespace DockedVehicleStorageAccess
 
 		private void Awake()
 		{
-			var buttonPositionCenter = new Vector2(0, 0);
-			var buttonSpacing = 104;
+			Vector2 buttonPositionCenter = new Vector2(0, 0);
+			int buttonSpacing = 104;
 
-			var parent = GetComponentInChildren<Canvas>().transform;
-			var color = new Color32(189, 255, 255, 255);
+			Transform parent = GetComponentInChildren<Canvas>().transform;
+			Color32 color = new Color32(189, 255, 255, 255);
 
-			var text = new GameObject("label", typeof(RectTransform)).AddComponent<Text>();
+#if SN1
+			Text text = new GameObject("label", typeof(RectTransform)).AddComponent<Text>();
 			RectTransformExtensions.SetParams(text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(text.rectTransform, 500, 140);
 			text.rectTransform.anchoredPosition = buttonPositionCenter + new Vector2(0, 80);
@@ -52,11 +58,22 @@ namespace DockedVehicleStorageAccess
 			text.fontSize = Mathf.FloorToInt(GetComponentInChildren<Text>().fontSize * 1.8f);
 			text.font = GetComponentInChildren<Text>().font;
 			text.alignment = TextAnchor.MiddleCenter;
+#elif BZ
+			TextMeshProUGUI text = new GameObject("label", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+			RectTransformExtensions.SetParams(text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
+			RectTransformExtensions.SetSize(text.rectTransform, 500, 140);
+			text.rectTransform.anchoredPosition = buttonPositionCenter + new Vector2(0, 80);
+			text.color = GetComponentInChildren<TextMeshProUGUI>().color;
+			text.text = "Position";
+			text.fontSize = Mathf.FloorToInt(GetComponentInChildren<TextMeshProUGUI>().fontSize * 1.8f);
+			text.font = GetComponentInChildren<TextMeshProUGUI>().font;
+			text.alignment = TextAlignmentOptions.Midline;
+#endif
 			text.raycastTarget = false;
 
-			for (int i = 0; i < 4; ++i)
+			for (int i = 0; i < 4; i++)
 			{
-				var button = CheckboxButton.CreateCheckboxNoText(parent, color, 100);
+				CheckboxButton button = CheckboxButton.CreateCheckboxNoText(parent, color, 100);
 				button.Initialize();
 				button.toggled = false;
 				button.rectTransform.anchoredPosition = buttonPositionCenter + new Vector2((-1.5f + i) * buttonSpacing, 0);

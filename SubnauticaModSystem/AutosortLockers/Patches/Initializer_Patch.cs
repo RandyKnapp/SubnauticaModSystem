@@ -1,5 +1,5 @@
 ﻿
-using Harmony;
+using HarmonyLib;
 
 namespace AutosortLockers.Patches
 {

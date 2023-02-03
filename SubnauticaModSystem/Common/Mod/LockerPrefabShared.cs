@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+#if BELOWZERO
+using TMPro;
+#endif
 
 namespace Common.Mod
 {
 	public static class LockerPrefabShared
 	{
-		internal static Canvas CreateCanvas(Transform parent)
+        internal static Canvas CreateCanvas(Transform parent)
 		{
 			var canvas = new GameObject("Canvas", typeof(RectTransform)).AddComponent<Canvas>();
 			var t = canvas.transform;
@@ -59,9 +62,16 @@ namespace Common.Mod
 			return icon;
 		}
 
+#if SN1
 		internal static Text CreateText(Transform parent, Text prefab, Color color, int y, int size, string initial)
 		{
 			var text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
+#elif BELOWZERO
+		internal static TextMeshProUGUI CreateText(Transform parent, TextMeshProUGUI prefab, Color color, int y, int size, string initial)
+		{
+			var text = new GameObject("TextMeshProUGUI", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+#endif
+
 			var rt = text.rectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(rt, 120, 200);
@@ -70,7 +80,11 @@ namespace Common.Mod
 			text.font = prefab.font;
 			text.fontSize = size;
 			text.color = color;
+#if SUBNAUTICA
 			text.alignment = TextAnchor.MiddleCenter;
+#elif BELOWZERO
+			text.alignment = TextAlignmentOptions.Center;
+#endif
 			text.text = initial;
 
 			return text;

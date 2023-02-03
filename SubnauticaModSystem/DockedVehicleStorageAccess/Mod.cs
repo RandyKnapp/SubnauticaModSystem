@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Reflection;
 using Common.Mod;
-using Harmony;
+using HarmonyLib;
 using QModManager.API;
+using SMLHelper.V2.Handlers;
 
 namespace DockedVehicleStorageAccess
 {
 	internal static class Mod
 	{
+#if !BELOWZERO
 		public static Config config;
+#else
+		public static Config config { get; } = OptionsPanelHandler.RegisterModOptions<Config>();
+#endif
 
 		private static string modDirectory;
 
@@ -21,8 +26,7 @@ namespace DockedVehicleStorageAccess
 
 			AddBuildables();
 
-			HarmonyInstance harmony = HarmonyInstance.Create("com.DockedVehicleStorageAccessSML.mod");
-			harmony.PatchAll(Assembly.GetExecutingAssembly());
+			new Harmony("com.DockedVehicleStorageAccessSML.mod").PatchAll(Assembly.GetExecutingAssembly());
 
 			Logger.Log("Patched");
 		}
@@ -44,7 +48,9 @@ namespace DockedVehicleStorageAccess
 
 		private static void LoadConfig()
 		{
+#if !BELOWZERO
 			config = ModUtils.LoadConfig<Config>(GetModPath() + "/config.json");
+#endif
 			config.UseAutosortMod = QModServices.Main.ModPresent("AutosortLockersSML");
 
 			if (config.UseAutosortMod)

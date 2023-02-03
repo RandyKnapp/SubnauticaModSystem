@@ -6,6 +6,11 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using UWE;
+using System.Collections;
+#if BELOWZERO
+using TMPro;
+#endif
 
 namespace AutosortLockers
 {
@@ -20,7 +25,11 @@ namespace AutosortLockers
 		[SerializeField]
 		private Image background;
 		[SerializeField]
+#if SUBNAUTICA
 		private Text labelLabel;
+#elif BELOWZERO
+		private TextMeshProUGUI labelLabel;
+#endif
 		[SerializeField]
 		private LabelController label;
 		[SerializeField]
@@ -174,10 +183,14 @@ namespace AutosortLockers
 
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		public static CustomizeScreen Create(Transform parent, SaveDataEntry data)
+		public static CustomizeScreen Create(Transform parent, SaveDataEntry data, GameObject lockerPrefab = null)
 		{
-			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+#if SUBNAUTICA
+			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
+#elif BELOWZERO
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
+#endif
 			textPrefab.fontSize = 12;
 			textPrefab.color = CustomizeScreen.ScreenContentColor;
 
@@ -192,31 +205,35 @@ namespace AutosortLockers
 
 			screen.labelLabel = LockerPrefabShared.CreateText(screen.background.transform, textPrefab, ScreenContentColor, 100, 9, "Label:");
 			RectTransformExtensions.SetSize(screen.labelLabel.rectTransform, 90, 40);
+#if SUBNAUTICA
 			screen.labelLabel.alignment = TextAnchor.MiddleLeft;
+#elif BELOWZERO
+			screen.labelLabel.alignment = TextAlignmentOptions.MidlineLeft;
+#endif
 
-			screen.label = LabelController.Create(data, screen.background.transform);
+			screen.label = LabelController.Create(data, screen.background.transform, lockerPrefab);
 			screen.label.rectTransform.anchoredPosition = new Vector2(0, 80);
 
 			screen.exitButton = ConfigureButton.Create(screen.background.transform, Color.white, 40);
 
 			var startX = 0;
 			var startY = 30;
-			screen.labelColorSetting = ColorSetting.Create(screen.background.transform, "Label Color");
+			screen.labelColorSetting = ColorSetting.Create(screen.background.transform, "Label Color", lockerPrefab);
 			screen.labelColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY);
 
-			screen.iconColorSetting = ColorSetting.Create(screen.background.transform, "Icon Color");
+			screen.iconColorSetting = ColorSetting.Create(screen.background.transform, "Icon Color", lockerPrefab);
 			screen.iconColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - 19);
 
-			screen.textColorSetting = ColorSetting.Create(screen.background.transform, "Filters Color");
+			screen.textColorSetting = ColorSetting.Create(screen.background.transform, "Filters Color", lockerPrefab);
 			screen.textColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 2));
 
-			screen.buttonsColorSetting = ColorSetting.Create(screen.background.transform, "Misc Color");
+			screen.buttonsColorSetting = ColorSetting.Create(screen.background.transform, "Misc Color", lockerPrefab);
 			screen.buttonsColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 3));
 
-			screen.lockerColorSetting = ColorSetting.Create(screen.background.transform, "Locker Color");
+			screen.lockerColorSetting = ColorSetting.Create(screen.background.transform, "Locker Color", lockerPrefab);
 			screen.lockerColorSetting.rectTransform.anchoredPosition = new Vector2(startX, startY - (19 * 4));
 
-			screen.colorPicker = ColorPicker.Create(screen.background.transform);
+			screen.colorPicker = ColorPicker.Create(screen.background.transform, lockerPrefab);
 			screen.colorPicker.gameObject.SetActive(false);
 			screen.colorPicker.rectTransform.anchoredPosition = new Vector2(0, 30);
 

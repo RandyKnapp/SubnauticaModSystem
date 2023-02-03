@@ -4,6 +4,9 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+#if BZ
+using TMPro;
+#endif
 
 namespace DockedVehicleStorageAccess
 {
@@ -21,7 +24,11 @@ namespace DockedVehicleStorageAccess
 
 		public RectTransform rectTransform;
 		public Image image;
+#if SN1
 		public Text text;
+#elif BZ
+		public TextMeshProUGUI text;
+#endif
 		public Action<bool> onToggled = delegate { };
 
 		private Sprite checkedSprite = null;
@@ -94,9 +101,14 @@ namespace DockedVehicleStorageAccess
 
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#if SN1
 		public static CheckboxButton CreateCheckbox(Transform parent, Color color, Text textPrefab, string label, float width = 100)
 		{
-			var checkboxButton = new GameObject("Checkbox", typeof(RectTransform));
+#elif BZ
+		public static CheckboxButton CreateCheckbox(Transform parent, Color color, TextMeshProUGUI textPrefab, string label, float width = 100)
+		{
+#endif
+		var checkboxButton = new GameObject("Checkbox", typeof(RectTransform));
 			var rt = checkboxButton.transform as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);
 			RectTransformExtensions.SetSize(rt, width, 20);
@@ -111,8 +123,11 @@ namespace DockedVehicleStorageAccess
 			var text = LockerPrefabShared.CreateText(rt, textPrefab, color, 0, 10, label);
 			RectTransformExtensions.SetSize(text.rectTransform, width - iconWidth - spacing, iconWidth);
 			text.rectTransform.anchoredPosition = new Vector2(iconWidth / 2 + spacing, 0);
+#if SN1
 			text.alignment = TextAnchor.MiddleLeft;
-
+#elif BZ
+			text.alignment = TextAlignmentOptions.MidlineLeft;
+#endif
 			checkboxButton.AddComponent<BoxCollider2D>();
 
 			var button = checkboxButton.AddComponent<CheckboxButton>();

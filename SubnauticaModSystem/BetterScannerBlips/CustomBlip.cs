@@ -1,22 +1,42 @@
-﻿using Common.Utility;
+﻿using BetterScannerBlips.Patches;
+using Common.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+#if BELOWZERO
+using TMPro;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace BetterScannerBlips
 {
-	class CustomBlip : MonoBehaviour
+	public class CustomBlip : MonoBehaviour
 	{
 		private static Color circleColor;
 		private static Color textColor;
 
 		private Image image;
+#if SN1
 		private Text text;
+#elif BELOWZERO
+		private TextMeshProUGUI text;
+#endif
 		private TechType techType;
 		private string resourceName;
+		private string lastID = ""; // Last unique identifier we were attached to. As long as the current ID matches this, we shouldn't need to retrieve the string.
+		// Randy's original code didn't take this into account; and in fairness, he may not have needed to take it into account at all.
+		// This code was originally based on Subnautica 1, and this behaviour may not have happened there.
+		// However, in BZ, a given blip might be moved around - for example, a blip may initially be highlighting a Seaglide fragment, but later on - be it frames, seconds, whatever -
+		// it might instead be highlighting a Seatruck fragment. Wouldn't be a problem under normal circumstances, but since we want proper text for these blips...
+		// Not only that, but since every blip from a given map room would've been showing the exact same text anyway, blips moving around didn't matter, until we wanted blips with different text.
+
+		public void ResetCustomBlip()
+		{
+			this.techType = TechType.None;
+			this.resourceName = "";
+		}
 
 		public static void InitializeColors()
 		{
@@ -36,20 +56,29 @@ namespace BetterScannerBlips
 		private void Awake()
 		{
 			image = gameObject.GetComponent<Image>();
+#if SN1
 			text = gameObject.GetComponentInChildren<Text>();
+#elif BELOWZERO
+			text = gameObject.GetComponentInChildren<TextMeshProUGUI>();
+#endif
 		}
 
+#if SN1
 		public void Refresh(ResourceTracker.ResourceInfo target)
+#elif BELOWZERO
+		public void Refresh(ResourceTrackerDatabase.ResourceInfo target)
+#endif
 		{
 			if (target != null)
 			{
 				var vectorToPlayer = Player.main.transform.position - target.position;
 				var distance = vectorToPlayer.magnitude;
 
-				if (resourceName == string.Empty || techType != target.techType)
+				if (techType != target.techType || target.techType == TechType.Fragment)
 				{
 					techType = target.techType;
-					resourceName = Language.main.Get(techType);
+					if(!ResourceTrackerPatches.TryGetResourceName(target.uniqueId, out resourceName))
+						resourceName = Language.main.Get(techType);
 				}
 
 				RefreshColor(distance);

@@ -6,6 +6,9 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+#if BELOWZERO
+	using TMPro;
+#endif
 
 namespace AutosortLockers
 {
@@ -26,7 +29,11 @@ namespace AutosortLockers
 		[SerializeField]
 		private Image background;
 		[SerializeField]
+#if SUBNAUTICA
 		private Text text;
+#elif BELOWZERO
+		private TextMeshProUGUI text;
+#endif
 
 		public AutosorterFilter GetTechType()
 		{
@@ -99,7 +106,13 @@ namespace AutosortLockers
 
 
 
-		public static PickerButton Create(Transform parent, Text textPrefab, Action<AutosorterFilter> action, int width = 100, int height = 18)
+		public static PickerButton Create(Transform parent,
+#if SUBNAUTICA
+			Text textPrefab,
+#elif BELOWZERO
+			TextMeshProUGUI textPrefab,
+#endif
+			Action<AutosorterFilter> action, int width = 100, int height = 18)
 		{
 			var button = new GameObject("PickerButton", typeof(RectTransform)).AddComponent<PickerButton>();
 			button.transform.SetParent(parent, false);
@@ -112,13 +125,18 @@ namespace AutosortLockers
 			button.background.color = upColor;
 			button.background.type = Image.Type.Sliced;
 
+#if SUBNAUTICA
 			button.text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
+			button.text.alignment = TextAnchor.MiddleCenter;
+#elif BELOWZERO
+			button.text = new GameObject("TextMeshProUGUI", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+			button.text.alignment = TextAlignmentOptions.Center;
+#endif
 			RectTransformExtensions.SetParams(button.text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), button.transform);
 			RectTransformExtensions.SetSize(button.text.rectTransform, width, height);
 			button.text.color = new Color(1, 1, 1);
 			button.text.font = textPrefab.font;
 			button.text.fontSize = 10;
-			button.text.alignment = TextAnchor.MiddleCenter;
 
 			button.onClick += action;
 
