@@ -1,10 +1,14 @@
 ﻿using System;
+using SMLHelper.V2.Json;
+using SMLHelper.V2.Options;
+using SMLHelper.V2.Options.Attributes;
 
 namespace PrawnsuitLightswitch
 {
-	[Serializable]
-	class Config
-	{
-		public bool PrawnsuitLightsUseEnergy = true;
-	}
+    [Menu("Prawnsuit Lightswitch")]
+    public class Config : ConfigFile
+    {
+        [Toggle("Lights Use Energy")]
+        public bool PrawnsuitLightsUseEnergy = true;
+    }
 }
