@@ -1,56 +1,25 @@
-﻿using Common.Mod;
-using Harmony;
+﻿using HarmonyLib;
+using BepInEx;
 using System;
 using System.Reflection;
+using SMLHelper.V2.Handlers;
 
 namespace PrawnsuitLightswitch
 {
-	static class Mod
+	[BepInPlugin(GUID, PluginName, VersionString)]
+	public class Mod : BaseUnityPlugin
 	{
 		public static Config config;
 
-		private static string modDirectory;
+		private const string PluginName = "PrawnsuitLightswitch";
+		private const string VersionString = "1.0.3";
+		private const string GUID = "com.PrawnsuitLightswitch.mod";
 
-		public static void Patch(string modDirectory = null)
+		private void Awake()
 		{
-			Mod.modDirectory = modDirectory ?? "Subnautica_Data/Managed";
-			LoadConfig();
-
-			HarmonyInstance harmony = HarmonyInstance.Create("com.PrawnsuitLightswitch.mod");
+			Harmony harmony = new Harmony(GUID);
 			harmony.PatchAll(Assembly.GetExecutingAssembly());
-
-			Logger.Log("Patched");
-		}
-
-		public static string GetModPath()
-		{
-			return Environment.CurrentDirectory + "/" + modDirectory;
-		}
-
-		public static string GetAssetPath(string filename)
-		{
-			return GetModPath() + "/Assets/" + filename;
-		}
-
-		private static string GetModInfoPath()
-		{
-			return GetModPath() + "/mod.json";
-		}
-
-		private static void LoadConfig()
-		{
-			config = ModUtils.LoadConfig<Config>(GetModInfoPath());
-			ValidateConfig();
-		}
-
-		private static void ValidateConfig()
-		{
-			Config defaultConfig = new Config();
-			if (config == null)
-			{
-				config = defaultConfig;
-				return;
-			}
+			config = OptionsPanelHandler.Main.RegisterModOptions<Config>();
 		}
 	}
 }
