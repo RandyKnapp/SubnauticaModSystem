@@ -44,11 +44,11 @@ namespace AutosortLockers
 		}
 
 
-		public static ConfigureButton Create(Transform parent, Color color, float x)
+		public static ConfigureButton Create(Transform parent, Color color, float x, int buttonPos)
 		{
 			var config = LockerPrefabShared.CreateIcon(parent, color, 0);
 			RectTransformExtensions.SetSize(config.rectTransform, 20, 20);
-			config.rectTransform.anchoredPosition = new Vector2(x, -104);
+			config.rectTransform.anchoredPosition = new Vector2(x, buttonPos);
 
 			config.gameObject.AddComponent<BoxCollider2D>();
 			var button = config.gameObject.AddComponent<ConfigureButton>();

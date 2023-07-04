@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-using UnityEngine.EventSystems;
+#if SUBNAUTICA
 using UnityEngine.UI;
+#elif BELOWZERO
+using TMPro;
+#endif
 
 namespace AutosortLockers
 {
@@ -20,12 +20,18 @@ namespace AutosortLockers
 		{
 			rectTransform = transform as RectTransform;
 		}
-
+#if SUBNAUTICA
 		private void Initialize(Text textPrefab, string label)
 		{
 			activeButton = ColoredIconButton.Create(transform, CustomizeScreen.ScreenContentColor, textPrefab, label, 100, 15);
 			activeButton.text.supportRichText = true;
 		}
+#elif BELOWZERO
+		private void Initialize(TextMeshProUGUI textPrefab, string label)
+		{
+			activeButton = ColoredIconButton.Create(transform, CustomizeScreen.ScreenContentColor, textPrefab, label, 100, 15);
+		}
+#endif
 
 		internal void SetInitialValue(Color initialColor)
 		{
@@ -43,15 +49,17 @@ namespace AutosortLockers
 			onClick();
 		}
 
+		/*_____________________________________________________________________________________________________*/
 
-		///////////////////////////////////////////////////////////////////////////////////////////
-		public static ColorSetting Create(Transform parent, string label)
+		public static ColorSetting Create(Transform parent, string label, GameObject lockerPrefab = null)
 		{
-			var lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
+#if SUBNAUTICA
+			lockerPrefab = Resources.Load<GameObject>("Submarine/Build/SmallLocker");
 			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<Text>());
-			textPrefab.fontSize = 12;
-			textPrefab.color = new Color32(66, 134, 244, 255);
-
+#elif BELOWZERO
+			var textPrefab = Instantiate(lockerPrefab.GetComponentInChildren<TextMeshProUGUI>());
+#endif
+			
 			var beaconController = new GameObject("ColorSettings", typeof(RectTransform)).AddComponent<ColorSetting>();
 			var rt = beaconController.gameObject.transform as RectTransform;
 			RectTransformExtensions.SetParams(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), parent);

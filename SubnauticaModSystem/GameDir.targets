@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <CommonDir>S:\Steam\steamapps\common\</CommonDir>
+	<SubnauticaDir>$(CommonDir)\Subnautica\</SubnauticaDir>
+	<BelowZeroDir>$(CommonDir)\SubnauticaZero\</BelowZeroDir>
+  </PropertyGroup>
+</Project>
